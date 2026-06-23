@@ -1,0 +1,35 @@
+{
+  "version": 2,
+  "builds": [
+    {
+      "src": "website/**",
+      "use": "@vercel/static"
+    },
+    {
+      "src": "widget/**",
+      "use": "@vercel/static"
+    },
+    {
+      "src": "api/**/*.js",
+      "use": "@vercel/node"
+    }
+  ],
+  "routes": [
+    {
+      "src": "/vaani-widget.js",
+      "dest": "/widget/vaani-widget.js"
+    },
+    {
+      "src": "/chat/message",
+      "dest": "/api/chat/message.js"
+    },
+    {
+      "src": "/chat/health",
+      "dest": "/api/chat/health.js"
+    },
+    {
+      "src": "/(.*)",
+      "dest": "/website/$1"
+    }
+  ]
+}
