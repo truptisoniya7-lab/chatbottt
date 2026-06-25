@@ -1,0 +1,74 @@
+{
+  "faq_responses": [
+    {
+      "faq_id": "FAQ-001",
+      "question": "How long does delivery take?",
+      "category": "Shipping",
+      "vaani_answer": "Standard delivery takes 3–5 business days for metro cities and 5–7 days for other areas. Express delivery (1–2 days) is available in metro cities for ₹99 extra.",
+      "follow_up_action": "Offer tracking link"
+    },
+    {
+      "faq_id": "FAQ-002",
+      "question": "Is there free shipping?",
+      "category": "Shipping",
+      "vaani_answer": "Yes! All orders above ₹999 ship free. Orders below ₹999 have a flat ₹49 shipping fee.",
+      "follow_up_action": "Suggest adding to cart"
+    },
+    {
+      "faq_id": "FAQ-003",
+      "question": "Do you deliver to [city]?",
+      "category": "Shipping",
+      "vaani_answer": "We deliver Pan India! Just enter your PIN code at checkout to confirm availability and estimated delivery date.",
+      "follow_up_action": "None"
+    },
+    {
+      "faq_id": "FAQ-004",
+      "question": "What is your return policy?",
+      "category": "Returns",
+      "vaani_answer": "You can return most items within 30 days of delivery — as long as they're unused, unwashed, with original tags and packaging. Some items like stitched blouses and customised pieces are non-returnable.",
+      "follow_up_action": "Offer to initiate return"
+    },
+    {
+      "faq_id": "FAQ-005",
+      "question": "How long does a refund take?",
+      "category": "Refunds",
+      "vaani_answer": "Refunds are processed within 5–7 business days of us receiving the returned item. If you prefer store credit, it's even faster — just 2 business days!",
+      "follow_up_action": "None"
+    },
+    {
+      "faq_id": "FAQ-006",
+      "question": "Can I exchange for a different size?",
+      "category": "Exchange",
+      "vaani_answer": "Yes! Exchanges for a different size or colour are accepted within 30 days, subject to stock availability.",
+      "follow_up_action": "Initiate exchange flow"
+    },
+    {
+      "faq_id": "FAQ-007",
+      "question": "Do you accept COD?",
+      "category": "Payment",
+      "vaani_answer": "Yes — COD is available across India for orders up to ₹15,000. A small ₹30 handling fee applies.",
+      "follow_up_action": "None"
+    },
+    {
+      "faq_id": "FAQ-008",
+      "question": "Is EMI available?",
+      "category": "Payment",
+      "vaani_answer": "Yes! EMI is available on HDFC, ICICI, Axis, and SBI credit cards for orders above ₹5,000. Select at checkout.",
+      "follow_up_action": "None"
+    },
+    {
+      "faq_id": "FAQ-009",
+      "question": "Are your handloom products authentic?",
+      "category": "Authenticity",
+      "vaani_answer": "Absolutely. Our handloom products are sourced directly from certified artisan clusters — Banarasi and Kanjivaram silks carry GI tags, and we share artisan provenance for every ethnic product.",
+      "follow_up_action": "Share ETH record"
+    },
+    {
+      "faq_id": "FAQ-010",
+      "question": "What is the difference between Banarasi and Kanjivaram silk?",
+      "category": "Product Knowledge",
+      "vaani_answer": "Both are handwoven with real silk and zari! Banarasi silk from Varanasi features intricate Mughal-inspired motifs and feels lighter. Kanjivaram from Kanchipuram has contrasting temple borders and is heavier — ideal for South Indian wedding traditions.",
+      "follow_up_action": "Offer product recs"
+    }
+  ]
+}

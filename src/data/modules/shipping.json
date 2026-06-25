@@ -1,0 +1,82 @@
+{
+  "shipping_policy": [
+    {
+      "policy_id": "SHIP-001",
+      "policy_name": "Free Delivery Threshold",
+      "rule": "Free on all orders above ₹999",
+      "exceptions": "None"
+    },
+    {
+      "policy_id": "SHIP-002",
+      "policy_name": "Delivery Charge Below Threshold",
+      "rule": "₹49 flat for orders below ₹999",
+      "exceptions": "—"
+    },
+    {
+      "policy_id": "SHIP-003",
+      "policy_name": "Express Delivery",
+      "rule": "Available at ₹99 extra · 1–2 business days",
+      "exceptions": "Metro cities only"
+    },
+    {
+      "policy_id": "SHIP-004",
+      "policy_name": "COD Availability",
+      "rule": "Available Pan India",
+      "exceptions": "Extra ₹30 COD handling charge"
+    },
+    {
+      "policy_id": "SHIP-005",
+      "policy_name": "Standard Delivery Timeline",
+      "rule": "3–5 business days (metro) · 5–7 days (non-metro) · 7–10 days (remote)",
+      "exceptions": "Customised / ethnic items: +2 days"
+    },
+    {
+      "policy_id": "SHIP-006",
+      "policy_name": "International Shipping",
+      "rule": "Not available in Phase 1",
+      "exceptions": "—"
+    },
+    {
+      "policy_id": "SHIP-007",
+      "policy_name": "Address Change",
+      "rule": "Can be changed before dispatch only",
+      "exceptions": "Call support within 2 hours of ordering"
+    },
+    {
+      "policy_id": "SHIP-008",
+      "policy_name": "PO Box Delivery",
+      "rule": "Not available",
+      "exceptions": "Use residential/office address"
+    }
+  ],
+  "delivery_zones": [
+    {
+      "city_tier": "Metro",
+      "examples": "Mumbai · Delhi · Bangalore · Chennai · Kolkata · Hyderabad",
+      "delivery_days": "2–4 days",
+      "express_available": "Yes",
+      "cod_available": "Yes"
+    },
+    {
+      "city_tier": "Tier 1",
+      "examples": "Pune · Ahmedabad · Jaipur · Lucknow · Surat · Kochi",
+      "delivery_days": "3–5 days",
+      "express_available": "Yes",
+      "cod_available": "Yes"
+    },
+    {
+      "city_tier": "Tier 2",
+      "examples": "Varanasi · Coimbatore · Visakhapatnam · Nagpur · Bhubaneswar",
+      "delivery_days": "4–6 days",
+      "express_available": "Limited",
+      "cod_available": "Yes"
+    },
+    {
+      "city_tier": "Tier 3 / Rural",
+      "examples": "Remote PIN codes",
+      "delivery_days": "7–10 days",
+      "express_available": "No",
+      "cod_available": "Limited"
+    }
+  ]
+}

@@ -2,8 +2,8 @@ const { Pool } = require('pg');
 
 const pool = new Pool({
   connectionString: process.env.NEON_DATABASE_URL,
-  ssl: { rejectUnauthorized: true },
-  max: 20,
+  ssl: { rejectUnauthorized: true },      // Neon requires SSL
+  max: 20,                                // connection pool max
   idleTimeoutMillis: 30000,
   connectionTimeoutMillis: 5000,
 });

@@ -1,0 +1,76 @@
+{
+  "payment_methods": [
+    {
+      "payment_id": "PAY-001",
+      "method": "UPI",
+      "method_name": "UPI (GPay · PhonePe · Paytm · BHIM)",
+      "processing_time": "Instant",
+      "surcharge": "None",
+      "popular_for": "All customers",
+      "notes": "Most popular in India"
+    },
+    {
+      "payment_id": "PAY-002",
+      "method": "VISA",
+      "method_name": "Visa Credit / Debit Card",
+      "processing_time": "Instant",
+      "surcharge": "None",
+      "popular_for": "Urban shoppers",
+      "notes": "3D Secure enabled"
+    },
+    {
+      "payment_id": "PAY-003",
+      "method": "MASTERCARD",
+      "method_name": "Mastercard Credit / Debit Card",
+      "processing_time": "Instant",
+      "surcharge": "None",
+      "popular_for": "Urban shoppers",
+      "notes": "3D Secure enabled"
+    },
+    {
+      "payment_id": "PAY-004",
+      "method": "RUPAY",
+      "method_name": "RuPay Debit Card",
+      "processing_time": "Instant",
+      "surcharge": "None",
+      "popular_for": "Tier 2/3 customers",
+      "notes": "—"
+    },
+    {
+      "payment_id": "PAY-005",
+      "method": "COD",
+      "method_name": "Cash on Delivery",
+      "processing_time": "At delivery",
+      "surcharge": "₹30",
+      "popular_for": "First-time buyers · Tier 2/3",
+      "notes": "Not available for orders > ₹15,000"
+    },
+    {
+      "payment_id": "PAY-006",
+      "method": "NETBANKING",
+      "method_name": "Net Banking (All major banks)",
+      "processing_time": "Instant",
+      "surcharge": "None",
+      "popular_for": "Traditional buyers",
+      "notes": "—"
+    },
+    {
+      "payment_id": "PAY-007",
+      "method": "EMI",
+      "method_name": "Credit Card EMI (3/6/9/12 months)",
+      "processing_time": "Instant",
+      "surcharge": "Bank interest rates",
+      "popular_for": "Premium orders > ₹5000",
+      "notes": "Available on HDFC · ICICI · Axis · SBI cards"
+    },
+    {
+      "payment_id": "PAY-008",
+      "method": "WALLETS",
+      "method_name": "Paytm Wallet · Mobikwik",
+      "processing_time": "Instant",
+      "surcharge": "None",
+      "popular_for": "—",
+      "notes": "—"
+    }
+  ]
+}

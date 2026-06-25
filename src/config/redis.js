@@ -1,30 +1,25 @@
 const { Redis } = require('@upstash/redis');
 
-// Initialize Redis client. For local dev without credentials, it might throw if not provided
-const redisUrl = process.env.UPSTASH_REDIS_URL;
-const redisToken = process.env.UPSTASH_REDIS_TOKEN;
+// Fallback logic for when Redis is not available locally or credentials are not provided
+const hasRedisConfig = process.env.UPSTASH_REDIS_URL && process.env.UPSTASH_REDIS_TOKEN;
 
-let redis = null;
-if (redisUrl && redisToken) {
+let redis;
+if (hasRedisConfig) {
   redis = new Redis({
-    url: redisUrl,
-    token: redisToken,
+    url: process.env.UPSTASH_REDIS_URL,
+    token: process.env.UPSTASH_REDIS_TOKEN,
   });
 } else {
-  console.warn('WARNING: UPSTASH_REDIS_URL or UPSTASH_REDIS_TOKEN not set. Redis is mocked.');
-  // Simple mock for local development without actual Redis
-  const mockStorage = new Map();
+  // Simple in-memory mock for local dev if Upstash isn't configured
+  console.warn('⚠️ UPSTASH_REDIS_URL or UPSTASH_REDIS_TOKEN missing. Using in-memory mock for Redis.');
+  const store = new Map();
   redis = {
-    get: async (key) => mockStorage.get(key) || null,
-    set: async (key, value) => { mockStorage.set(key, value); return 'OK'; },
-    incr: async (key) => {
-      const val = (mockStorage.get(key) || 0) + 1;
-      mockStorage.set(key, val);
-      return val;
-    },
+    get: async (key) => store.get(key) || null,
+    set: async (key, value) => { store.set(key, typeof value === 'string' ? value : JSON.stringify(value)); return 'OK'; },
+    del: async (key) => { const r = store.has(key); store.delete(key); return r ? 1 : 0; },
+    incr: async (key) => { const v = parseInt(store.get(key) || '0', 10) + 1; store.set(key, v.toString()); return v; },
     expire: async (key, ttl) => 1,
-    del: async (key) => { mockStorage.delete(key); return 1; },
-    ttl: async (key) => 100,
+    ttl: async (key) => 60,
   };
 }
 

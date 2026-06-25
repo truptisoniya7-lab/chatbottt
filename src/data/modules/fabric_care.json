@@ -1,0 +1,44 @@
+{
+  "fabric_care": [
+    {
+      "fabric_id": "FAB-001",
+      "fabric_name": "Pure Silk (Banarasi · Kanjivaram)",
+      "wash_method": "Dry clean only",
+      "water_temp": "Cold if hand-washing",
+      "drying": "Dry in shade · Never tumble dry",
+      "ironing": "Low heat · Use cloth between iron and fabric",
+      "storage": "Wrap in muslin cloth · Not plastic · Re-fold every 6 months",
+      "special_notes": "Avoid perfume/deodorant contact on zari · Wipe zari gently if tarnished"
+    },
+    {
+      "fabric_id": "FAB-002",
+      "fabric_name": "Cotton (Chikankari · Kalamkari · Block Print)",
+      "wash_method": "Hand wash or gentle machine wash",
+      "water_temp": "Cold (30°C max)",
+      "drying": "Dry in shade",
+      "ironing": "Medium heat",
+      "storage": "Fold flat · Store in cotton bag",
+      "special_notes": "First wash colours may bleed slightly — wash alone"
+    },
+    {
+      "fabric_id": "FAB-003",
+      "fabric_name": "Georgette",
+      "wash_method": "Dry clean preferred · Hand wash gentle",
+      "water_temp": "Cold",
+      "drying": "Hang to dry · Not tumble",
+      "ironing": "Low heat",
+      "storage": "Hang in wardrobe · Not folded",
+      "special_notes": "Very delicate — avoid wringing"
+    },
+    {
+      "fabric_id": "FAB-004",
+      "fabric_name": "Chiffon",
+      "wash_method": "Hand wash only",
+      "water_temp": "Cold",
+      "drying": "Hang to dry",
+      "ironing": "Very low heat with pressing cloth",
+      "storage": "Hang · Never fold tightly",
+      "special_notes": "Snags easily — wash inside out"
+    }
+  ]
+}

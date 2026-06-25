@@ -1,0 +1,74 @@
+{
+  "promotions": [
+    {
+      "promo_id": "PROMO-001",
+      "code": "VASUDHA15",
+      "title": "15% Off on Sarees",
+      "discount_type": "percentage",
+      "discount_value": 15,
+      "min_order": 1500,
+      "max_discount": 5000,
+      "valid_from": "2025-06-01",
+      "valid_till": "2025-06-30",
+      "applicable_categories": "saree",
+      "stackable": false,
+      "usage_limit_per_user": 1
+    },
+    {
+      "promo_id": "PROMO-002",
+      "code": "FIRSTLOOK",
+      "title": "First Order Discount",
+      "discount_type": "percentage",
+      "discount_value": 10,
+      "min_order": 0,
+      "max_discount": 2000,
+      "valid_from": "2025-01-01",
+      "valid_till": "2025-12-31",
+      "applicable_categories": "all",
+      "stackable": false,
+      "usage_limit_per_user": 1
+    },
+    {
+      "promo_id": "PROMO-003",
+      "code": "FESTIVE500",
+      "title": "₹500 Off on ₹3999+",
+      "discount_type": "flat",
+      "discount_value": 500,
+      "min_order": 3999,
+      "max_discount": 500,
+      "valid_from": "2025-06-01",
+      "valid_till": "2025-07-15",
+      "applicable_categories": "all",
+      "stackable": false,
+      "usage_limit_per_user": 2
+    },
+    {
+      "promo_id": "PROMO-004",
+      "code": "ETHNIC20",
+      "title": "20% Off Ethnic Wear",
+      "discount_type": "percentage",
+      "discount_value": 20,
+      "min_order": 2000,
+      "max_discount": 3000,
+      "valid_from": "2025-06-15",
+      "valid_till": "2025-07-31",
+      "applicable_categories": "ethnic-wear · kurta · sherwani",
+      "stackable": false,
+      "usage_limit_per_user": 1
+    },
+    {
+      "promo_id": "PROMO-005",
+      "code": "NEWSEASON",
+      "title": "New Season Extra 12%",
+      "discount_type": "percentage",
+      "discount_value": 12,
+      "min_order": 1000,
+      "max_discount": 2500,
+      "valid_from": "2025-06-20",
+      "valid_till": "2025-07-20",
+      "applicable_categories": "all",
+      "stackable": false,
+      "usage_limit_per_user": 1
+    }
+  ]
+}

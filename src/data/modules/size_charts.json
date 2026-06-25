@@ -1,0 +1,144 @@
+{
+  "size_chart_women": [
+    {
+      "size_label": "XS",
+      "bust_cm": "76–80",
+      "waist_cm": "60–64",
+      "hip_cm": "84–88",
+      "fits_saree_blouse": "30–32\"",
+      "fits_kurta": "XS",
+      "fits_lehenga_choli": "22–24 waist"
+    },
+    {
+      "size_label": "S",
+      "bust_cm": "80–84",
+      "waist_cm": "64–68",
+      "hip_cm": "88–92",
+      "fits_saree_blouse": "32–34\"",
+      "fits_kurta": "S",
+      "fits_lehenga_choli": "24–26 waist"
+    },
+    {
+      "size_label": "M",
+      "bust_cm": "84–88",
+      "waist_cm": "68–72",
+      "hip_cm": "92–96",
+      "fits_saree_blouse": "34–36\"",
+      "fits_kurta": "M",
+      "fits_lehenga_choli": "26–28 waist"
+    },
+    {
+      "size_label": "L",
+      "bust_cm": "88–94",
+      "waist_cm": "72–78",
+      "hip_cm": "96–102",
+      "fits_saree_blouse": "36–38\"",
+      "fits_kurta": "L",
+      "fits_lehenga_choli": "28–30 waist"
+    },
+    {
+      "size_label": "XL",
+      "bust_cm": "94–100",
+      "waist_cm": "78–84",
+      "hip_cm": "102–108",
+      "fits_saree_blouse": "38–40\"",
+      "fits_kurta": "XL",
+      "fits_lehenga_choli": "30–32 waist"
+    },
+    {
+      "size_label": "XXL",
+      "bust_cm": "100–108",
+      "waist_cm": "84–90",
+      "hip_cm": "108–116",
+      "fits_saree_blouse": "40–42\"",
+      "fits_kurta": "XXL",
+      "fits_lehenga_choli": "32–34 waist"
+    }
+  ],
+  "size_chart_men": [
+    {
+      "size_label": "S",
+      "chest_cm": "86–90",
+      "shoulder_cm": "40–42",
+      "kurta_length_cm": "42\"",
+      "shirt_size_equivalent": "S / 38",
+      "height_range": "5'4\"–5'7\""
+    },
+    {
+      "size_label": "M",
+      "chest_cm": "90–96",
+      "shoulder_cm": "42–44",
+      "kurta_length_cm": "44\"",
+      "shirt_size_equivalent": "M / 40",
+      "height_range": "5'7\"–5'10\""
+    },
+    {
+      "size_label": "L",
+      "chest_cm": "96–102",
+      "shoulder_cm": "44–46",
+      "kurta_length_cm": "46\"",
+      "shirt_size_equivalent": "L / 42",
+      "height_range": "5'9\"–6'0\""
+    },
+    {
+      "size_label": "XL",
+      "chest_cm": "102–108",
+      "shoulder_cm": "46–48",
+      "kurta_length_cm": "48\"",
+      "shirt_size_equivalent": "XL / 44",
+      "height_range": "5'11\"–6'2\""
+    },
+    {
+      "size_label": "XXL",
+      "chest_cm": "108–116",
+      "shoulder_cm": "48–50",
+      "kurta_length_cm": "50\"",
+      "shirt_size_equivalent": "XXL / 46",
+      "height_range": "6'0\"–6'3\""
+    }
+  ],
+  "size_chart_jeans": [
+    {
+      "waist_size": 28,
+      "waist_inches": "28\"",
+      "waist_cm": 71,
+      "hip_cm": 88,
+      "inseam_cm": 76
+    },
+    {
+      "waist_size": 30,
+      "waist_inches": "30\"",
+      "waist_cm": 76,
+      "hip_cm": 92,
+      "inseam_cm": 78
+    },
+    {
+      "waist_size": 32,
+      "waist_inches": "32\"",
+      "waist_cm": 81,
+      "hip_cm": 97,
+      "inseam_cm": 79
+    },
+    {
+      "waist_size": 34,
+      "waist_inches": "34\"",
+      "waist_cm": 86,
+      "hip_cm": 102,
+      "inseam_cm": 79
+    },
+    {
+      "waist_size": 36,
+      "waist_inches": "36\"",
+      "waist_cm": 91,
+      "hip_cm": 107,
+      "inseam_cm": 80
+    },
+    {
+      "waist_size": 38,
+      "waist_inches": "38\"",
+      "waist_cm": 97,
+      "hip_cm": 112,
+      "inseam_cm": 80
+    }
+  ]
+}

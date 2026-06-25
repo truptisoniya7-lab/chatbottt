@@ -1,0 +1,95 @@
+{
+  "support_schedule": [
+    {
+      "day": "Monday – Saturday",
+      "shift": "Day",
+      "hours_ist": "9:00 AM – 9:00 PM IST",
+      "channels": "Chat (Vaani hand-off) · Email · WhatsApp",
+      "avg_response_time": "Within 2–4 hours"
+    },
+    {
+      "day": "Sunday",
+      "shift": "Closed",
+      "hours_ist": "—",
+      "channels": "Email only",
+      "avg_response_time": "Next business day"
+    },
+    {
+      "day": "Peak Season (Diwali · Wedding Season)",
+      "shift": "Extended",
+      "hours_ist": "8:00 AM – 11:00 PM IST",
+      "channels": "All channels",
+      "avg_response_time": "Within 1–2 hours"
+    }
+  ],
+  "escalation_triggers": [
+    {
+      "trigger_type": "Explicit request",
+      "condition": "User says \"talk to human\" · \"manager\" · \"agent\"",
+      "vaani_action": "Immediately initiate escalation flow"
+    },
+    {
+      "trigger_type": "Repeated failure",
+      "condition": "Same issue unresolved after 2 Vaani turns",
+      "vaani_action": "Proactively offer escalation"
+    },
+    {
+      "trigger_type": "Low confidence",
+      "condition": "Intent confidence < 0.50 on sensitive query",
+      "vaani_action": "Offer escalation or clarification"
+    },
+    {
+      "trigger_type": "High frustration",
+      "condition": "Sentiment analysis: negative + urgent",
+      "vaani_action": "Empathise and offer escalation"
+    },
+    {
+      "trigger_type": "High-value complaint",
+      "condition": "Order value > ₹10,000 + complaint intent",
+      "vaani_action": "Auto-elevate to HIGH priority"
+    },
+    {
+      "trigger_type": "Defective product",
+      "condition": "Reason code DAMAGED or WRONG_ITEM",
+      "vaani_action": "Auto-create priority ticket"
+    }
+  ],
+  "site_section_context": [
+    {
+      "anchor_id": "#women",
+      "section_name": "Women's Finest",
+      "vaani_context_greeting": "I see you're exploring our Women's collection! Can I help you find something specific?",
+      "products_to_reference": "VC-W-001 to VC-W-012"
+    },
+    {
+      "anchor_id": "#men",
+      "section_name": "Men's Signatures",
+      "vaani_context_greeting": "Great taste — you're browsing our Men's Signatures! Looking for something particular?",
+      "products_to_reference": "VC-M-001 to VC-M-010"
+    },
+    {
+      "anchor_id": "#ethnic",
+      "section_name": "Ethnic Spotlight",
+      "vaani_context_greeting": "You're exploring our Heritage Collections — each piece here has an incredible story. What region or craft are you drawn to?",
+      "products_to_reference": "ETH-001 to ETH-005"
+    },
+    {
+      "anchor_id": "#trending",
+      "section_name": "Trending Now",
+      "vaani_context_greeting": "These are our most-loved styles right now! See anything that caught your eye?",
+      "products_to_reference": "VC-W-006 · VC-W-007 · VC-M-006 · VC-M-007"
+    },
+    {
+      "anchor_id": "#lookbook",
+      "section_name": "Season Lookbook",
+      "vaani_context_greeting": "You're browsing the Lookbook! Which look resonates with you — the Festive Saree Edit, the Groom's Story, or Sangeet Night?",
+      "products_to_reference": "Curated sets"
+    },
+    {
+      "anchor_id": "/",
+      "section_name": "Homepage",
+      "vaani_context_greeting": "Namaste! 🙏 I'm Vaani — welcome to Vasudha Couture. Where Tradition Meets Modern Elegance.",
+      "products_to_reference": "General"
+    }
+  ]
+}

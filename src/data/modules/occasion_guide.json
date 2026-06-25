@@ -1,0 +1,28 @@
+{
+  "occasion_guide": [
+    {
+      "occasion": "Wedding (Guest)",
+      "women_recommendations": "Banarasi/Kanjivaram Saree · Embroidered Lehenga · Anarkali Suit",
+      "men_recommendations": "Sherwani Set · Brocade Kurta with Churidar",
+      "vaani_opening_line": "Weddings call for something truly special! Here's what we'd recommend..."
+    },
+    {
+      "occasion": "Bridal",
+      "women_recommendations": "Embroidered Bridal Lehenga · Heavy Silk Saree",
+      "men_recommendations": "Royal Gold-Work Sherwani (Groom) · Bandhgala Suit",
+      "vaani_opening_line": "Congratulations! Let me help you find your perfect bridal look."
+    },
+    {
+      "occasion": "Sangeet",
+      "women_recommendations": "Fusion Lehenga · Embroidered Anarkali",
+      "men_recommendations": "Brocade Nehru Jacket · Printed Kurta",
+      "vaani_opening_line": "Sangeet outfits are so fun — colourful and a little dramatic! Here are some favourites."
+    },
+    {
+      "occasion": "Festive (Diwali · Holi · Eid)",
+      "women_recommendations": "Chikankari Kurta Set · Printed Saree · Chanderi Saree",
+      "men_recommendations": "Linen Kurta · Nehru Jacket · Ethnic Set",
+      "vaani_opening_line": "Nothing like dressing up for a festival! Here are some perfect picks."
+    }
+  ]
+}

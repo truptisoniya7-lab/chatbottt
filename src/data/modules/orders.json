@@ -1,0 +1,193 @@
+{
+  "orders": [
+    {
+      "order_id": "VC-20245781",
+      "customer_name": "Ananya Sharma",
+      "phone_last4": "8967",
+      "email": "ananya@email.com",
+      "product_id": "VC-M-003",
+      "product_name": "Linen Mandarin Kurta",
+      "size": "M",
+      "colour": "Sage Green",
+      "qty": 1,
+      "price": 1499,
+      "payment_method": "UPI",
+      "order_date": "2025-06-18",
+      "status": "Out for Delivery",
+      "courier": "Delhivery",
+      "tracking_id": "DL4872993",
+      "est_delivery": "2025-06-25"
+    },
+    {
+      "order_id": "VC-20245611",
+      "customer_name": "Priya Mehta",
+      "phone_last4": "4423",
+      "email": "priya@email.com",
+      "product_id": "VC-W-002",
+      "product_name": "Embroidered Bridal Lehenga",
+      "size": "M",
+      "colour": "Magenta",
+      "qty": 1,
+      "price": 14999,
+      "payment_method": "Razorpay Card",
+      "order_date": "2025-06-10",
+      "status": "Delivered",
+      "courier": "BlueDart",
+      "tracking_id": "BD9921334",
+      "est_delivery": "2025-06-15"
+    },
+    {
+      "order_id": "VC-20245900",
+      "customer_name": "Ramesh Kumar",
+      "phone_last4": "7812",
+      "email": "ramesh@email.com",
+      "product_id": "VC-M-001",
+      "product_name": "Royal Gold-Work Sherwani Set",
+      "size": "L",
+      "colour": "Ivory",
+      "qty": 1,
+      "price": 18999,
+      "payment_method": "COD",
+      "order_date": "2025-06-20",
+      "status": "Packed",
+      "courier": "DTDC",
+      "tracking_id": "Pending",
+      "est_delivery": "2025-06-28"
+    },
+    {
+      "order_id": "VC-20245233",
+      "customer_name": "Meena Iyer",
+      "phone_last4": "3301",
+      "email": "meena@email.com",
+      "product_id": "VC-W-001",
+      "product_name": "Banarasi Silk Zari Saree",
+      "size": "Free Size",
+      "colour": "Royal Blue",
+      "qty": 1,
+      "price": 8499,
+      "payment_method": "UPI",
+      "order_date": "2025-06-05",
+      "status": "Delivered",
+      "courier": "Ekart",
+      "tracking_id": "EK7723891",
+      "est_delivery": "2025-06-10"
+    },
+    {
+      "order_id": "VC-20246012",
+      "customer_name": "Vikram Nair",
+      "phone_last4": "5590",
+      "email": "vikram@email.com",
+      "product_id": "VC-M-006",
+      "product_name": "Brocade Nehru Jacket",
+      "size": "L",
+      "colour": "Black Gold",
+      "qty": 1,
+      "price": 3499,
+      "payment_method": "Visa",
+      "order_date": "2025-06-22",
+      "status": "Confirmed",
+      "courier": "—",
+      "tracking_id": "—",
+      "est_delivery": "2025-06-30"
+    },
+    {
+      "order_id": "VC-20246199",
+      "customer_name": "Sunita Das",
+      "phone_last4": "6678",
+      "email": "sunita@email.com",
+      "product_id": "VC-W-007",
+      "product_name": "Printed Palazzo Set",
+      "size": "L",
+      "colour": "Floral Pink",
+      "qty": 2,
+      "price": 3798,
+      "payment_method": "COD",
+      "order_date": "2025-06-23",
+      "status": "Processing",
+      "courier": "—",
+      "tracking_id": "—",
+      "est_delivery": "2025-07-01"
+    },
+    {
+      "order_id": "VC-20244890",
+      "customer_name": "Rohit Gupta",
+      "phone_last4": "2245",
+      "email": "rohit@email.com",
+      "product_id": "VC-M-004",
+      "product_name": "Slim Fit Dark Jeans",
+      "size": "32",
+      "colour": "Indigo Dark",
+      "qty": 1,
+      "price": 2299,
+      "payment_method": "RuPay",
+      "order_date": "2025-05-28",
+      "status": "Delivered",
+      "courier": "Xpressbees",
+      "tracking_id": "XB3312780",
+      "est_delivery": "2025-06-02"
+    }
+  ],
+  "order_status_log": [
+    {
+      "status": "Confirmed",
+      "vaani_says": "Your order is confirmed and being prepared for dispatch! 🎉"
+    },
+    {
+      "status": "Packed",
+      "vaani_says": "Your order is packed and ready — awaiting courier pickup."
+    },
+    {
+      "status": "Shipped",
+      "vaani_says": "Your order is on its way! Here's your tracking link."
+    },
+    {
+      "status": "Out for Delivery",
+      "vaani_says": "Great news — your order will be delivered today! 🚚"
+    },
+    {
+      "status": "Delivered",
+      "vaani_says": "Your order was delivered on [date]. Hope you love it! 😊"
+    },
+    {
+      "status": "Delayed",
+      "vaani_says": "I see your order is running a bit late — I sincerely apologise. 😔"
+    }
+  ],
+  "courier_partners": [
+    {
+      "courier_name": "Delhivery",
+      "tracking_url": "https://www.delhivery.com/track/package/{tracking_id}",
+      "coverage": "Pan India",
+      "avg_delivery_days": "3–5 days",
+      "cod_available": "Yes"
+    },
+    {
+      "courier_name": "BlueDart",
+      "tracking_url": "https://www.bluedart.com/tracking?trackid={tracking_id}",
+      "coverage": "Metro + Tier 1",
+      "avg_delivery_days": "2–3 days",
+      "cod_available": "Yes"
+    },
+    {
+      "courier_name": "Ekart",
+      "tracking_url": "https://ekartlogistics.com/tracking/{tracking_id}",
+      "coverage": "Pan India",
+      "avg_delivery_days": "4–6 days",
+      "cod_available": "Yes"
+    },
+    {
+      "courier_name": "DTDC",
+      "tracking_url": "https://www.dtdc.in/tracking/{tracking_id}",
+      "coverage": "Pan India",
+      "avg_delivery_days": "4–7 days",
+      "cod_available": "Yes"
+    },
+    {
+      "courier_name": "Xpressbees",
+      "tracking_url": "https://www.xpressbees.com/shipment/tracking?awb={tracking_id}",
+      "coverage": "Pan India",
+      "avg_delivery_days": "3–5 days",
+      "cod_available": "Yes"
+    }
+  ]
+}

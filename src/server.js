@@ -3,6 +3,7 @@ require('dotenv').config({ path: path.join(__dirname, '../.env') });
 const express = require('express');
 const cors = require('cors');
 const helmet = require('helmet');
+const cookieParser = require('cookie-parser');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -18,6 +19,7 @@ app.use(cors({
   allowedHeaders: ['Content-Type', 'Authorization']
 }));
 app.use(express.json());
+app.use(cookieParser());
 
 // Serve static frontend and widget from root directory
 app.use(express.static(path.join(__dirname, '../website')));
@@ -29,7 +31,7 @@ app.get('/chat/health', (req, res) => {
 });
 
 // Import routes
-const authRoutes = require('./routes/auth');
+const authRoutes = require('./routes/auth.routes');
 const chatRoutes = require('./routes/chat');
 app.use('/auth', authRoutes);
 app.use('/chat', chatRoutes);

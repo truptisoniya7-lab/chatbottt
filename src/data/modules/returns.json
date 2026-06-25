@@ -1,0 +1,167 @@
+{
+  "return_tickets": [
+    {
+      "return_id": "RT-20248823",
+      "order_id": "VC-20245611",
+      "reason_code": "COLOUR_DIFF",
+      "return_type": "refund",
+      "status": "Pickup Scheduled",
+      "pickup_date": "2025-06-27",
+      "refund_amount": 14999,
+      "refund_method": "Original Payment Method",
+      "resolved_at": "—"
+    },
+    {
+      "return_id": "RT-20248100",
+      "order_id": "VC-20244890",
+      "reason_code": "SIZE_ISSUE",
+      "return_type": "exchange",
+      "status": "Completed",
+      "pickup_date": "2025-06-10",
+      "refund_amount": "—",
+      "refund_method": "Exchange (size 34)",
+      "resolved_at": "2025-06-18"
+    },
+    {
+      "return_id": "RT-20247590",
+      "order_id": "VC-20245233",
+      "reason_code": "QUALITY",
+      "return_type": "refund",
+      "status": "Refund Credited",
+      "pickup_date": "2025-06-12",
+      "refund_amount": 8499,
+      "refund_method": "Bank Account",
+      "resolved_at": "2025-06-19"
+    }
+  ],
+  "return_policy_rules": [
+    {
+      "rule_id": "RP-001",
+      "rule_name": "Return window",
+      "rule_value": "30 days from delivery date",
+      "applies_to": "All eligible items"
+    },
+    {
+      "rule_id": "RP-002",
+      "rule_name": "Item condition",
+      "rule_value": "Unused, unwashed, unworn",
+      "applies_to": "All returns"
+    },
+    {
+      "rule_id": "RP-003",
+      "rule_name": "Tags condition",
+      "rule_value": "Original tags must be intact and attached",
+      "applies_to": "All returns"
+    },
+    {
+      "rule_id": "RP-004",
+      "rule_name": "Packaging",
+      "rule_value": "Original packaging must be available",
+      "applies_to": "All returns"
+    },
+    {
+      "rule_id": "RP-005",
+      "rule_name": "Non-returnable: stitched blouses",
+      "rule_value": "Cannot be returned (hygiene)",
+      "applies_to": "Blouses ordered stitched"
+    },
+    {
+      "rule_id": "RP-006",
+      "rule_name": "Non-returnable: final sale items",
+      "rule_value": "Items marked \"Final Sale\"",
+      "applies_to": "Sale items"
+    },
+    {
+      "rule_id": "RP-007",
+      "rule_name": "Non-returnable: customised items",
+      "rule_value": "Personalised / custom-stitched garments",
+      "applies_to": "Custom orders"
+    },
+    {
+      "rule_id": "RP-008",
+      "rule_name": "Non-returnable: innerwear",
+      "rule_value": "Hygiene policy",
+      "applies_to": "Innerwear category"
+    },
+    {
+      "rule_id": "RP-009",
+      "rule_name": "Quality defect exception",
+      "rule_value": "Quality defects accepted beyond 30 days",
+      "applies_to": "Defective items only"
+    },
+    {
+      "rule_id": "RP-010",
+      "rule_name": "Exchange",
+      "rule_value": "Size/colour exchange allowed within 30 days if replacement in stock",
+      "applies_to": "Eligible items"
+    },
+    {
+      "rule_id": "RP-011",
+      "rule_name": "Pickup",
+      "rule_value": "Scheduled within 2–3 business days of approval",
+      "applies_to": "All returns"
+    },
+    {
+      "rule_id": "RP-012",
+      "rule_name": "Refund timeline",
+      "rule_value": "5–7 business days after pickup confirmation",
+      "applies_to": "Original payment method"
+    },
+    {
+      "rule_id": "RP-013",
+      "rule_name": "Store credit option",
+      "rule_value": "Available as faster alternative (2 business days)",
+      "applies_to": "Customer's choice"
+    }
+  ],
+  "return_reasons": [
+    {
+      "reason_code": "COLOUR_DIFF",
+      "reason_label": "Colour different from photos",
+      "flags_qc": true,
+      "vaani_empathy_script": "I'm really sorry — colour representation on screens can differ. You absolutely deserve what you expected."
+    },
+    {
+      "reason_code": "SIZE_ISSUE",
+      "reason_label": "Size doesn't fit",
+      "flags_qc": false,
+      "vaani_empathy_script": "Sizing can be tricky online — no worries, let's get you the right size."
+    },
+    {
+      "reason_code": "QUALITY",
+      "reason_label": "Quality not as expected",
+      "flags_qc": true,
+      "vaani_empathy_script": "That's very disappointing and I want to make it right immediately."
+    },
+    {
+      "reason_code": "DAMAGED",
+      "reason_label": "Item arrived damaged",
+      "flags_qc": true,
+      "vaani_empathy_script": "I sincerely apologise — this should never happen. I'll prioritise your case."
+    },
+    {
+      "reason_code": "WRONG_ITEM",
+      "reason_label": "Wrong product delivered",
+      "flags_qc": true,
+      "vaani_empathy_script": "I'm so sorry about this error — we'll fix it as a priority."
+    },
+    {
+      "reason_code": "CHANGED_MIND",
+      "reason_label": "Changed mind",
+      "flags_qc": false,
+      "vaani_empathy_script": "Of course! You have 30 days to decide."
+    },
+    {
+      "reason_code": "LATE_DELIVERY",
+      "reason_label": "Order arrived too late for occasion",
+      "flags_qc": false,
+      "vaani_empathy_script": "I understand — that must be so frustrating. Let's sort this out."
+    },
+    {
+      "reason_code": "DUPLICATE",
+      "reason_label": "Ordered by mistake / duplicate",
+      "flags_qc": false,
+      "vaani_empathy_script": "No problem at all — let's get that sorted."
+    }
+  ]
+}

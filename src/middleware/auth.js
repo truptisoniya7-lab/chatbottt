@@ -1,5 +1,5 @@
 const jwt = require('jsonwebtoken');
-const { pool } = require('../config/database');
+const db = require('../config/database');
 
 const authenticate = (required = false) => async (req, res, next) => {
   try {
@@ -17,16 +17,10 @@ const authenticate = (required = false) => async (req, res, next) => {
     }
 
     const token = authHeader.split(' ')[1];
-    
-    if (!process.env.JWT_SECRET && token === 'mock_token') {
-       req.user = { id: '00000000-0000-0000-0000-000000000000', email: 'test@vasudha.com', role: 'customer' };
-       return next();
-    }
-
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
     
-    // Verify user still exists in DB
-    const user = await pool.query(
+    // Verify user still exists in DB (not deleted)
+    const user = await db.query(
       'SELECT id, name, email, role, is_active FROM users WHERE id = $1',
       [decoded.userId]
     );
@@ -45,4 +39,12 @@ const authenticate = (required = false) => async (req, res, next) => {
   }
 };
 
-module.exports = { authenticate };
+const requireRole = (...roles) => (req, res, next) => {
+  if (!req.user) return res.status(401).json({ error: 'Not authenticated' });
+  if (!roles.includes(req.user.role)) {
+    return res.status(403).json({ error: 'Insufficient permissions' });
+  }
+  next();
+};
+
+module.exports = { authenticate, requireRole };
