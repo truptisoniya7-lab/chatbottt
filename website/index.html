@@ -11,7 +11,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400;1,500&family=DM+Sans:wght@300;400;500&family=Jost:wght@300;400;500&display=swap" rel="stylesheet">
 
   <!-- Stylesheet -->
-  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="style.css?v=1783140828690">
 </head>
 <body>
 
@@ -33,23 +33,43 @@
   </button>
 
   <ul class="nav-links">
-    <li><a href="#women">Women</a></li>
-    <li><a href="#men">Men</a></li>
-    <li><a href="#ethnic">Ethnic</a></li>
-    <li><a href="#trending">Trending</a></li>
-    <li><a href="#lookbook">Lookbook</a></li>
+    <li><a href="category.html?type=women">Women</a></li>
+    <li><a href="category.html?type=men">Men</a></li>
+    <li><a href="category.html?type=lehengas">Lehengas</a></li>
+    <li><a href="category.html?type=sarees">Sarees</a></li>
+    <li><a href="category.html?type=kurtas">Kurtas</a></li>
+    <li><a href="category.html?type=jeans">Jeans</a></li>
   </ul>
 
   <div class="nav-actions">
-    <button class="nav-icon-btn" onclick="showToast('🔍 Search coming soon')">🔍</button>
-    <button class="nav-icon-btn" onclick="showToast('❤️ Wishlist opening...')">♡</button>
-    <button class="nav-cart" onclick="showToast('🛒 Your cart is empty')">Cart (0)</button>
+    <button class="nav-icon-btn" id="authNavBtn" onclick="openAuthModal()">Login</button>
+    <button class="nav-icon-btn" onclick="toggleSearch()">🔍</button>
+    <button class="nav-icon-btn" onclick="toggleWishlistSidebar()">♡</button>
+    <button class="nav-cart" id="navCartBtn" onclick="toggleCart()">Cart (0)</button>
   </div>
 </nav>
 
 
+<!-- QUICK VIEW MODAL -->
+<div class="auth-overlay" id="qvOverlay" onclick="closeQuickView(event)">
+  <div class="auth-modal" style="max-width: 800px; display: flex; padding: 0; overflow: hidden; background: #fff;">
+    <button class="auth-close" onclick="closeQuickView()" style="color: var(--plum-deep); z-index: 10;">×</button>
+    <div id="qvImage" style="width: 50%; background-size: cover; background-position: center; min-height: 400px;"></div>
+    <div style="width: 50%; padding: 3rem; display: flex; flex-direction: column; justify-content: center; text-align: left;">
+      <div id="qvTag" style="font-size: 0.75rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--gold-primary); margin-bottom: 1rem;"></div>
+      <h2 id="qvName" style="font-family: 'Cormorant Garamond', serif; font-size: 2.2rem; margin-bottom: 1rem; color: var(--plum-deep); font-weight: 500;"></h2>
+      <div id="qvPrice" style="font-family: 'Jost', sans-serif; font-size: 1.5rem; margin-bottom: 2rem; color: var(--text-dark);"></div>
+      <p style="color: var(--text-muted); font-family: 'DM Sans', sans-serif; font-size: 0.9rem; margin-bottom: 2rem; line-height: 1.6;">Experience the perfect blend of traditional craftsmanship and modern elegance. This piece is curated carefully for your special moments.</p>
+      <div style="display: flex; gap: 1rem; margin-bottom: 1rem;">
+        <button id="qvAddToCartBtn" class="btn-primary" style="flex: 1; padding: 1rem;">Add to Cart</button>
+      </div>
+      <button id="qvWishlistBtn" style="background: transparent; border: 1px dashed var(--gold-primary); color: var(--gold-primary); padding: 1rem; border-radius: 4px; cursor: pointer; font-family: 'Jost', sans-serif; text-transform: uppercase; letter-spacing: 0.1em; transition: 0.3s;" onmouseover="this.style.background='rgba(200,169,106,0.1)'" onmouseout="this.style.background='transparent'">♡ Add to Wishlist</button>
+    </div>
+  </div>
+</div>
+
 <!-- ═══════════════════════════════════
-     HERO
+     AUTH MODAL
 ═══════════════════════════════════ -->
 <section class="hero" id="home">
   <!-- Three.js particle canvas -->
@@ -103,17 +123,10 @@
       </div>
 
       <!-- 3D floating model card -->
-      <div class="hero-model-scene" id="heroModelScene">
-        <div class="hero-model-card">
-          <!-- CSS editorial image -->
-          <div class="model-img"></div>
-          <div class="hero-model-info">
-            <div class="hero-product-tag">Featured · Saree Collection</div>
-            <div class="hero-product-name">Banarasi Silk<br>Zari Saree</div>
-            <div class="hero-product-price">
-              ₹8,499
-              <span class="hero-price-old">₹12,000</span>
-            </div>
+      <div class="hero-model-scene" id="heroModelScene" style="cursor: pointer;" onclick="if(window.heroCarouselItems) { const it = window.heroCarouselItems[window.currentHeroIndex]; openQuickView(it.name.replace('<br>',' '), it.priceNum, it.img, it.oldPrice ? it.oldPrice.replace('₹','') : null, it.tag); } else { openQuickView('Banarasi Silk Zari Saree', 8499, 'img-saree', '12,000', 'Saree Collection'); }">
+        <div class="hero-model-card" id="heroModelCard">
+          <div id="heroTrack" style="display: flex; height: 100%; transition: transform 0.6s cubic-bezier(0.25, 1, 0.5, 1);">
+            <!-- Populated by JS -->
           </div>
         </div>
       </div>
@@ -231,12 +244,17 @@
   <div class="product-grid reveal reveal-delay-1">
 
     <div class="pcard tall tilt-card">
-      <div class="pcard-bg img-saree" style="min-height:520px;"></div>
+      <div class="pcard-bg img-saree" style="min-height:520px; cursor: pointer;" onclick="openQuickView('Banarasi Silk Zari Saree', 8499, 'img-saree', '12,000', 'Saree Collection')"></div>
       <div class="pcard-overlay"></div>
       <div class="pcard-gloss"></div>
       <div class="badge-new">New In</div>
-      <button class="pcard-btn" title="Add to cart">+</button>
-      <div class="pcard-info">
+      
+      <button class="pcard-btn" onclick="event.stopPropagation(); addToCart('Banarasi Silk Zari Saree', 8499)">+</button>
+      <div class="pcard-actions">
+        <button class="pcard-btn-add" onclick="addToCart('Banarasi Silk Zari Saree', 8499)">Add to Cart</button>
+        <button class="pcard-btn-buy" onclick="buyNow('Banarasi Silk Zari Saree', 8499)">Buy Now</button>
+      </div>
+      <div class="pcard-info" style="cursor: pointer;" onclick="openQuickView('Banarasi Silk Zari Saree', 8499, 'img-saree', '12,000', 'Saree Collection')">
         <div class="pcard-tag">Saree Collection</div>
         <div class="pcard-name">Banarasi Silk<br>Zari Saree</div>
         <div class="pcard-price">₹8,499 <span class="pcard-price-old">₹12,000</span></div>
@@ -244,12 +262,17 @@
     </div>
 
     <div class="pcard tilt-card">
-      <div class="pcard-bg img-lehenga" style="min-height:240px;"></div>
+      <div class="pcard-bg img-lehenga" style="min-height:240px; cursor: pointer;" onclick="openQuickView('Embroidered Bridal Lehenga', 14999, 'img-lehenga', '21,000', 'Lehenga')"></div>
       <div class="pcard-overlay"></div>
       <div class="pcard-gloss"></div>
       <div class="badge-sale">–30%</div>
-      <button class="pcard-btn">+</button>
-      <div class="pcard-info">
+      
+      <button class="pcard-btn" onclick="event.stopPropagation(); addToCart('Embroidered Bridal Lehenga', 14999)">+</button>
+      <div class="pcard-actions">
+        <button class="pcard-btn-add" onclick="addToCart('Embroidered Bridal Lehenga', 14999)">Add to Cart</button>
+        <button class="pcard-btn-buy" onclick="buyNow('Embroidered Bridal Lehenga', 14999)">Buy Now</button>
+      </div>
+      <div class="pcard-info" style="cursor: pointer;" onclick="openQuickView('Embroidered Bridal Lehenga', 14999, 'img-lehenga', '21,000', 'Lehenga')">
         <div class="pcard-tag">Lehenga</div>
         <div class="pcard-name">Embroidered<br>Bridal Lehenga</div>
         <div class="pcard-price">₹14,999 <span class="pcard-price-old">₹21,000</span></div>
@@ -257,11 +280,16 @@
     </div>
 
     <div class="pcard tilt-card">
-      <div class="pcard-bg img-gown" style="min-height:240px;"></div>
+      <div class="pcard-bg img-gown" style="min-height:240px; cursor: pointer;" onclick="openQuickView('Floral Maxi Dress', 3299, 'img-gown', null, 'Evening Wear')"></div>
       <div class="pcard-overlay"></div>
       <div class="pcard-gloss"></div>
-      <button class="pcard-btn">+</button>
-      <div class="pcard-info">
+      
+      <button class="pcard-btn" onclick="event.stopPropagation(); addToCart('Floral Maxi Dress', 3299)">+</button>
+      <div class="pcard-actions">
+        <button class="pcard-btn-add" onclick="addToCart('Floral Maxi Dress', 3299)">Add to Cart</button>
+        <button class="pcard-btn-buy" onclick="buyNow('Floral Maxi Dress', 3299)">Buy Now</button>
+      </div>
+      <div class="pcard-info" style="cursor: pointer;" onclick="openQuickView('Floral Maxi Dress', 3299, 'img-gown', null, 'Evening Wear')">
         <div class="pcard-tag">Evening Wear</div>
         <div class="pcard-name">Floral<br>Maxi Dress</div>
         <div class="pcard-price">₹3,299</div>
@@ -269,12 +297,17 @@
     </div>
 
     <div class="pcard tilt-card">
-      <div class="pcard-bg img-anarkali" style="min-height:240px;"></div>
+      <div class="pcard-bg img-anarkali" style="min-height:240px; cursor: pointer;" onclick="openQuickView('Georgette Anarkali Suit', 5499, 'img-anarkali', null, 'Anarkali')"></div>
       <div class="pcard-overlay"></div>
       <div class="pcard-gloss"></div>
       <div class="badge-new">New</div>
-      <button class="pcard-btn">+</button>
-      <div class="pcard-info">
+      
+      <button class="pcard-btn" onclick="event.stopPropagation(); addToCart('Georgette Anarkali Suit', 5499)">+</button>
+      <div class="pcard-actions">
+        <button class="pcard-btn-add" onclick="addToCart('Georgette Anarkali Suit', 5499)">Add to Cart</button>
+        <button class="pcard-btn-buy" onclick="buyNow('Georgette Anarkali Suit', 5499)">Buy Now</button>
+      </div>
+      <div class="pcard-info" style="cursor: pointer;" onclick="openQuickView('Georgette Anarkali Suit', 5499, 'img-anarkali', null, 'Anarkali')">
         <div class="pcard-tag">Anarkali</div>
         <div class="pcard-name">Georgette<br>Anarkali Suit</div>
         <div class="pcard-price">₹5,499</div>
@@ -282,12 +315,17 @@
     </div>
 
     <div class="pcard tilt-card">
-      <div class="pcard-bg img-ethnic" style="min-height:240px;"></div>
+      <div class="pcard-bg img-ethnic" style="min-height:240px; cursor: pointer; background: url('assets/womens_dress_model_1782379530104.png') center/cover;" onclick="openQuickView('Chikankari Kurta Set', 2799, 'img-ethnic', '3,499', 'Ethnic Sets', 'assets/womens_dress_model_1782379530104.png')"></div>
       <div class="pcard-overlay"></div>
       <div class="pcard-gloss"></div>
       <div class="badge-sale">–20%</div>
-      <button class="pcard-btn">+</button>
-      <div class="pcard-info">
+      
+      <button class="pcard-btn" onclick="event.stopPropagation(); addToCart('Chikankari Kurta Set', 2799)">+</button>
+      <div class="pcard-actions">
+        <button class="pcard-btn-add" onclick="addToCart('Chikankari Kurta Set', 2799)">Add to Cart</button>
+        <button class="pcard-btn-buy" onclick="buyNow('Chikankari Kurta Set', 2799)">Buy Now</button>
+      </div>
+      <div class="pcard-info" style="cursor: pointer;" onclick="openQuickView('Chikankari Kurta Set', 2799, 'img-ethnic', '3,499', 'Ethnic Sets')">
         <div class="pcard-tag">Ethnic Sets</div>
         <div class="pcard-name">Chikankari<br>Kurta Set</div>
         <div class="pcard-price">₹2,799 <span class="pcard-price-old">₹3,499</span></div>
@@ -313,12 +351,17 @@
   <div class="product-grid men-grid reveal reveal-delay-1">
 
     <div class="pcard tilt-card">
-      <div class="pcard-bg img-shirt" style="min-height:240px;"></div>
+      <div class="pcard-bg img-shirt" style="min-height:240px; cursor: pointer; background: url('assets/mens_shirt_model_1782378349323.png') center/cover;" onclick="openQuickView('Oxford Cotton Shirt', 1899, 'img-shirt', null, 'Formal Shirts', 'assets/mens_shirt_model_1782378349323.png')"></div>
       <div class="pcard-overlay"></div>
       <div class="pcard-gloss"></div>
       <div class="badge-new">New</div>
-      <button class="pcard-btn">+</button>
-      <div class="pcard-info">
+      
+      <button class="pcard-btn" onclick="event.stopPropagation(); addToCart('Oxford Cotton Shirt', 1899)">+</button>
+      <div class="pcard-actions">
+        <button class="pcard-btn-add" onclick="addToCart('Oxford Cotton Shirt', 1899)">Add to Cart</button>
+        <button class="pcard-btn-buy" onclick="buyNow('Oxford Cotton Shirt', 1899)">Buy Now</button>
+      </div>
+      <div class="pcard-info" style="cursor: pointer;" onclick="openQuickView('Oxford Cotton Shirt', 1899, 'img-shirt', null, 'Formal Shirts')">
         <div class="pcard-tag">Formal Shirts</div>
         <div class="pcard-name">Oxford<br>Cotton Shirt</div>
         <div class="pcard-price">₹1,899</div>
@@ -326,12 +369,17 @@
     </div>
 
     <div class="pcard tilt-card">
-      <div class="pcard-bg img-kurta-men" style="min-height:240px;"></div>
+      <div class="pcard-bg img-kurta-men" style="min-height:240px; cursor: pointer; background: url('assets/kurta_model_1782372108155.png') center/cover;" onclick="openQuickView('Linen Mandarin Kurta', 1499, 'img-kurta-men', '1,999', 'Kurta', 'assets/kurta_model_1782372108155.png')"></div>
       <div class="pcard-overlay"></div>
       <div class="pcard-gloss"></div>
       <div class="badge-sale">–25%</div>
-      <button class="pcard-btn">+</button>
-      <div class="pcard-info">
+      
+      <button class="pcard-btn" onclick="event.stopPropagation(); addToCart('Linen Mandarin Kurta', 1499)">+</button>
+      <div class="pcard-actions">
+        <button class="pcard-btn-add" onclick="addToCart('Linen Mandarin Kurta', 1499)">Add to Cart</button>
+        <button class="pcard-btn-buy" onclick="buyNow('Linen Mandarin Kurta', 1499)">Buy Now</button>
+      </div>
+      <div class="pcard-info" style="cursor: pointer;" onclick="openQuickView('Linen Mandarin Kurta', 1499, 'img-kurta-men', '1,999', 'Kurta')">
         <div class="pcard-tag">Kurta</div>
         <div class="pcard-name">Linen<br>Mandarin Kurta</div>
         <div class="pcard-price">₹1,499 <span class="pcard-price-old">₹1,999</span></div>
@@ -339,12 +387,17 @@
     </div>
 
     <div class="pcard tall tilt-card">
-      <div class="pcard-bg img-sherwani" style="min-height:520px;"></div>
+      <div class="pcard-bg img-sherwani" style="min-height:520px; cursor: pointer; background: url('assets/sherwani_model_1782372003018.png') center/cover;" onclick="openQuickView('Royal Gold-Work Sherwani Set', 18999, 'img-sherwani', '25,000', 'Sherwani', 'assets/sherwani_model_1782372003018.png')"></div>
       <div class="pcard-overlay"></div>
       <div class="pcard-gloss"></div>
       <div class="badge-new">Featured</div>
-      <button class="pcard-btn">+</button>
-      <div class="pcard-info">
+      
+      <button class="pcard-btn" onclick="event.stopPropagation(); addToCart('Royal Gold-Work Sherwani Set', 18999)">+</button>
+      <div class="pcard-actions">
+        <button class="pcard-btn-add" onclick="addToCart('Royal Gold-Work Sherwani Set', 18999)">Add to Cart</button>
+        <button class="pcard-btn-buy" onclick="buyNow('Royal Gold-Work Sherwani Set', 18999)">Buy Now</button>
+      </div>
+      <div class="pcard-info" style="cursor: pointer;" onclick="openQuickView('Royal Gold-Work Sherwani Set', 18999, 'img-sherwani', '25,000', 'Sherwani')">
         <div class="pcard-tag">Sherwani</div>
         <div class="pcard-name">Royal Gold-Work<br>Sherwani Set</div>
         <div class="pcard-price">₹18,999 <span class="pcard-price-old">₹25,000</span></div>
@@ -352,11 +405,16 @@
     </div>
 
     <div class="pcard tilt-card">
-      <div class="pcard-bg img-jeans" style="min-height:240px;"></div>
+      <div class="pcard-bg img-jeans" style="min-height:240px; cursor: pointer;" onclick="openQuickView('Slim Fit Dark Jeans', 2299, 'img-jeans', null, 'Denim')"></div>
       <div class="pcard-overlay"></div>
       <div class="pcard-gloss"></div>
-      <button class="pcard-btn">+</button>
-      <div class="pcard-info">
+      
+      <button class="pcard-btn" onclick="event.stopPropagation(); addToCart('Slim Fit Dark Jeans', 2299)">+</button>
+      <div class="pcard-actions">
+        <button class="pcard-btn-add" onclick="addToCart('Slim Fit Dark Jeans', 2299)">Add to Cart</button>
+        <button class="pcard-btn-buy" onclick="buyNow('Slim Fit Dark Jeans', 2299)">Buy Now</button>
+      </div>
+      <div class="pcard-info" style="cursor: pointer;" onclick="openQuickView('Slim Fit Dark Jeans', 2299, 'img-jeans', null, 'Denim')">
         <div class="pcard-tag">Denim</div>
         <div class="pcard-name">Slim Fit<br>Dark Jeans</div>
         <div class="pcard-price">₹2,299</div>
@@ -364,12 +422,17 @@
     </div>
 
     <div class="pcard tilt-card">
-      <div class="pcard-bg img-blazer" style="min-height:240px;"></div>
+      <div class="pcard-bg img-blazer" style="min-height:240px; cursor: pointer;" onclick="openQuickView('Heritage Tweed Blazer', 7999, 'img-blazer', null, 'Blazers')"></div>
       <div class="pcard-overlay"></div>
       <div class="pcard-gloss"></div>
       <div class="badge-new">Premium</div>
-      <button class="pcard-btn">+</button>
-      <div class="pcard-info">
+      
+      <button class="pcard-btn" onclick="event.stopPropagation(); addToCart('Heritage Tweed Blazer', 7999)">+</button>
+      <div class="pcard-actions">
+        <button class="pcard-btn-add" onclick="addToCart('Heritage Tweed Blazer', 7999)">Add to Cart</button>
+        <button class="pcard-btn-buy" onclick="buyNow('Heritage Tweed Blazer', 7999)">Buy Now</button>
+      </div>
+      <div class="pcard-info" style="cursor: pointer;" onclick="openQuickView('Heritage Tweed Blazer', 7999, 'img-blazer', null, 'Blazers')">
         <div class="pcard-tag">Blazers</div>
         <div class="pcard-name">Heritage<br>Tweed Blazer</div>
         <div class="pcard-price">₹7,999</div>
@@ -505,7 +568,7 @@
       <div class="tcard-img">
         <div class="tcard-inner img-dupatta"></div>
         <div class="tcard-gloss"></div>
-        <button class="tcard-wish">♡</button>
+        <button class="tcard-wish" onclick="toggleWishlist('Kanjivaram Silk Dupatta', 2199, 'img-default')">♡</button>
         <div class="badge-sale" style="top:.7rem;left:.7rem;">–21%</div>
       </div>
       <div class="tcard-colors">
@@ -522,7 +585,7 @@
       <div class="tcard-img">
         <div class="tcard-inner img-nehru"></div>
         <div class="tcard-gloss"></div>
-        <button class="tcard-wish">♡</button>
+        <button class="tcard-wish" onclick="toggleWishlist('Brocade Nehru Jacket', 3499, 'img-default')">♡</button>
         <div class="badge-sale" style="top:.7rem;left:.7rem;">Hot</div>
       </div>
       <div class="tcard-colors">
@@ -539,7 +602,7 @@
       <div class="tcard-img">
         <div class="tcard-inner img-palazzo"></div>
         <div class="tcard-gloss"></div>
-        <button class="tcard-wish">♡</button>
+        <button class="tcard-wish" onclick="toggleWishlist('Printed Palazzo Set', 1899, 'img-default')">♡</button>
       </div>
       <div class="tcard-colors">
         <div class="tcard-dot" style="background:#E8BDB5;"></div>
@@ -555,7 +618,7 @@
       <div class="tcard-img">
         <div class="tcard-inner img-dhoti"></div>
         <div class="tcard-gloss"></div>
-        <button class="tcard-wish">♡</button>
+        <button class="tcard-wish" onclick="toggleWishlist('Linen Dhoti Pants', 2699, 'img-default')">♡</button>
         <div class="badge-new" style="top:.7rem;left:.7rem;">New</div>
       </div>
       <div class="tcard-colors">
@@ -655,7 +718,7 @@
     <div class="footer-col">
       <h4>Men's</h4>
       <ul>
-        <li><a href="#">Kurtas</a></li>
+        <li><a href="category.html?type=kurtas">Kurtas</a></li>
         <li><a href="#">Sherwanis</a></li>
         <li><a href="#">Shirts</a></li>
         <li><a href="#">Jeans &amp; Trousers</a></li>
@@ -700,10 +763,92 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 
 <!-- Main JS -->
-<script src="script.js"></script>
+<script src="script.js?v=1783142302567"></script>
 
 <!-- Vaani Chatbot Widget Integration -->
 <script src="/vaani-widget.js" data-api-url="http://localhost:3000"></script>
+
+<!-- ═══ AUTHENTICATION MODAL ═══ -->
+<div class="auth-overlay" id="authOverlay" onclick="closeAuthModal(event)">
+  <div class="auth-modal" onclick="event.stopPropagation()">
+    <button class="auth-close" onclick="closeAuthModal()">×</button>
+    
+    <div class="auth-tabs">
+      <button class="auth-tab active" onclick="switchAuthTab('login')">Log In</button>
+      <button class="auth-tab" onclick="switchAuthTab('signup')">Sign Up</button>
+    </div>
+
+    <form class="auth-form" id="authForm" onsubmit="handleAuthSubmit(event)">
+      <div class="auth-role-group">
+        <label><input type="radio" name="role" value="customer" checked> Customer</label>
+        <label><input type="radio" name="role" value="admin"> Admin</label>
+        <label><input type="radio" name="role" value="seller"> Seller</label>
+      </div>
+
+      <div class="input-group" id="signupFields" style="display: none;">
+        <label>Full Name</label>
+        <input type="text" id="authName" placeholder="Enter your name">
+      </div>
+
+      <div class="input-group">
+        <label>Email Address</label>
+        <input type="email" id="authEmail" placeholder="Enter your email" required>
+      </div>
+
+      <div class="input-group">
+        <label>Password</label>
+        <input type="password" id="authPassword" placeholder="Enter your password" required>
+      </div>
+
+      <button type="submit" class="btn-primary auth-submit" id="authSubmitBtn">Log In</button>
+    </form>
+  </div>
+</div>
+
+<!-- ═══ CART SIDEBAR ═══ -->
+<div class="cart-overlay" id="cartOverlay" onclick="toggleCart()"></div>
+<div class="cart-sidebar" id="cartSidebar">
+  <div class="cart-header">
+    <h3>Your Cart</h3>
+    <button class="cart-close" onclick="toggleCart()">×</button>
+  </div>
+  <div class="cart-items" id="cartItemsContainer">
+    <!-- Items rendered here by JS -->
+    <div class="cart-empty">Your cart is empty.</div>
+  </div>
+  <div class="cart-footer">
+    <div class="cart-total">
+      <span>Subtotal</span>
+      <span id="cartTotalVal">₹0</span>
+    </div>
+    <button class="btn-primary checkout-btn" onclick="checkout()">Proceed to Checkout</button>
+  </div>
+</div>
+
+<!-- ═══ WISHLIST SIDEBAR ═══ -->
+<div class="cart-overlay" id="wishlistOverlay" onclick="toggleWishlistSidebar()"></div>
+<div class="cart-sidebar" id="wishlistSidebar">
+  <div class="cart-header">
+    <h3>Your Wishlist</h3>
+    <button class="cart-close" onclick="toggleWishlistSidebar()">×</button>
+  </div>
+  <div class="cart-items" id="wishlistItemsContainer">
+    <div class="cart-empty">Your wishlist is empty.</div>
+  </div>
+</div>
+
+<!-- ═══ SEARCH OVERLAY ═══ -->
+<div class="search-overlay" id="searchOverlay">
+  <div class="search-container">
+    <div class="search-header">
+      <input type="text" class="search-input" id="searchInput" placeholder="Search for products, collections, tags..." oninput="handleSearch(this.value)">
+      <button class="search-close" onclick="toggleSearch()">×</button>
+    </div>
+    <div class="search-results" id="searchResults">
+      <!-- Search results will populate here -->
+    </div>
+  </div>
+</div>
 
 </body>
 </html>

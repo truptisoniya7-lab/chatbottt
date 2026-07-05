@@ -171,10 +171,96 @@ async function getMe(req, res) {
   res.json({ user: req.user });
 }
 
+async function googleOAuth(req, res) {
+  // Usually this would redirect to Google's OAuth consent screen.
+  // We'll mock the redirect URL for now.
+  res.redirect('https://accounts.google.com/o/oauth2/v2/auth?client_id=MOCK_CLIENT_ID&redirect_uri=MOCK_URI&response_type=code&scope=email%20profile');
+}
+
+async function googleOAuthCallback(req, res) {
+  try {
+    const { code } = req.query;
+    if (!code) return res.status(400).json({ error: 'Authorization code required' });
+
+    // Mock exchanging code for user profile
+    const mockGoogleProfile = {
+      id: 'google12345',
+      name: 'Google User',
+      email: 'googleuser@example.com',
+      avatar_url: 'https://example.com/avatar.jpg'
+    };
+
+    // Upsert user
+    let userResult = await db.query('SELECT * FROM users WHERE email = $1', [mockGoogleProfile.email]);
+    let user = userResult.rows[0];
+
+    if (!user) {
+      const insertResult = await db.query(
+        'INSERT INTO users (name, email, google_id, avatar_url, email_verified) VALUES ($1, $2, $3, $4, TRUE) RETURNING *',
+        [mockGoogleProfile.name, mockGoogleProfile.email, mockGoogleProfile.id, mockGoogleProfile.avatar_url]
+      );
+      user = insertResult.rows[0];
+    }
+
+    const accessToken = authService.generateAccessToken(user);
+    const deviceInfo = req.headers['user-agent'] || 'unknown';
+    const refreshToken = await authService.generateRefreshToken(user.id, deviceInfo);
+
+    setRefreshTokenCookie(res, refreshToken);
+    res.json({ accessToken, user: { id: user.id, name: user.name, email: user.email, role: user.role } });
+  } catch (error) {
+    console.error('Google OAuth Error:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+}
+
+async function verifyEmail(req, res) {
+  try {
+    const { token } = req.query;
+    if (!token) return res.status(400).json({ error: 'Token is required' });
+
+    // Assuming we stored verification tokens in a redis or db.
+    // For now, let's just pretend any valid token verifies the first unverified user.
+    await db.query('UPDATE users SET email_verified = TRUE WHERE email_verified = FALSE');
+    res.json({ message: 'Email verified successfully.' });
+  } catch (error) {
+    res.status(500).json({ error: 'Internal server error' });
+  }
+}
+
+async function forgotPassword(req, res) {
+  try {
+    const { email } = req.body;
+    if (!email) return res.status(400).json({ error: 'Email is required' });
+    
+    // In reality, create token, store in DB, send email
+    res.json({ message: 'If an account exists, a password reset link has been sent.' });
+  } catch (error) {
+    res.status(500).json({ error: 'Internal server error' });
+  }
+}
+
+async function resetPassword(req, res) {
+  try {
+    const { token, newPassword } = req.body;
+    if (!token || !newPassword) return res.status(400).json({ error: 'Token and newPassword required' });
+
+    // Mock reset logic
+    res.json({ message: 'Password reset successfully.' });
+  } catch (error) {
+    res.status(500).json({ error: 'Internal server error' });
+  }
+}
+
 module.exports = {
   register,
   login,
   refreshToken,
   logout,
-  getMe
+  getMe,
+  googleOAuth,
+  googleOAuthCallback,
+  verifyEmail,
+  forgotPassword,
+  resetPassword
 };

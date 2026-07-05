@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>My Account — Vasudha Couture</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400;1,500&family=DM+Sans:wght@300;400;500&family=Jost:wght@300;400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="dashboard.css">
+</head>
+<body class="dashboard-body customer-body">
+
+  <aside class="dash-sidebar">
+    <a href="index.html" class="dash-logo">Vasudha <span>Couture</span></a>
+    <div class="dash-nav">
+      <a href="#" class="active" onclick="switchTab('orders', this)">My Orders</a>
+      <a href="#" onclick="switchTab('wishlist', this)">Wishlist</a>
+      <a href="#" onclick="switchTab('addresses', this)">Addresses</a>
+      <a href="#" onclick="switchTab('settings', this)">Account Settings</a>
+    </div>
+    <div class="dash-logout">
+      <button onclick="window.location.href='index.html'" style="margin-bottom: 1rem; background: transparent; border: 1px solid var(--gold-primary); color: var(--gold-primary);">Back to Home</button>
+      <button onclick="logout()">Log Out</button>
+    </div>
+  </aside>
+
+  <main class="dash-main">
+    <header class="customer-banner">
+      <div class="customer-avatar-large" id="dashUserAvatar">C</div>
+      <div class="customer-banner-info">
+        <h1 id="dashUserName">Customer Name</h1>
+        <p>Member since 2026 • <span id="dashUserRole" style="color: var(--gold-primary);">Customer</span></p>
+      </div>
+    </header>
+
+    <!-- VIEWS -->
+    <div id="view-orders" class="dash-view">
+      <div class="dash-stats">
+        <div class="stat-card customer-stat-card">
+          <div class="stat-title">Orders Placed</div>
+          <div class="stat-value stat-orders">3</div>
+        </div>
+        <div class="stat-card customer-stat-card">
+          <div class="stat-title">Wishlist Items</div>
+          <div class="stat-value stat-wishlist">0</div>
+        </div>
+      </div>
+
+      <div class="dash-section-title" style="color: #f3f4f6;">Order History</div>
+      <div class="dash-table-wrap customer-table-wrap">
+        <table class="dash-table admin-table">
+          <thead>
+            <tr>
+              <th>Order ID</th>
+              <th>Date</th>
+              <th>Item</th>
+              <th>Total</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            <!-- Populated via dashboard.js -->
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div id="view-wishlist" class="dash-view" style="display: none;">
+      <div class="dash-section-title">My Saved Items</div>
+      <div style="background: white; padding: 2rem; border-radius: 8px; border: 1px solid var(--border-light); text-align: center; color: var(--text-muted);">
+        Your wishlist is empty. Discover the latest trends on the home page!
+        <br><br>
+        <a href="index.html" style="color: var(--gold-primary); text-decoration: none; font-weight: 500;">Continue Shopping</a>
+      </div>
+    </div>
+
+    <div id="view-addresses" class="dash-view" style="display: none;">
+      <div class="dash-section-title" style="color: #831843;">Saved Addresses</div>
+      <div style="background: rgba(255, 255, 255, 0.9); padding: 1.5rem; border-radius: 8px; border: 1px solid #f9a8d4; margin-bottom: 1rem; box-shadow: 0 4px 6px -1px rgba(244,114,182,0.1); backdrop-filter: blur(4px);">
+        <div style="font-weight: 500; margin-bottom: 0.5rem; font-family: 'Cormorant Garamond', serif; font-size: 1.2rem; color: #831843;">Home (Default)</div>
+        <div style="color: #be185d; font-size: 0.9rem; line-height: 1.5;">
+          A-402, Royal Residency<br>
+          Bandra West, Mumbai<br>
+          Maharashtra - 400050<br>
+          Phone: +91 98765 43210
+        </div>
+        <div style="margin-top: 1rem;">
+          <a href="#" style="color: #db2777; font-size: 0.8rem; text-decoration: none; margin-right: 1rem; font-weight: 500;">Edit</a>
+          <a href="#" style="color: #e11d48; font-size: 0.8rem; text-decoration: none; font-weight: 500;">Delete</a>
+        </div>
+      </div>
+      <button style="background: rgba(253, 242, 248, 0.8); border: 1px dashed #f472b6; color: #db2777; padding: 1rem; width: 100%; border-radius: 8px; cursor: pointer; font-family: 'Jost', sans-serif; font-weight: 500;">+ Add New Address</button>
+    </div>
+
+    <div id="view-settings" class="dash-view" style="display: none;">
+      <div class="dash-section-title" style="color: #831843;">Profile Information</div>
+      <div style="background: rgba(255, 255, 255, 0.9); padding: 2rem; border-radius: 8px; border: 1px solid #f9a8d4; box-shadow: 0 4px 6px -1px rgba(244,114,182,0.1); backdrop-filter: blur(4px);">
+        <form onsubmit="event.preventDefault(); alert('Profile updated successfully!');">
+          <div style="margin-bottom: 1rem;">
+            <label style="display: block; font-size: 0.8rem; color: #be185d; margin-bottom: 0.4rem; font-weight: 500;">Full Name</label>
+            <input type="text" id="settingsName" value="" style="width: 100%; padding: 0.8rem; border: 1px solid #fbcfe8; border-radius: 4px; background: #fff0f5; color: #831843;" required>
+          </div>
+          <div style="margin-bottom: 1.5rem;">
+            <label style="display: block; font-size: 0.8rem; color: #be185d; margin-bottom: 0.4rem; font-weight: 500;">Email Address</label>
+            <input type="email" id="settingsEmail" value="" style="width: 100%; padding: 0.8rem; border: 1px solid #fbcfe8; border-radius: 4px; background: #fff0f5; color: #831843;" required readonly>
+          </div>
+          <button type="submit" style="background: #f472b6; color: white; border: none; padding: 1rem 2rem; border-radius: 4px; font-weight: 500; cursor: pointer; box-shadow: 0 2px 4px rgba(244,114,182,0.3);">Save Changes</button>
+        </form>
+      </div>
+    </div>
+
+  </main>
+
+  <script>
+    function switchTab(tabId, el) {
+      // Update nav styles
+      document.querySelectorAll('.dash-nav a').forEach(a => a.classList.remove('active'));
+      el.classList.add('active');
+      
+      // Update title
+      document.getElementById('dashTitle').innerText = el.innerText;
+      
+      // Hide all views
+      document.querySelectorAll('.dash-view').forEach(v => v.style.display = 'none');
+      
+      // Show selected view
+      document.getElementById('view-' + tabId).style.display = 'block';
+    }
+  </script>
+  <script src="dashboard.js"></script>
+</body>
+</html>

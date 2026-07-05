@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Dashboard — Vasudha Couture</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400;1,500&family=DM+Sans:wght@300;400;500&family=Jost:wght@300;400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="dashboard.css">
+</head>
+<body class="dashboard-body admin-body">
+
+  <aside class="dash-sidebar admin-sidebar">
+    <a href="index.html" class="dash-logo">Vasudha <span>Couture</span></a>
+    <div class="dash-nav">
+      <a href="#" class="active" onclick="switchTab('overview')">Overview</a>
+      <a href="#" onclick="switchTab('sellers')">Manage Sellers</a>
+      <a href="#" onclick="switchTab('orders')">Global Orders</a>
+      <a href="#" onclick="switchTab('health')">System Health</a>
+      <a href="#" onclick="switchTab('settings')">Settings</a>
+    </div>
+    <div class="dash-logout">
+      <button onclick="window.location.href='index.html'" style="margin-bottom: 1rem; background: transparent; border: 1px solid var(--gold-primary); color: var(--gold-primary);">Back to Home</button>
+      <button onclick="logout()">Log Out</button>
+    </div>
+  </aside>
+
+  <main class="dash-main">
+    <header class="dash-header admin-header">
+      <h1>Admin Command Center</h1>
+      <div class="dash-user-info">
+        <div style="text-align: right;">
+          <div style="font-weight: 500;" id="dashUserName">Admin Name</div>
+          <div style="font-size: 0.8rem; color: #9ca3af;" id="dashUserRole">Super Admin</div>
+        </div>
+        <div class="dash-user-avatar" id="dashUserAvatar" style="background: #374151; color: #f3f4f6;">A</div>
+      </div>
+    </header>
+
+    <div id="view-overview" class="dash-view active">
+      <div class="dash-stats">
+        <div class="stat-card admin-stat-card">
+          <div class="stat-title">Platform Revenue</div>
+          <div class="stat-value">₹0</div>
+        </div>
+        <div class="stat-card admin-stat-card">
+          <div class="stat-title">Active Sellers</div>
+          <div class="stat-value">0</div>
+        </div>
+        <div class="stat-card admin-stat-card">
+          <div class="stat-title">Total Orders</div>
+          <div class="stat-value">0</div>
+        </div>
+      </div>
+
+      <div class="dash-section-title" style="color: #f3f4f6;">Recent Platform Orders</div>
+      <div class="dash-table-wrap admin-table-wrap">
+        <table class="dash-table admin-table">
+          <thead>
+            <tr>
+              <th>Order ID</th>
+              <th>Customer</th>
+              <th>Seller</th>
+              <th>Amount</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            <!-- Dynamic Orders will populate here -->
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div id="view-sellers" class="dash-view" style="display: none;">
+      <div class="dash-section-title" style="color: #f3f4f6;">Manage Sellers</div>
+      <div style="color: #9ca3af; padding: 2rem; background: #1f2937; border-radius: 8px; border: 1px solid #374151;">
+        Seller management interface goes here...
+      </div>
+    </div>
+
+    <div id="view-orders" class="dash-view" style="display: none;">
+      <div class="dash-section-title" style="color: #f3f4f6;">Global Orders</div>
+      <div style="color: #9ca3af; padding: 2rem; background: #1f2937; border-radius: 8px; border: 1px solid #374151;">
+        All orders across the platform goes here...
+      </div>
+    </div>
+
+    <div id="view-health" class="dash-view" style="display: none;">
+      <div class="dash-section-title" style="color: #f3f4f6;">System Health</div>
+      <div style="color: #9ca3af; padding: 2rem; background: #1f2937; border-radius: 8px; border: 1px solid #374151;">
+        Server logs, CPU usage, and database status goes here...
+      </div>
+    </div>
+
+    <div id="view-settings" class="dash-view" style="display: none;">
+      <div class="dash-section-title" style="color: #f3f4f6;">Settings</div>
+      <div style="color: #9ca3af; padding: 2rem; background: #1f2937; border-radius: 8px; border: 1px solid #374151;">
+        Platform configuration and environment variables goes here...
+      </div>
+    </div>
+
+  </main>
+
+  <script src="dashboard.js"></script>
+</body>
+</html>

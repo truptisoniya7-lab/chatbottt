@@ -146,6 +146,43 @@ CREATE TABLE IF NOT EXISTS knowledge_base (
 
 CREATE INDEX IF NOT EXISTS idx_kb_category ON knowledge_base(category);
 CREATE INDEX IF NOT EXISTS idx_kb_tags ON knowledge_base USING GIN(tags);
+
+-- ─────────────────────────────────────────
+-- E-COMMERCE TABLES
+-- ─────────────────────────────────────────
+DROP TABLE IF EXISTS order_items CASCADE;
+DROP TABLE IF EXISTS orders CASCADE;
+DROP TABLE IF EXISTS products CASCADE;
+
+CREATE TABLE IF NOT EXISTS products (
+  id            UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  seller_id     UUID REFERENCES users(id),
+  name          VARCHAR(256) NOT NULL,
+  description   TEXT,
+  price         NUMERIC(10, 2) NOT NULL,
+  stock         INTEGER DEFAULT 0,
+  image_url     VARCHAR(512),
+  created_at    TIMESTAMPTZ DEFAULT NOW(),
+  updated_at    TIMESTAMPTZ DEFAULT NOW()
+);
+
+CREATE TABLE IF NOT EXISTS orders (
+  id            UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  customer_id   UUID REFERENCES users(id),
+  total_amount  NUMERIC(10, 2) NOT NULL,
+  status        VARCHAR(32) DEFAULT 'pending',
+  created_at    TIMESTAMPTZ DEFAULT NOW(),
+  updated_at    TIMESTAMPTZ DEFAULT NOW()
+);
+
+CREATE TABLE IF NOT EXISTS order_items (
+  id                UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  order_id          UUID REFERENCES orders(id) ON DELETE CASCADE,
+  product_id        UUID REFERENCES products(id),
+  quantity          INTEGER NOT NULL DEFAULT 1,
+  price_at_purchase NUMERIC(10, 2) NOT NULL,
+  seller_id         UUID REFERENCES users(id) -- to easily query seller payouts
+);
 `;
 
 async function initDb() {

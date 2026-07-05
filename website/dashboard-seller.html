@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Seller Dashboard — Vasudha Couture</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400;1,500&family=DM+Sans:wght@300;400;500&family=Jost:wght@300;400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="dashboard.css">
+</head>
+<body class="seller-body">
+
+  <nav class="seller-navbar">
+    <a href="index.html" class="dash-logo" style="margin:0;">Vasudha <span>Couture</span> <span style="font-size: 0.9rem; color: #6b7280; font-family: 'DM Sans', sans-serif;">| Seller Hub</span></a>
+    
+    <div class="seller-nav-links">
+      <a href="#" class="active">Overview</a>
+      <a href="#">Products</a>
+      <a href="#">Orders</a>
+      <a href="#">Payouts</a>
+      <a href="#">Settings</a>
+    </div>
+
+    <div class="dash-user-info" style="margin:0; padding:0; background:transparent; border:none; box-shadow:none;">
+      <div style="text-align: right; margin-right: 1rem;">
+        <div style="font-weight: 500;" id="dashUserName">Seller Name</div>
+        <div style="font-size: 0.8rem; color: var(--text-muted);" id="dashUserRole">Seller</div>
+      </div>
+      <div class="dash-user-avatar" id="dashUserAvatar" style="background: var(--gold-primary); color: white;">S</div>
+      <button onclick="logout()" style="margin-left: 1rem; background: #fee2e2; border: none; padding: 0.5rem 1rem; border-radius: 4px; color: #991b1b; font-weight: 500; cursor: pointer;">Logout</button>
+    </div>
+  </nav>
+
+  <main class="seller-main">
+    <header class="dash-header" style="background: transparent; border: none; box-shadow: none; padding: 0 0 2rem 0; margin: 0;">
+      <h1 style="font-size: 2.5rem; color: #f3f4f6;">Store Performance</h1>
+    </header>
+
+    <div class="dash-stats">
+      <div class="stat-card seller-stat-card">
+        <div class="stat-title">My Revenue</div>
+        <div class="stat-value">₹84,500</div>
+      </div>
+      <div class="stat-card seller-stat-card">
+        <div class="stat-title">Products Listed</div>
+        <div class="stat-value">12</div>
+      </div>
+      <div class="stat-card seller-stat-card">
+        <div class="stat-title">Pending Orders</div>
+        <div class="stat-value">4</div>
+      </div>
+    </div>
+
+    <div class="dash-section-title" style="margin-top: 2rem;">Orders to Fulfill</div>
+    <div class="dash-table-wrap seller-table-wrap">
+      <table class="dash-table">
+        <thead>
+          <tr>
+            <th>Order ID</th>
+            <th>Product</th>
+            <th>Customer</th>
+            <th>Status</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>#ORD-8821</td>
+            <td>Banarasi Silk Zari Saree</td>
+            <td>Priya Sharma</td>
+            <td><span class="status-badge status-pending">Processing</span></td>
+            <td><a href="#" style="color: var(--gold-primary); text-decoration: none; font-weight: 500;">Ship Order</a></td>
+          </tr>
+          <tr>
+            <td>#ORD-8815</td>
+            <td>Embroidered Bridal Lehenga</td>
+            <td>Neha Gupta</td>
+            <td><span class="status-badge status-success">Shipped</span></td>
+            <td><a href="#" style="color: var(--text-muted); text-decoration: none;">View Details</a></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+  </main>
+
+  <script src="dashboard.js"></script>
+</body>
+</html>

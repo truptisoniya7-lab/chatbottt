@@ -71,7 +71,7 @@
       <div class="vaani-panel" id="vaaniPanel" hidden>
         <div class="vaani-panel-header">
           <div class="vaani-header-pet">
-            <div class="vaani-avatar-small"><img src="/assets/vaani-pet.png" style="width:100%; height:100%; object-fit:cover; border-radius:50%;"></div>
+            <div class="vaani-avatar-small"><img src="/assets/vaani-pet.png?v=3" style="width:100%; height:100%; object-fit:cover; border-radius:50%;"></div>
             <div class="vaani-header-info">
               <div class="vaani-header-name">Vaani</div>
               <div class="vaani-header-status">
@@ -88,7 +88,7 @@
         <div class="vaani-messages" id="vaaniMessages"></div>
         
         <div class="vaani-typing hidden" id="vaaniTyping">
-          <div class="vaani-msg-avatar"><img src="/assets/vaani-pet.png" style="width:100%; height:100%; object-fit:cover; border-radius:50%;"></div>
+          <div class="vaani-msg-avatar"><img src="/assets/vaani-pet.png?v=3" style="width:100%; height:100%; object-fit:cover; border-radius:50%;"></div>
           <div class="vaani-typing-dots">
             <span></span><span></span><span></span>
           </div>
@@ -324,7 +324,7 @@
 
     if (role === 'bot') {
       div.innerHTML = `
-        <div class="vaani-msg-avatar"><img src="/assets/vaani-pet.png" style="width:100%; height:100%; object-fit:cover; border-radius:50%;"></div>
+        <div class="vaani-msg-avatar"><img src="/assets/vaani-pet.png?v=3" style="width:100%; height:100%; object-fit:cover; border-radius:50%;"></div>
         <div class="vaani-msg-bubble">${text}</div>`;
     } else {
       div.innerHTML = `<div class="vaani-msg-bubble">${text}</div>`;
@@ -342,7 +342,7 @@
 
     msgs.innerHTML = `
       <div class="vaani-msg vaani-msg-bot vaani-msg-greeting">
-        <div class="vaani-msg-avatar"><img src="/assets/vaani-pet.png" style="width:100%; height:100%; object-fit:cover; border-radius:50%;"></div>
+        <div class="vaani-msg-avatar"><img src="/assets/vaani-pet.png?v=3" style="width:100%; height:100%; object-fit:cover; border-radius:50%;"></div>
         <div class="vaani-msg-bubble">
           Namaste! 🙏 I'm <strong>Vaani</strong> — your personal style companion
           at Vasudha Couture.<br><br>How can I help you today?

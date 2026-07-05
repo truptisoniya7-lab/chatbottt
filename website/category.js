@@ -1,0 +1,119 @@
+document.addEventListener('DOMContentLoaded', () => {
+  const urlParams = new URLSearchParams(window.location.search);
+  const typeParam = urlParams.get('type') || 'all';
+  
+  // Update header title
+  const titleMap = {
+    'lehengas': 'Shop Lehengas',
+    'sarees': 'Saree Collection',
+    'kurtas': 'Designer Kurtas',
+    'jeans': 'Jeans & Trousers',
+    'women': 'Women\'s Collection',
+    'men': 'Men\'s Collection',
+    'all': 'All Categories'
+  };
+  
+  document.getElementById('categoryTitle').innerText = titleMap[typeParam.toLowerCase()] || `Shop ${typeParam}`;
+  
+  // Fetch products
+  fetchProducts(typeParam);
+});
+
+async function fetchProducts(categoryType) {
+  const grid = document.getElementById('categoryGrid');
+  
+  try {
+    let products = [];
+    if (window.PRODUCT_CATALOG) {
+      if (window.PRODUCT_CATALOG.products_women) products = products.concat(window.PRODUCT_CATALOG.products_women);
+      if (window.PRODUCT_CATALOG.products_men) products = products.concat(window.PRODUCT_CATALOG.products_men);
+      if (window.PRODUCT_CATALOG.ethnic_heritage) products = products.concat(window.PRODUCT_CATALOG.ethnic_heritage);
+    }
+    
+    if (categoryType !== 'all') {
+      const targetCat = categoryType.toLowerCase();
+      products = products.filter(p => {
+        const cat = (p.category || '').toLowerCase();
+        const name = (p.name || '').toLowerCase();
+        
+        if (targetCat === 'women' && (cat.includes('women') || (p.gender && p.gender.toLowerCase() === 'women'))) return true;
+        if (targetCat === 'men' && (cat.includes('men') || (p.gender && p.gender.toLowerCase() === 'men'))) return true;
+        if (targetCat === 'lehengas' && (cat.includes('lehenga') || name.includes('lehenga'))) return true;
+        if (targetCat === 'sarees' && (cat.includes('saree') || name.includes('saree'))) return true;
+        if (targetCat === 'kurtas' && (cat.includes('kurta') || name.includes('kurta') || cat.includes('kurti') || name.includes('kurti'))) return true;
+        if ((targetCat === 'tops' || targetCat === 'top') && (cat.includes('top') || name.includes('top'))) return true;
+        if (targetCat === 'jeans' && (cat.includes('jean') || name.includes('jean') || cat.includes('trouser'))) return true;
+        
+        return cat.includes(targetCat) || name.includes(targetCat);
+      });
+    }
+    
+    if (products.length === 0) {
+      grid.innerHTML = '<div class="no-products">No products found in this category.</div>';
+      return;
+    }
+    
+    renderProducts(products, grid);
+  } catch (error) {
+    console.error('Error loading products:', error);
+    grid.innerHTML = '<div class="no-products">Failed to load products. Please try again later.</div>';
+  }
+}
+
+function renderProducts(products, grid) {
+  grid.innerHTML = '';
+  
+  products.forEach(product => {
+    // Determine image class based on category, name, and gender
+    let imgClass = 'img-ethnic'; // default
+    const cat = (product.category || '').toLowerCase();
+    const name = (product.name || '').toLowerCase();
+    const gender = (product.gender || '').toLowerCase();
+    
+    if (gender === 'men' || cat.includes('men') || name.includes('men')) {
+      if (cat.includes('shirt') || name.includes('shirt')) imgClass = 'img-shirt';
+      else if (cat.includes('jean') || name.includes('jean') || cat.includes('denim')) imgClass = 'img-jeans';
+      else if (cat.includes('sherwani') || name.includes('sherwani')) imgClass = 'img-sherwani';
+      else if (cat.includes('blazer') || name.includes('blazer') || cat.includes('suit')) imgClass = 'img-blazer';
+      else imgClass = 'img-kurta-men'; // default men's ethnic
+    } else {
+      // Women's default logic
+      if (cat.includes('lehenga') || name.includes('lehenga')) imgClass = 'img-lehenga';
+      else if (cat.includes('saree') || name.includes('saree')) imgClass = 'img-saree';
+      else if (cat.includes('gown') || name.includes('gown') || name.includes('dress')) imgClass = 'img-gown';
+      else if (cat.includes('anarkali') || name.includes('anarkali')) imgClass = 'img-anarkali';
+      else if (cat.includes('jean') || name.includes('jean') || cat.includes('trouser')) imgClass = 'img-jeans';
+      else if (cat.includes('top') || name.includes('top')) imgClass = 'img-top'; // use distinct top image
+      else if (cat.includes('kurta') || name.includes('kurta') || cat.includes('kurti') || name.includes('kurti')) imgClass = 'img-kurti'; // use distinct kurti image
+      else imgClass = 'img-anarkali'; // default women's ethnic
+    }
+    
+    const formattedPrice = product.price ? product.price.toLocaleString('en-IN') : '0';
+    // Access data JSONB fields if necessary, some fields might be top level depending on schema
+    const mrp = product.data && product.data.mrp ? product.data.mrp : null;
+    let oldPriceHtml = '';
+    if (mrp && mrp > product.price) {
+      oldPriceHtml = `<span class="pcard-price-old">₹${mrp.toLocaleString('en-IN')}</span>`;
+    }
+
+    const card = document.createElement('div');
+    card.className = 'pcard tilt-card';
+    card.innerHTML = `
+      <div class="pcard-bg ${imgClass}" style="min-height:300px; cursor: pointer; ${product.image_url ? `background: url('${product.image_url}') center/cover;` : ''}" onclick="openQuickView('${product.name}', ${product.price}, '${imgClass}', '${mrp ? mrp.toLocaleString('en-IN') : ''}', '${product.category || 'Category'}', '${product.image_url || ''}')"></div>
+      <div class="pcard-overlay"></div>
+      <div class="pcard-gloss"></div>
+      <button class="pcard-btn" onclick="event.stopPropagation(); addToCart('${product.name}', ${product.price})">+</button>
+      <div class="pcard-actions">
+        <button class="pcard-btn-add" onclick="addToCart('${product.name}', ${product.price})">Add to Cart</button>
+        <button class="pcard-btn-buy" onclick="buyNow('${product.name}', ${product.price})">Buy Now</button>
+      </div>
+      <div class="pcard-info" style="cursor: pointer;" onclick="openQuickView('${product.name}', ${product.price}, '${imgClass}', '${mrp ? mrp.toLocaleString('en-IN') : ''}', '${product.category || 'Category'}', '${product.image_url || ''}')">
+        <div class="pcard-tag" style="text-transform: capitalize;">${product.category || 'Apparel'}</div>
+        <div class="pcard-name">${product.name}</div>
+        <div class="pcard-price">₹${formattedPrice} ${oldPriceHtml}</div>
+      </div>
+    `;
+    
+    grid.appendChild(card);
+  });
+}

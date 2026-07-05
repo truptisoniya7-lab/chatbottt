@@ -6,7 +6,7 @@ const helmet = require('helmet');
 const cookieParser = require('cookie-parser');
 
 const app = express();
-const PORT = process.env.PORT || 3000;
+const PORT = parseInt(process.env.PORT || 3000, 10);
 
 // Middleware
 app.use(helmet({
@@ -33,14 +33,28 @@ app.get('/chat/health', (req, res) => {
 // Import routes
 const authRoutes = require('./routes/auth.routes');
 const chatRoutes = require('./routes/chat');
+const ecommerceRoutes = require('./routes/ecommerce.routes');
 app.use('/auth', authRoutes);
 app.use('/chat', chatRoutes);
+app.use('/api', ecommerceRoutes);
 
 app.use((err, req, res, next) => {
   console.error(err.stack);
   res.status(500).json({ error: 'Internal Server Error' });
 });
 
-app.listen(PORT, () => {
-  console.log(`Server listening on port ${PORT}`);
+const http = require('http');
+const server = http.createServer(app);
+
+server.on('error', (e) => {
+  if (e.code === 'EADDRINUSE') {
+    console.error(`Port ${PORT} is already in use. Trying ${PORT + 1}...`);
+    server.listen(PORT + 1);
+  } else {
+    console.error('Server error:', e);
+  }
+});
+
+server.listen(PORT, () => {
+  console.log(`Server listening on port ${server.address().port}`);
 });

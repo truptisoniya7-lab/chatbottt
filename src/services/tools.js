@@ -2,135 +2,108 @@ const { query } = require('../config/database');
 
 const definitions = [
   {
-    type: 'function',
-    function: {
-      name: 'search_catalogue',
-      description: 'Search Vasudha Couture product catalogue with filters. Use for any product recommendation request.',
-      parameters: {
-        type: 'object',
-        properties: {
-          category:  { type: 'string', description: 'saree, lehenga, kurta, shirt, dress, jeans, sherwani, dupatta, anarkali' },
-          gender:    { type: 'string', enum: ['women','men','unisex'] },
-          max_price: { type: 'number', description: 'Maximum price in INR' },
-          min_price: { type: 'number', description: 'Minimum price in INR' },
-          occasion:  { type: 'string', description: 'E.g. wedding, festive, office, casual, sangeet, reception' },
-          fabric:    { type: 'string', description: 'E.g. silk, cotton, georgette, linen, chiffon, chanderi' },
-          colour:    { type: 'string', description: 'Colour name or family' },
-          limit:     { type: 'number', description: 'Max products to return, default 4' },
-        },
+    name: 'search_catalogue',
+    description: 'Search Vasudha Couture product catalogue with filters. Use for any product recommendation request.',
+    parameters: {
+      type: 'object',
+      properties: {
+        category:  { type: 'string', description: 'saree, lehenga, kurta, shirt, dress, jeans, sherwani, dupatta, anarkali' },
+        gender:    { type: 'string', enum: ['women','men','unisex'] },
+        max_price: { type: 'number', description: 'Maximum price in INR' },
+        min_price: { type: 'number', description: 'Minimum price in INR' },
+        occasion:  { type: 'string', description: 'E.g. wedding, festive, office, casual, sangeet, reception' },
+        fabric:    { type: 'string', description: 'E.g. silk, cotton, georgette, linen, chiffon, chanderi' },
+        colour:    { type: 'string', description: 'Colour name or family' },
+        limit:     { type: 'number', description: 'Max products to return, default 4' },
+      },
+    }
+  },
+  {
+    name: 'get_order_status',
+    description: 'Fetch real-time order status.',
+    parameters: {
+      type: 'object',
+      properties: {
+        order_id:      { type: 'string', description: 'Order ID like VC-20245781.' },
+        phone_last4:   { type: 'string', description: 'Last 4 digits of registered phone.' }
       }
     }
   },
   {
-    type: 'function',
-    function: {
-      name: 'get_order_status',
-      description: 'Fetch real-time order status.',
-      parameters: {
-        type: 'object',
-        properties: {
-          order_id:      { type: 'string', description: 'Order ID like VC-20245781.' },
-          phone_last4:   { type: 'string', description: 'Last 4 digits of registered phone.' }
-        }
+    name: 'initiate_return',
+    description: 'Create a return or exchange request for a delivered order.',
+    parameters: {
+      type: 'object',
+      properties: {
+        order_id:    { type: 'string' },
+        reason:      { type: 'string' },
+        return_type: { type: 'string', enum: ['refund','exchange'] }
+      },
+      required: ['order_id', 'reason', 'return_type'],
+    }
+  },
+  {
+    name: 'get_size_recommendation',
+    description: 'Calculate recommended garment size from body measurements.',
+    parameters: {
+      type: 'object',
+      properties: {
+        category:   { type: 'string', description: 'Garment category (e.g. kurta, lehenga, dress)' },
+        chest_cm:   { type: 'number' },
+        waist_cm:   { type: 'number' }
+      },
+      required: ['category'],
+    }
+  },
+  {
+    name: 'lookup_promo',
+    description: 'Get current active promotions and discount codes.',
+    parameters: {
+      type: 'object',
+      properties: {}
+    }
+  },
+  {
+    name: 'get_faqs',
+    description: 'Get answers to frequently asked questions.',
+    parameters: {
+      type: 'object',
+      properties: {
+        topic: { type: 'string', description: 'Keywords from user query to match FAQs' }
       }
     }
   },
   {
-    type: 'function',
-    function: {
-      name: 'initiate_return',
-      description: 'Create a return or exchange request for a delivered order.',
-      parameters: {
-        type: 'object',
-        properties: {
-          order_id:    { type: 'string' },
-          reason:      { type: 'string' },
-          return_type: { type: 'string', enum: ['refund','exchange'] }
-        },
-        required: ['order_id', 'reason', 'return_type'],
+    name: 'get_fabric_care',
+    description: 'Get care instructions for specific fabrics.',
+    parameters: {
+      type: 'object',
+      properties: {
+        fabric: { type: 'string', description: 'Name of fabric (e.g. Silk, Cotton, Georgette)' }
       }
     }
   },
   {
-    type: 'function',
-    function: {
-      name: 'get_size_recommendation',
-      description: 'Calculate recommended garment size from body measurements.',
-      parameters: {
-        type: 'object',
-        properties: {
-          category:   { type: 'string', description: 'Garment category (e.g. kurta, lehenga, dress)' },
-          chest_cm:   { type: 'number' },
-          waist_cm:   { type: 'number' }
-        },
-        required: ['category'],
-      }
+    name: 'get_store_policies',
+    description: 'Get information about shipping, payments, and returns policies.',
+    parameters: {
+      type: 'object',
+      properties: {
+        topic: { type: 'string', enum: ['shipping', 'returns', 'payments'], description: 'Which policy to lookup' }
+      },
+      required: ['topic']
     }
   },
   {
-    type: 'function',
-    function: {
-      name: 'lookup_promo',
-      description: 'Get current active promotions and discount codes.',
-      parameters: {
-        type: 'object',
-        properties: {}
-      }
-    }
-  },
-  {
-    type: 'function',
-    function: {
-      name: 'get_faqs',
-      description: 'Get answers to frequently asked questions.',
-      parameters: {
-        type: 'object',
-        properties: {
-          topic: { type: 'string', description: 'Keywords from user query to match FAQs' }
-        }
-      }
-    }
-  },
-  {
-    type: 'function',
-    function: {
-      name: 'get_fabric_care',
-      description: 'Get care instructions for specific fabrics.',
-      parameters: {
-        type: 'object',
-        properties: {
-          fabric: { type: 'string', description: 'Name of fabric (e.g. Silk, Cotton, Georgette)' }
-        }
-      }
-    }
-  },
-  {
-    type: 'function',
-    function: {
-      name: 'get_store_policies',
-      description: 'Get information about shipping, payments, and returns policies.',
-      parameters: {
-        type: 'object',
-        properties: {
-          topic: { type: 'string', enum: ['shipping', 'returns', 'payments'], description: 'Which policy to lookup' }
-        },
-        required: ['topic']
-      }
-    }
-  },
-  {
-    type: 'function',
-    function: {
-      name: 'escalate_to_agent',
-      description: 'Create a Freshdesk support ticket and escalate to human agent. Use when issue cannot be resolved after 2 attempts or user explicitly asks.',
-      parameters: {
-        type: 'object',
-        properties: {
-          issue_summary:   { type: 'string' },
-          chat_transcript: { type: 'string' }
-        },
-        required: ['issue_summary', 'chat_transcript'],
-      }
+    name: 'escalate_to_agent',
+    description: 'Create a Freshdesk support ticket and escalate to human agent. Use when issue cannot be resolved after 2 attempts or user explicitly asks.',
+    parameters: {
+      type: 'object',
+      properties: {
+        issue_summary:   { type: 'string' },
+        chat_transcript: { type: 'string' }
+      },
+      required: ['issue_summary', 'chat_transcript'],
     }
   }
 ];

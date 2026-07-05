@@ -1,13 +1,20 @@
-const { groq, buildSystemPrompt, GROQ_MODEL } = require('./groqService');
-const { getSessionHistory, appendToSession } = require('./sessionService');
-const { sanitiseUserInput } = require('../middleware/piiStripper');
+const { model, buildSystemPrompt, genAI } = require('./gemini');
 const tools = require('./tools');
+const { getSessionHistory, appendToSession } = require('./sessionService');
+const { stripPII } = require('../middleware/piiStripper');
+
+// active offers mock or fetch
+async function getActiveOffers() {
+  return []; // In real app, fetch from Redis or DB
+}
 
 async function processMessage({ sessionId, userMessage, user, language, pageContext }) {
   const startTime = Date.now();
   
-  const safeMessage = sanitiseUserInput(userMessage);
-  if (safeMessage === null) {
+  // 1. Strip PII before logging or sending to Gemini
+  const safeMessage = stripPII ? stripPII(userMessage) : userMessage; // Fallback if stripPII is missing
+  
+  if (!safeMessage) {
     await appendToSession(sessionId, {
         role: 'user', content: userMessage, language, isFlagged: true, flagReason: 'Prompt Injection Attempt'
     });
@@ -18,80 +25,74 @@ async function processMessage({ sessionId, userMessage, user, language, pageCont
     };
   }
 
-  if (!groq) {
-      return {
-          text: "I'm currently unable to access my AI engine. Please try again later.",
-          latencyMs: Date.now() - startTime,
-          tokensUsed: 0
-      };
-  }
+  // 2. Fetch active offers (cached in Redis)
+  const activeOffers = await getActiveOffers();
+  
+  // 3. Build fresh model instance with current system prompt
+  const chatModel = genAI.getGenerativeModel({
+    model: 'gemini-2.5-flash',
+    systemInstruction: buildSystemPrompt(user, language, activeOffers),
+    generationConfig: { temperature: 0.7, maxOutputTokens: 1024 },
+  });
 
-  const systemPrompt = buildSystemPrompt(user, language, []);
+  // 4. Get conversation history from Redis
+  const history = await getSessionHistory(sessionId);
   
-  // Get history
-  let dbHistory = await getSessionHistory(sessionId);
-  
-  // Format for Groq
-  let messages = [
-    { role: "system", content: systemPrompt },
-    ...dbHistory.map(h => ({ role: h.role === 'model' ? 'assistant' : h.role, content: h.parts[0].text })),
-    { role: "user", content: safeMessage }
-  ];
+  // 5. Start Gemini chat session with history
+  const chat = chatModel.startChat({
+    history: history,
+    tools: [{ functionDeclarations: tools.definitions }],
+  });
 
   let assistantText = "I'm sorry, an error occurred while processing your request.";
   let tokensUsed = 0;
-  
-  try {
-    let completion = await groq.chat.completions.create({
-        model: GROQ_MODEL,
-        messages: messages,
-        tools: tools.definitions,
-        tool_choice: "auto",
-        max_tokens: 1024,
-        temperature: 0.7
-    });
-    
-    let responseMessage = completion.choices[0].message;
-    tokensUsed += completion.usage?.total_tokens || 0;
 
-    // Handle function/tool calls loop
-    while (responseMessage.tool_calls && responseMessage.tool_calls.length > 0) {
-      messages.push(responseMessage); // Add assistant tool_calls message to history
-      
-      for (const toolCall of responseMessage.tool_calls) {
-          const args = JSON.parse(toolCall.function.arguments);
-          const toolResult = await tools.execute(toolCall.function.name, args, user);
-          
-          messages.push({
-              tool_call_id: toolCall.id,
-              role: "tool",
-              name: toolCall.function.name,
-              content: JSON.stringify(toolResult),
-          });
+  try {
+    // 6. Send message
+    let result = await chat.sendMessage(safeMessage);
+    let response = result.response;
+    tokensUsed += response.usageMetadata?.totalTokenCount || 0;
+
+    // 7. Handle function/tool calls (Gemini function calling)
+    while (response.functionCalls()?.length > 0) {
+      const functionCalls = response.functionCalls();
+      const functionResponses = [];
+
+      for (const functionCall of functionCalls) {
+        const toolResult = await tools.execute(functionCall.name, functionCall.args, user);
+        functionResponses.push({
+          functionResponse: {
+            name: functionCall.name,
+            response: toolResult,
+          }
+        });
       }
-      
-      // Make second request with tool results
-      completion = await groq.chat.completions.create({
-          model: GROQ_MODEL,
-          messages: messages,
-          tools: tools.definitions,
-          max_tokens: 1024,
-          temperature: 0.7
-      });
-      
-      responseMessage = completion.choices[0].message;
-      tokensUsed += completion.usage?.total_tokens || 0;
+
+      result = await chat.sendMessage(functionResponses);
+      response = result.response;
+      tokensUsed += response.usageMetadata?.totalTokenCount || 0;
     }
 
-    assistantText = responseMessage.content;
+    assistantText = response.text();
   } catch (e) {
-    console.error('Groq chat error:', e);
+    console.error('Gemini chat error:', e);
   }
 
   const latencyMs = Date.now() - startTime;
 
-  await appendToSession(sessionId, { role: 'user', content: safeMessage, language });
-  await appendToSession(sessionId, { role: 'assistant', content: assistantText, latencyMs, tokensUsed, language });
+  // 8. Persist to Neon DB
+  await appendToSession(sessionId, {
+    role: 'user',
+    content: safeMessage,
+    originalLength: userMessage.length,
+    language,
+  });
+  await appendToSession(sessionId, {
+    role: 'assistant', 
+    content: assistantText,
+    latencyMs,
+    tokensUsed,
+  });
 
   return {
     text: assistantText,

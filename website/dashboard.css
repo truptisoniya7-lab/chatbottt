@@ -1,0 +1,380 @@
+/* ============================================================
+   VASUDHA COUTURE 3D — dashboard.css
+   Shared layout for Admin, Seller, and User dashboards
+   ============================================================ */
+
+@import url('style.css'); /* Import core variables and fonts */
+
+body.dashboard-body {
+  background: var(--plum-deep);
+  display: flex;
+  min-height: 100vh;
+  overflow-x: hidden;
+  margin: 0;
+}
+
+/* Sidebar */
+.dash-sidebar {
+  width: 260px;
+  background: var(--void);
+  border-right: 1px solid var(--plum-mid);
+  display: flex;
+  flex-direction: column;
+  position: fixed;
+  top: 0; bottom: 0; left: 0;
+  z-index: 100;
+}
+
+.dash-logo {
+  padding: 2rem;
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.8rem;
+  color: var(--gold-lt);
+  border-bottom: 1px solid var(--plum-mid);
+  text-decoration: none;
+}
+.dash-logo span { color: var(--gold); font-style: italic; }
+
+.dash-nav {
+  padding: 2rem 0;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
+.dash-nav a {
+  padding: 1rem 2rem;
+  color: var(--text-muted);
+  text-decoration: none;
+  font-weight: 500;
+  transition: 0.3s;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.dash-nav a:hover, .dash-nav a.active {
+  color: var(--gold-dk);
+  background: var(--plum);
+  border-right: 3px solid var(--gold);
+}
+
+.dash-logout {
+  padding: 2rem;
+  border-top: 1px solid var(--plum-mid);
+}
+
+.dash-logout button {
+  width: 100%;
+  background: none;
+  border: 1px solid var(--rose);
+  color: var(--rose);
+  padding: 0.8rem;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: 0.3s;
+  font-weight: 500;
+}
+.dash-logout button:hover {
+  background: var(--rose);
+  color: #fff;
+}
+
+/* Main Content */
+.dash-main {
+  flex: 1;
+  margin-left: 260px;
+  padding: 2rem 3rem;
+  display: flex;
+  flex-direction: column;
+}
+
+.dash-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+}
+
+.dash-header h1 {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 2.2rem;
+  color: var(--gold-dk);
+  margin: 0;
+}
+
+.dash-user-info {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+.dash-user-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: var(--gold);
+  color: #fff;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-weight: bold;
+}
+
+/* Stats Cards */
+.dash-stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 1.5rem;
+  margin-bottom: 2.5rem;
+}
+
+.stat-card {
+  background: var(--void);
+  padding: 1.5rem;
+  border-radius: 8px;
+  border: 1px solid var(--plum-mid);
+  box-shadow: 0 4px 15px rgba(0,0,0,0.02);
+}
+.stat-title {
+  color: var(--text-muted);
+  font-size: 0.9rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 0.5rem;
+}
+.stat-value {
+  font-size: 2rem;
+  font-weight: 500;
+  color: var(--text-pearl);
+}
+
+/* Data Tables */
+.dash-section-title {
+  font-size: 1.2rem;
+  font-weight: 500;
+  margin-bottom: 1rem;
+  color: var(--text-pearl);
+}
+
+.dash-table-wrap {
+  background: var(--void);
+  border-radius: 8px;
+  border: 1px solid var(--plum-mid);
+  overflow: hidden;
+  margin-bottom: 2rem;
+}
+
+.dash-table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+}
+
+.dash-table th {
+  background: var(--plum);
+  padding: 1rem 1.5rem;
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  font-weight: 500;
+}
+
+.dash-table td {
+  padding: 1rem 1.5rem;
+  border-bottom: 1px solid var(--plum-mid);
+  font-size: 0.95rem;
+  color: var(--text-pearl);
+}
+
+/* ============================================================
+   ADMIN DASHBOARD (Command Center)
+   ============================================================ */
+.dashboard-body.admin-body {
+  background: #0d0f12;
+  color: #e5e7eb;
+}
+.admin-sidebar {
+  background: #111827;
+  border-right: 1px solid #1f2937;
+}
+.admin-sidebar .dash-logo {
+  color: #f3f4f6;
+}
+.admin-sidebar .dash-logo span {
+  color: var(--gold-primary);
+}
+.admin-sidebar .dash-nav a {
+  color: #9ca3af;
+}
+.admin-sidebar .dash-nav a:hover,
+.admin-sidebar .dash-nav a.active {
+  background: rgba(200, 169, 106, 0.1);
+  color: var(--gold-primary);
+}
+.admin-header h1 {
+  color: #f3f4f6;
+}
+.admin-stat-card {
+  background: #1f2937;
+  border: 1px solid #374151;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.5);
+}
+.admin-stat-card .stat-title {
+  color: #9ca3af;
+}
+.admin-stat-card .stat-value {
+  color: var(--gold-primary);
+}
+.admin-table-wrap {
+  background: #1f2937;
+  border: 1px solid #374151;
+}
+.admin-table th {
+  background: #111827;
+  color: #d1d5db;
+  border-bottom: 1px solid #374151;
+}
+.admin-table td {
+  border-bottom: 1px solid #374151;
+  color: #f3f4f6;
+}
+
+/* ============================================================
+   SELLER DASHBOARD (Top Nav Layout)
+   ============================================================ */
+.dashboard-body.seller-body {
+  display: block;
+  background: #0d0f12;
+  color: #e5e7eb;
+}
+.seller-navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 3rem;
+  background: #111827;
+  border-bottom: 1px solid #1f2937;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.5);
+}
+.seller-nav-links {
+  display: flex;
+  gap: 2rem;
+}
+.seller-nav-links a {
+  text-decoration: none;
+  color: #9ca3af;
+  font-weight: 500;
+  transition: color 0.3s;
+}
+.seller-nav-links a:hover,
+.seller-nav-links a.active {
+  color: var(--gold-primary);
+}
+.seller-main {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem;
+}
+.seller-stat-card {
+  background: #1f2937;
+  border: 1px solid #374151;
+  border-left: 4px solid var(--gold-primary);
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.5);
+}
+.seller-stat-card .stat-title {
+  color: #9ca3af;
+}
+.seller-stat-card .stat-value {
+  color: var(--gold-primary);
+}
+.seller-table-wrap {
+  background: #1f2937;
+  border: 1px solid #374151;
+}
+
+.dash-table tr:last-child td {
+  border-bottom: none;
+}
+
+/* ============================================================
+   CUSTOMER DASHBOARD (Pinkish Theme)
+   ============================================================ */
+.dashboard-body.customer-body {
+  display: block;
+  background: #fff0f5 url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Ctext x='10' y='30' font-size='16' opacity='0.2'%3E🌸%3C/text%3E%3Ctext x='40' y='50' font-size='12' opacity='0.15'%3E✨%3C/text%3E%3Ctext x='50' y='20' font-size='14' opacity='0.2'%3E🎀%3C/text%3E%3Ctext x='20' y='55' font-size='10' opacity='0.15'%3E💖%3C/text%3E%3C/svg%3E");
+  color: #831843;
+}
+.customer-banner {
+  background: linear-gradient(135deg, #fce7f3, #fbcfe8);
+  border-radius: 12px;
+  padding: 3rem;
+  display: flex;
+  align-items: center;
+  gap: 2rem;
+  margin-bottom: 2rem;
+  border: 1px solid #f9a8d4;
+  box-shadow: 0 4px 15px rgba(244,114,182,0.2);
+}
+.customer-avatar-large {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  background: #f472b6;
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 3rem;
+  font-family: 'Cormorant Garamond', serif;
+  box-shadow: 0 4px 15px rgba(244,114,182,0.4);
+}
+.customer-banner-info h1 {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 2.5rem;
+  color: #831843;
+  margin-bottom: 0.5rem;
+}
+.customer-banner-info p {
+  color: #9d174d;
+  font-size: 1.1rem;
+}
+.customer-stat-card {
+  background: rgba(255, 255, 255, 0.9);
+  border: 1px solid #f9a8d4;
+  box-shadow: 0 4px 6px -1px rgba(244,114,182,0.1);
+  backdrop-filter: blur(4px);
+}
+.customer-stat-card .stat-title {
+  color: #be185d;
+}
+.customer-stat-card .stat-value {
+  color: #db2777;
+}
+.customer-table-wrap {
+  background: rgba(255, 255, 255, 0.9);
+  border: 1px solid #f9a8d4;
+  backdrop-filter: blur(4px);
+}
+.customer-table-wrap th {
+  background: #fce7f3;
+  color: #831843;
+  border-bottom: 1px solid #f9a8d4;
+}
+.customer-table-wrap td {
+  border-bottom: 1px solid #fce7f3;
+  color: #831843;
+}
+
+.status-badge {
+  padding: 0.3rem 0.8rem;
+  border-radius: 12px;
+  font-size: 0.8rem;
+  font-weight: 500;
+}
+.status-success { background: rgba(0, 200, 83, 0.1); color: #00C853; }
+.status-pending { background: rgba(255, 171, 0, 0.1); color: #FFAB00; }
+.status-alert { background: rgba(213, 0, 0, 0.1); color: #D50000; }
+
+@media (max-width: 768px) {
+  .dash-sidebar { transform: translateX(-100%); transition: 0.3s; }
+  .dash-main { margin-left: 0; padding: 1.5rem; }
+}

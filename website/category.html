@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Category - Vasudha Couture</title>
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=Jost:wght@300;400;500;600&family=DM+Sans:wght@400;500&display=swap" rel="stylesheet">
+  
+  <link rel="stylesheet" href="style.css?v=1783140828696">
+  
+  <style>
+    /* Category Page specific styles */
+    .category-header {
+      padding: 10rem 4rem 4rem;
+      text-align: center;
+      background: transparent;
+    }
+    
+    .category-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 3.5rem;
+      color: var(--gold-lt);
+      margin-bottom: 1rem;
+      text-transform: capitalize;
+    }
+    
+    .category-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 2.5rem;
+      padding: 2rem 6rem 6rem;
+    }
+    
+    .loader-spinner {
+      margin: 4rem auto;
+      border: 4px solid var(--plum-mid);
+      border-top: 4px solid var(--gold);
+      border-radius: 50%;
+      width: 50px;
+      height: 50px;
+      animation: spin 1s linear infinite;
+    }
+    
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+    
+    .no-products {
+      text-align: center;
+      font-size: 1.2rem;
+      color: var(--text-muted);
+      margin: 4rem auto;
+      grid-column: 1 / -1;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Navigation (copied from index.html) -->
+  <nav id="mainNav" class="scrolled">
+    <a href="index.html" class="nav-logo">Vasudha <span>Couture</span></a>
+
+    <button class="nav-mobile-toggle" aria-label="Toggle Menu" onclick="document.getElementById('mainNav').classList.toggle('nav-open')">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12h18M3 6h18M3 18h18"/></svg>
+    </button>
+
+    <ul class="nav-links">
+      <li><a href="category.html?type=women">Women</a></li>
+      <li><a href="category.html?type=men">Men</a></li>
+      <li><a href="category.html?type=lehengas">Lehengas</a></li>
+      <li><a href="category.html?type=sarees">Sarees</a></li>
+      <li><a href="category.html?type=kurtas">Kurtas</a></li>
+      <li><a href="category.html?type=jeans">Jeans</a></li>
+    </ul>
+
+    <div class="nav-actions">
+      <button class="nav-icon-btn" id="authNavBtn" onclick="openAuthModal()">Login</button>
+      <button class="nav-icon-btn" onclick="toggleSearch()">🔍</button>
+      <button class="nav-icon-btn" onclick="toggleWishlistSidebar()">♡</button>
+      <button class="nav-cart" id="navCartBtn" onclick="toggleCart()">Cart (0)</button>
+    </div>
+  </nav>
+
+  <div class="category-header">
+    <h1 class="category-title" id="categoryTitle">Shop</h1>
+    <p style="color: var(--text-muted);">Explore our curated collection.</p>
+  </div>
+  
+  <div class="category-grid" id="categoryGrid">
+    <div class="loader-spinner" id="categoryLoader"></div>
+  </div>
+
+  <footer class="footer">
+    <div class="footer-grid">
+      <div class="footer-col">
+        <h3>Vasudha Couture</h3>
+        <p>Elevating traditional Indian craftsmanship into modern luxury for the discerning individual.</p>
+      </div>
+      <div class="footer-col">
+        <h4>Shop</h4>
+        <ul>
+          <li><a href="category.html?type=lehengas">Lehengas</a></li>
+          <li><a href="category.html?type=sarees">Sarees</a></li>
+          <li><a href="category.html?type=jeans">Jeans</a></li>
+          <li><a href="category.html?type=kurtas">Kurtas</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>&copy; 2026 Vasudha Couture. All rights reserved.</p>
+    </div>
+  </footer>
+
+
+<!-- QUICK VIEW MODAL -->
+<div class="auth-overlay" id="qvOverlay" onclick="closeQuickView(event)">
+  <div class="auth-modal" style="max-width: 800px; display: flex; padding: 0; overflow: hidden; background: #fff;">
+    <button class="auth-close" onclick="closeQuickView()" style="color: var(--plum-deep); z-index: 10;">×</button>
+    <div id="qvImage" style="width: 50%; background-size: cover; background-position: center; min-height: 400px;"></div>
+    <div style="width: 50%; padding: 3rem; display: flex; flex-direction: column; justify-content: center; text-align: left;">
+      <div id="qvTag" style="font-size: 0.75rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--gold-primary); margin-bottom: 1rem;"></div>
+      <h2 id="qvName" style="font-family: 'Cormorant Garamond', serif; font-size: 2.2rem; margin-bottom: 1rem; color: var(--plum-deep); font-weight: 500;"></h2>
+      <div id="qvPrice" style="font-family: 'Jost', sans-serif; font-size: 1.5rem; margin-bottom: 2rem; color: var(--text-dark);"></div>
+      <p style="color: var(--text-muted); font-family: 'DM Sans', sans-serif; font-size: 0.9rem; margin-bottom: 2rem; line-height: 1.6;">Experience the perfect blend of traditional craftsmanship and modern elegance. This piece is curated carefully for your special moments.</p>
+      <div style="display: flex; gap: 1rem; margin-bottom: 1rem;">
+        <button id="qvAddToCartBtn" class="btn-primary" style="flex: 1; padding: 1rem;">Add to Cart</button>
+      </div>
+      <button id="qvWishlistBtn" style="background: transparent; border: 1px dashed var(--gold-primary); color: var(--gold-primary); padding: 1rem; border-radius: 4px; cursor: pointer; font-family: 'Jost', sans-serif; text-transform: uppercase; letter-spacing: 0.1em; transition: 0.3s;" onmouseover="this.style.background='rgba(200,169,106,0.1)'" onmouseout="this.style.background='transparent'">♡ Add to Wishlist</button>
+    </div>
+  </div>
+</div>
+
+
+<!-- ═══ TOAST ═══ -->
+<div class="toast" id="toast"></div>
+
+
+<!-- ═══ SCRIPTS ═══ -->
+<!-- Three.js r128 — 3D particle field -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+
+<!-- Main JS -->
+<script src="script.js?v=1783142302570"></script>
+<script src="catalog.js?v=1783142302570"></script>
+<script src="category.js?v=1783142302570"></script>
+
+<!-- Vaani Chatbot Widget Integration -->
+<script src="/vaani-widget.js" data-api-url="http://localhost:3000"></script>
+
+<!-- ═══ AUTHENTICATION MODAL ═══ -->
+<div class="auth-overlay" id="authOverlay" onclick="closeAuthModal(event)">
+  <div class="auth-modal" onclick="event.stopPropagation()">
+    <button class="auth-close" onclick="closeAuthModal()">×</button>
+    
+    <div class="auth-tabs">
+      <button class="auth-tab active" onclick="switchAuthTab('login')">Log In</button>
+      <button class="auth-tab" onclick="switchAuthTab('signup')">Sign Up</button>
+    </div>
+
+    <form class="auth-form" id="authForm" onsubmit="handleAuthSubmit(event)">
+      <div class="auth-role-group">
+        <label><input type="radio" name="role" value="customer" checked> Customer</label>
+        <label><input type="radio" name="role" value="admin"> Admin</label>
+        <label><input type="radio" name="role" value="seller"> Seller</label>
+      </div>
+
+      <div class="input-group" id="signupFields" style="display: none;">
+        <label>Full Name</label>
+        <input type="text" id="authName" placeholder="Enter your name">
+      </div>
+
+      <div class="input-group">
+        <label>Email Address</label>
+        <input type="email" id="authEmail" placeholder="Enter your email" required>
+      </div>
+
+      <div class="input-group">
+        <label>Password</label>
+        <input type="password" id="authPassword" placeholder="Enter your password" required>
+      </div>
+
+      <button type="submit" class="btn-primary auth-submit" id="authSubmitBtn">Log In</button>
+    </form>
+  </div>
+</div>
+
+<!-- ═══ CART SIDEBAR ═══ -->
+<div class="cart-overlay" id="cartOverlay" onclick="toggleCart()"></div>
+<div class="cart-sidebar" id="cartSidebar">
+  <div class="cart-header">
+    <h3>Your Cart</h3>
+    <button class="cart-close" onclick="toggleCart()">×</button>
+  </div>
+  <div class="cart-items" id="cartItemsContainer">
+    <!-- Items rendered here by JS -->
+    <div class="cart-empty">Your cart is empty.</div>
+  </div>
+  <div class="cart-footer">
+    <div class="cart-total">
+      <span>Subtotal</span>
+      <span id="cartTotalVal">₹0</span>
+    </div>
+    <button class="btn-primary checkout-btn" onclick="checkout()">Proceed to Checkout</button>
+  </div>
+</div>
+
+<!-- ═══ WISHLIST SIDEBAR ═══ -->
+<div class="cart-overlay" id="wishlistOverlay" onclick="toggleWishlistSidebar()"></div>
+<div class="cart-sidebar" id="wishlistSidebar">
+  <div class="cart-header">
+    <h3>Your Wishlist</h3>
+    <button class="cart-close" onclick="toggleWishlistSidebar()">×</button>
+  </div>
+  <div class="cart-items" id="wishlistItemsContainer">
+    <div class="cart-empty">Your wishlist is empty.</div>
+  </div>
+</div>
+
+<!-- ═══ SEARCH OVERLAY ═══ -->
+<div class="search-overlay" id="searchOverlay">
+  <div class="search-container">
+    <div class="search-header">
+      <input type="text" class="search-input" id="searchInput" placeholder="Search for products, collections, tags..." oninput="handleSearch(this.value)">
+      <button class="search-close" onclick="toggleSearch()">×</button>
+    </div>
+    <div class="search-results" id="searchResults">
+      <!-- Search results will populate here -->
+    </div>
+  </div>
+</div>
+
+
+</body>
+</html>

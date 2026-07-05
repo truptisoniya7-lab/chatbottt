@@ -1,4 +1,4 @@
-{
+window.PRODUCT_CATALOG = {
   "categories": [
     {
       "category_id": "CAT-001",
@@ -826,4 +826,4 @@
     }
   ],
   "ethnic_heritage": []
-}
+};
