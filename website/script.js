@@ -518,11 +518,11 @@ window.currentHeroIndex = 0;
 
 function initHeroCarousel() {
   const track = document.getElementById('heroTrack');
-  if (track && window.heroCarouselItems) {
+  if (track && window.heroCarouselItems && window.heroCarouselItems.length > 0) {
     track.style.width = (window.heroCarouselItems.length * 100) + '%';
     track.innerHTML = window.heroCarouselItems.map(item => `
       <div style="flex: 0 0 ${100 / window.heroCarouselItems.length}%; position: relative; height: 100%;">
-        <div class="model-img ${item.img}"></div>
+        <div class="model-img ${item.img || ''}" ${item.imageUrl ? `style="background-image: url('${item.imageUrl}'); background-size: cover; background-position: top center;"` : ''}></div>
         <div class="hero-model-info">
           <div class="hero-product-tag">${item.tag}</div>
           <div class="hero-product-name">${item.name}</div>
@@ -535,7 +535,7 @@ function initHeroCarousel() {
 
 function rotateHeroCarousel() {
   const track = document.getElementById('heroTrack');
-  if (!track) return;
+  if (!track || !window.heroCarouselItems || window.heroCarouselItems.length === 0) return;
   
   window.currentHeroIndex = (window.currentHeroIndex + 1) % window.heroCarouselItems.length;
   track.style.transform = `translateX(-${window.currentHeroIndex * (100 / window.heroCarouselItems.length)}%)`;
@@ -724,6 +724,26 @@ async function loadHomeProducts() {
         glare: true,
         "max-glare": 0.2,
       });
+    }
+
+    // Update Hero Carousel with dynamic products (prioritize sarees)
+    const sareeProducts = products.filter(p => /saree/i.test(p.name));
+    const carouselProducts = [...sareeProducts, ...products].filter((v, i, a) => a.findIndex(t => (t.id === v.id)) === i).slice(0, 5);
+    
+    if (carouselProducts.length > 0) {
+      window.heroCarouselItems = carouselProducts.map(p => {
+        const oldPrice = Math.round(p.price * 1.3);
+        return {
+          name: p.name,
+          priceNum: p.price,
+          price: '₹' + p.price,
+          oldPrice: '₹' + oldPrice,
+          tag: 'Featured Collection',
+          img: '',
+          imageUrl: p.image_url
+        };
+      });
+      initHeroCarousel(); // Re-render the carousel
     }
   } catch (err) {
     console.error('Error loading home products:', err);
