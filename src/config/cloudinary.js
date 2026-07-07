@@ -16,37 +16,43 @@ cloudinary.config({
  */
 function uploadBuffer(buffer, folder = 'vasudha/general', options = {}) {
   return new Promise((resolve, reject) => {
-    const uploadStream = cloudinary.uploader.upload_stream(
-      {
-        folder,
-        resource_type: 'image',
-        transformation: [
-          { quality: 'auto', fetch_format: 'auto' }, // Auto format (WebP/AVIF)
-        ],
-        ...options,
-      },
-      (error, result) => {
-        if (error) {
-          console.warn('Cloudinary upload failed, falling back to local storage:', error.message);
-          try {
-            const fs = require('fs');
-            const path = require('path');
-            const filename = (options.public_id || Date.now()) + '.jpg';
-            const localPath = path.join(__dirname, '../../website/assets/uploads', filename);
-            fs.writeFileSync(localPath, buffer);
-            return resolve({
-              secure_url: 'assets/uploads/' + filename,
-              public_id: options.public_id || filename,
-              width: 800, height: 1100, format: 'jpg', bytes: buffer.length
-            });
-          } catch (localErr) {
-            return reject(error); // Return original cloudinary error if local fails
-          }
-        }
-        resolve(result);
+    const fallbackLocal = (err) => {
+      console.warn('Cloudinary upload failed, falling back to local storage:', err.message || err);
+      try {
+        const fs = require('fs');
+        const path = require('path');
+        const filename = (options.public_id || Date.now()) + '.jpg';
+        const localPath = path.join(__dirname, '../../website/assets/uploads', filename);
+        fs.writeFileSync(localPath, buffer);
+        resolve({
+          secure_url: 'assets/uploads/' + filename,
+          public_id: options.public_id || filename,
+          width: 800, height: 1100, format: 'jpg', bytes: buffer.length
+        });
+      } catch (localErr) {
+        reject(err);
       }
-    );
-    uploadStream.end(buffer);
+    };
+
+    try {
+      const uploadStream = cloudinary.uploader.upload_stream(
+        {
+          folder,
+          resource_type: 'image',
+          transformation: [
+            { quality: 'auto', fetch_format: 'auto' }, // Auto format (WebP/AVIF)
+          ],
+          ...options,
+        },
+        (error, result) => {
+          if (error) return fallbackLocal(error);
+          resolve(result);
+        }
+      );
+      uploadStream.end(buffer);
+    } catch (syncErr) {
+      fallbackLocal(syncErr);
+    }
   });
 }
 
