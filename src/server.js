@@ -13,7 +13,7 @@ app.use(helmet({
   contentSecurityPolicy: false // Disable CSP for simple development; in prod we configure properly
 }));
 app.use(cors({
-  origin: process.env.ALLOWED_ORIGINS?.split(',') || '*', // Allow all by default for dev
+  origin: true, // Dynamically reflect origin to allow credentials
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization']
