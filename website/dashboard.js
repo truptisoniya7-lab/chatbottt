@@ -28,11 +28,16 @@ document.addEventListener("DOMContentLoaded", async () => {
     window.location.href = `dashboard-${currentUser.role}.html`;
   }
 
-  // 4. Fetch Real Stats from Backend
   try {
     const res = await fetch('http://localhost:3000/api/dashboard/stats', {
       headers: { 'Authorization': 'Bearer ' + token }
     });
+    if (res.status === 401) {
+      localStorage.removeItem('accessToken');
+      localStorage.removeItem('currentUser');
+      window.location.href = 'index.html';
+      return;
+    }
     if (!res.ok) throw new Error('Failed to fetch stats');
     const stats = await res.json();
     
@@ -134,6 +139,17 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
   } catch (error) {
     console.error('Error fetching dashboard stats:', error);
+    // If stats failed to load, update the UI to avoid being stuck on 'Loading...'
+    const els = document.querySelectorAll('.stat-value');
+    els.forEach(el => {
+      if (el.innerText === '' || el.innerText === '₹0' || el.innerText === '0') {
+        el.innerText = '—';
+      }
+    });
+    const tbody = document.querySelector('.dash-table tbody') || document.getElementById('recentOrdersBody');
+    if (tbody) {
+      tbody.innerHTML = `<tr><td colspan="5" style="text-align:center; color:#ef4444; padding: 2rem;">Error loading data. Please refresh or log in again.</td></tr>`;
+    }
   }
 });
 
