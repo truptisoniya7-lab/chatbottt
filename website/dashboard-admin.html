@@ -898,7 +898,7 @@
       const token = localStorage.getItem('accessToken');
       if (!token) return;
       try {
-        const res = await fetch(`http://localhost:3000/api/admin/products?page=${page}&limit=10&search=${encodeURIComponent(productsSearchQuery)}`, {
+        const res = await fetch(`http://localhost:3000/api/admin/products?page=${page}&limit=20&search=${encodeURIComponent(productsSearchQuery)}`, {
           headers: { 'Authorization': 'Bearer ' + token }
         });
         if (res.status === 401) {
