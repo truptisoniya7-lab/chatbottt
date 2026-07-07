@@ -928,6 +928,7 @@ footer { background: var(--plum-deep); padding: 5rem 6rem 2rem; border-top: 1px 
   /* Grids */
   .categories-grid { grid-template-columns: repeat(2, 1fr); gap: 1rem; }
   .product-grid { grid-template-columns: repeat(2, 1fr); gap: 1rem; }
+  .product-grid.men-grid { grid-template-columns: repeat(2, 1fr); }
   .trend-grid { grid-template-columns: repeat(2, 1fr); }
   .lookbook-grid { grid-template-columns: 1fr; }
   .ethnic-cards { grid-template-columns: 1fr 1fr; }
@@ -958,6 +959,11 @@ footer { background: var(--plum-deep); padding: 5rem 6rem 2rem; border-top: 1px 
 @media (max-width: 480px) {
   /* Global */
   body { font-size: 0.9rem; }
+  
+  .categories-grid, .product-grid, .trend-grid, .lookbook-grid, .ethnic-grid { padding: 0 1rem; gap: 1rem; }
+  .collection-header, .categories-header { padding: 0 1rem; }
+  
+  .hero-right { min-height: 50vh; margin-top: 1rem; }
   .hero-headline { font-size: 2.2rem; }
   .section-title { font-size: 1.8rem; }
   
