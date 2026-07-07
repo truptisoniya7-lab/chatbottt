@@ -106,7 +106,7 @@ async function uploadProductImage(req, res) {
     // Update the products table if product_id given
     if (product_id) {
       await db.query(
-        `UPDATE products SET image_url = $1 WHERE product_id = $2`,
+        `UPDATE products SET image_url = $1 WHERE id = $2`,
         [result.secure_url, product_id]
       );
     }

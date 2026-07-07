@@ -269,7 +269,6 @@
       <a href="#" id="nav-sellers"  onclick="switchTab('sellers', this)">🏪 Manage Sellers</a>
       <a href="#" id="nav-orders"   onclick="switchTab('orders', this)">📦 Global Orders</a>
       <a href="#" id="nav-health"   onclick="switchTab('health', this)">💻 System Health</a>
-      <a href="image-manager.html" style="margin-top:auto;">🖼️ Image Manager</a>
     </div>
     <div class="dash-logout">
       <button onclick="window.location.href='index.html'" style="margin-bottom: 1rem; background: transparent; border: 1px solid var(--gold-primary); color: var(--gold-primary);">Back to Home</button>
@@ -515,9 +514,11 @@
           </div>
 
           <div style="margin-bottom: 1.5rem;">
-            <label style="display:block; color:#9ca3af; font-size:0.8rem; margin-bottom:0.3rem;">Image URL (Cloudinary or local)</label>
+            <label style="display:block; color:#9ca3af; font-size:0.8rem; margin-bottom:0.3rem;">Upload Image</label>
+            <input type="file" id="prodImageFile" accept="image/*" style="width:100%; background:#1f2937; border:1px solid #374151; color:#fff; padding:0.6rem; border-radius:6px; box-sizing: border-box; margin-bottom: 0.5rem;">
+            <label style="display:block; color:#9ca3af; font-size:0.8rem; margin-bottom:0.3rem;">Or Image URL (Cloudinary or local)</label>
             <input type="text" id="prodImage" style="width:100%; background:#1f2937; border:1px solid #374151; color:#fff; padding:0.6rem; border-radius:6px; box-sizing: border-box;">
-            <div style="font-size: 0.75rem; color: #6b7280; margin-top: 0.3rem;">Use Image Manager to upload new images.</div>
+            <div style="font-size: 0.75rem; color: #6b7280; margin-top: 0.3rem;" id="uploadProgress"></div>
           </div>
 
           <div style="display: flex; gap: 1rem; justify-content: flex-end;">
@@ -980,6 +981,8 @@
       document.getElementById('prodStock').value = prod.stock;
       document.getElementById('prodSeller').value = prod.seller_id || '';
       document.getElementById('prodImage').value = prod.image_url || '';
+      document.getElementById('prodImageFile').value = '';
+      document.getElementById('uploadProgress').innerText = '';
       
       document.getElementById('productModalTitle').innerText = 'Edit Product';
       document.getElementById('productModalOverlay').classList.add('open');
@@ -991,22 +994,43 @@
       if (!token) return;
 
       const id = document.getElementById('prodId').value;
-      const payload = {
-        name: document.getElementById('prodName').value,
-        price: parseFloat(document.getElementById('prodPrice').value),
-        cost_price: parseFloat(document.getElementById('prodCost').value) || 0,
-        stock: parseInt(document.getElementById('prodStock').value) || 0,
-        seller_id: document.getElementById('prodSeller').value || null,
-        image_url: document.getElementById('prodImage').value
-      };
-
-      const method = id ? 'PUT' : 'POST';
-      const url = id ? `http://localhost:3000/api/admin/products/${id}` : `http://localhost:3000/api/admin/products`;
+      let finalImageUrl = document.getElementById('prodImage').value;
 
       try {
         const btn = document.getElementById('prodSaveBtn');
         btn.innerText = 'Saving...';
         btn.disabled = true;
+
+        // Handle file upload if file is selected
+        const fileInput = document.getElementById('prodImageFile');
+        if (fileInput.files.length > 0) {
+          document.getElementById('uploadProgress').innerText = 'Uploading image...';
+          const formData = new FormData();
+          formData.append('image', fileInput.files[0]);
+          if (id) formData.append('product_id', id);
+
+          const upRes = await fetch('http://localhost:3000/api/upload/product-image', {
+            method: 'POST',
+            headers: { 'Authorization': 'Bearer ' + token },
+            body: formData
+          });
+          if (!upRes.ok) throw new Error('Image upload failed');
+          const upData = await upRes.json();
+          finalImageUrl = upData.image.url;
+          document.getElementById('uploadProgress').innerText = 'Upload successful!';
+        }
+
+        const payload = {
+          name: document.getElementById('prodName').value,
+          price: parseFloat(document.getElementById('prodPrice').value),
+          cost_price: parseFloat(document.getElementById('prodCost').value) || 0,
+          stock: parseInt(document.getElementById('prodStock').value) || 0,
+          seller_id: document.getElementById('prodSeller').value || null,
+          image_url: finalImageUrl
+        };
+
+        const method = id ? 'PUT' : 'POST';
+        const url = id ? `http://localhost:3000/api/admin/products/${id}` : `http://localhost:3000/api/admin/products`;
 
         const res = await fetch(url, {
           method,
