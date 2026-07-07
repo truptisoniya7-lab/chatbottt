@@ -250,7 +250,7 @@ window.handleAuthSubmit = async function(e) {
   const password = document.getElementById('authPassword').value;
   const name = document.getElementById('authName') ? document.getElementById('authName').value : email.split('@')[0];
   
-  const endpoint = isSignup ? '/auth/register' : '/auth/login';
+  const endpoint = 'http://localhost:3000' + (isSignup ? '/auth/register' : '/auth/login');
   const payload = isSignup ? { name, email, password, role } : { email, password };
   
   try {
@@ -401,7 +401,7 @@ window.checkout = async function() {
 
   try {
     const token = window.safeStorage.getItem('accessToken');
-    const response = await fetch('/api/orders', {
+    const response = await fetch('http://localhost:3000/api/orders', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

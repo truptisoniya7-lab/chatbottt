@@ -30,7 +30,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   // 4. Fetch Real Stats from Backend
   try {
-    const res = await fetch('/api/dashboard/stats', {
+    const res = await fetch('http://localhost:3000/api/dashboard/stats', {
       headers: { 'Authorization': 'Bearer ' + token }
     });
     if (!res.ok) throw new Error('Failed to fetch stats');
@@ -133,7 +133,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 // Logout Function
 window.logout = async function() {
   try {
-    await fetch('/auth/logout', { method: 'POST' });
+    await fetch('http://localhost:3000/auth/logout', { method: 'POST' });
   } catch(e) {}
   localStorage.removeItem('accessToken');
   localStorage.removeItem('currentUser');
