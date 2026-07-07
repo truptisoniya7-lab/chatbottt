@@ -250,7 +250,7 @@ window.handleAuthSubmit = async function(e) {
   const password = document.getElementById('authPassword').value;
   const name = document.getElementById('authName') ? document.getElementById('authName').value : email.split('@')[0];
   
-  const endpoint = 'http://localhost:3000' + (isSignup ? '/auth/register' : '/auth/login');
+  const endpoint = '' + (isSignup ? '/auth/register' : '/auth/login');
   const payload = isSignup ? { name, email, password, role } : { email, password };
   
   try {
@@ -401,7 +401,7 @@ window.checkout = async function() {
 
   try {
     const token = window.safeStorage.getItem('accessToken');
-    const response = await fetch('http://localhost:3000/api/orders', {
+    const response = await fetch('/api/orders', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -674,7 +674,7 @@ async function loadHomeProducts() {
   if (!wGrid && !mGrid) return; // not on home page
 
   try {
-    const res = await fetch('http://localhost:3000/api/products');
+    const res = await fetch('/api/products');
     if (!res.ok) throw new Error('Failed to fetch products');
     const products = await res.json();
     
@@ -691,7 +691,7 @@ async function loadHomeProducts() {
       const oldPrice = Math.round(prod.price * 1.3); // Fake old price for UI
       let finalImgUrl = prod.image_url;
       if (finalImgUrl && finalImgUrl.startsWith('assets/uploads/')) {
-        finalImgUrl = 'http://localhost:3000/' + finalImgUrl;
+        finalImgUrl = '/' + finalImgUrl;
       }
       const imageStyle = finalImgUrl ? `background-image: url('${finalImgUrl}');` : `background: #374151;`;
       
@@ -739,7 +739,7 @@ async function loadHomeProducts() {
         const oldPrice = Math.round(p.price * 1.3);
         let finalImgUrl = p.image_url;
         if (finalImgUrl && finalImgUrl.startsWith('assets/uploads/')) {
-          finalImgUrl = 'http://localhost:3000/' + finalImgUrl;
+          finalImgUrl = '/' + finalImgUrl;
         }
         return {
           name: p.name,

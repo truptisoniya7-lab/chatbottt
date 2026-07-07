@@ -533,7 +533,7 @@
   <script src="dashboard.js"></script>
   <script>
     /* ── Admin Users Tab Logic ── */
-    const API = 'http://localhost:3000';
+    const API = '';
     let usersState = { page: 1, limit: 20, search: '', role: '', total: 0 };
     let searchTimer = null;
 
@@ -899,7 +899,7 @@
       const token = localStorage.getItem('accessToken');
       if (!token) return;
       try {
-        const res = await fetch(`http://localhost:3000/api/admin/products?page=${page}&limit=20&search=${encodeURIComponent(productsSearchQuery)}`, {
+        const res = await fetch(`/api/admin/products?page=${page}&limit=20&search=${encodeURIComponent(productsSearchQuery)}`, {
           headers: { 'Authorization': 'Bearer ' + token }
         });
         if (res.status === 401) {
@@ -1009,7 +1009,7 @@
           formData.append('image', fileInput.files[0]);
           if (id) formData.append('product_id', id);
 
-          const upRes = await fetch('http://localhost:3000/api/upload/product-image', {
+          const upRes = await fetch('/api/upload/product-image', {
             method: 'POST',
             headers: { 'Authorization': 'Bearer ' + token },
             body: formData
@@ -1037,7 +1037,7 @@
         };
 
         const method = id ? 'PUT' : 'POST';
-        const url = id ? `http://localhost:3000/api/admin/products/${id}` : `http://localhost:3000/api/admin/products`;
+        const url = id ? `/api/admin/products/${id}` : `/api/admin/products`;
 
         const res = await fetch(url, {
           method,
@@ -1070,7 +1070,7 @@
       if (!confirm('Are you sure you want to delete this product?')) return;
       const token = localStorage.getItem('accessToken');
       try {
-        const res = await fetch(`http://localhost:3000/api/admin/products/${id}`, {
+        const res = await fetch(`/api/admin/products/${id}`, {
           method: 'DELETE',
           headers: { 'Authorization': 'Bearer ' + token }
         });

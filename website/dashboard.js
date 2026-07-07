@@ -29,7 +29,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   }
 
   try {
-    const res = await fetch('http://localhost:3000/api/dashboard/stats', {
+    const res = await fetch('/api/dashboard/stats', {
       headers: { 'Authorization': 'Bearer ' + token }
     });
     if (res.status === 401) {
@@ -156,7 +156,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 // Logout Function
 window.logout = async function() {
   try {
-    await fetch('http://localhost:3000/auth/logout', { method: 'POST' });
+    await fetch('/auth/logout', { method: 'POST' });
   } catch(e) {}
   localStorage.removeItem('accessToken');
   localStorage.removeItem('currentUser');

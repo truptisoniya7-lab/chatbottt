@@ -12,6 +12,10 @@
     {
       "src": "api/**/*.js",
       "use": "@vercel/node"
+    },
+    {
+      "src": "src/server.js",
+      "use": "@vercel/node"
     }
   ],
   "routes": [
@@ -26,6 +30,14 @@
     {
       "src": "/chat/health",
       "dest": "/api/chat/health.js"
+    },
+    {
+      "src": "/api/(.*)",
+      "dest": "/src/server.js"
+    },
+    {
+      "src": "/auth/(.*)",
+      "dest": "/src/server.js"
     },
     {
       "src": "/(.*)",

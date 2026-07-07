@@ -59,6 +59,10 @@ server.on('error', (e) => {
   }
 });
 
-server.listen(PORT, () => {
-  console.log(`Server listening on port ${server.address().port}`);
-});
+if (require.main === module) {
+  server.listen(PORT, () => {
+    console.log(`Server listening on port ${server.address().port}`);
+  });
+}
+
+module.exports = app;
