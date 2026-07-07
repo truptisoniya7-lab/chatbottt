@@ -689,14 +689,18 @@ async function loadHomeProducts() {
       if (!grid) return;
 
       const oldPrice = Math.round(prod.price * 1.3); // Fake old price for UI
-      const imageStyle = prod.image_url ? `background-image: url('${prod.image_url}');` : `background: #374151;`;
+      let finalImgUrl = prod.image_url;
+      if (finalImgUrl && finalImgUrl.startsWith('assets/uploads/')) {
+        finalImgUrl = 'http://localhost:3000/' + finalImgUrl;
+      }
+      const imageStyle = finalImgUrl ? `background-image: url('${finalImgUrl}');` : `background: #374151;`;
       
       // Every 5th item can be tall
       const isTall = index % 5 === 0 ? 'tall' : '';
       
       const cardHtml = `
         <div class="pcard ${isTall} tilt-card">
-          <div class="pcard-bg" style="${imageStyle} background-size: cover; background-position: center; min-height: ${isTall ? '520px' : '380px'}; cursor: pointer;" onclick="openQuickView('${prod.name.replace(/'/g, "\\'")}', ${prod.price}, '', '${oldPrice}', 'Collection', '${prod.image_url || ''}')"></div>
+          <div class="pcard-bg" style="${imageStyle} background-size: cover; background-position: center; min-height: ${isTall ? '520px' : '380px'}; cursor: pointer;" onclick="openQuickView('${prod.name.replace(/'/g, "\\'")}', ${prod.price}, '', '${oldPrice}', 'Collection', '${finalImgUrl || ''}')"></div>
           <div class="pcard-overlay"></div>
           <div class="pcard-gloss"></div>
           <div class="badge-new">New In</div>
@@ -706,7 +710,7 @@ async function loadHomeProducts() {
             <button class="pcard-btn-add" onclick="addToCart('${prod.name.replace(/'/g, "\\'")}', ${prod.price})">Add to Cart</button>
             <button class="pcard-btn-buy" onclick="buyNow('${prod.name.replace(/'/g, "\\'")}', ${prod.price})">Buy Now</button>
           </div>
-          <div class="pcard-info" style="cursor: pointer;" onclick="openQuickView('${prod.name.replace(/'/g, "\\'")}', ${prod.price}, '', '${oldPrice}', 'Collection', '${prod.image_url || ''}')">
+          <div class="pcard-info" style="cursor: pointer;" onclick="openQuickView('${prod.name.replace(/'/g, "\\'")}', ${prod.price}, '', '${oldPrice}', 'Collection', '${finalImgUrl || ''}')">
             <div class="pcard-tag">Collection</div>
             <div class="pcard-name" style="font-size: 1.1rem; line-height: 1.4;">${prod.name}</div>
             <div class="pcard-price">₹${prod.price} <span class="pcard-price-old">₹${oldPrice}</span></div>
@@ -733,6 +737,10 @@ async function loadHomeProducts() {
     if (carouselProducts.length > 0) {
       window.heroCarouselItems = carouselProducts.map(p => {
         const oldPrice = Math.round(p.price * 1.3);
+        let finalImgUrl = p.image_url;
+        if (finalImgUrl && finalImgUrl.startsWith('assets/uploads/')) {
+          finalImgUrl = 'http://localhost:3000/' + finalImgUrl;
+        }
         return {
           name: p.name,
           priceNum: p.price,
@@ -740,7 +748,7 @@ async function loadHomeProducts() {
           oldPrice: '₹' + oldPrice,
           tag: 'Featured Collection',
           img: '',
-          imageUrl: p.image_url
+          imageUrl: finalImgUrl
         };
       });
       initHeroCarousel(); // Re-render the carousel
