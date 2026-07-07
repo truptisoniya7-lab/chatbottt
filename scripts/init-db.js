@@ -160,6 +160,7 @@ CREATE TABLE IF NOT EXISTS products (
   name          VARCHAR(256) NOT NULL,
   description   TEXT,
   price         NUMERIC(10, 2) NOT NULL,
+  cost_price    NUMERIC(10, 2) DEFAULT 0,
   stock         INTEGER DEFAULT 0,
   image_url     VARCHAR(512),
   created_at    TIMESTAMPTZ DEFAULT NOW(),
@@ -181,6 +182,7 @@ CREATE TABLE IF NOT EXISTS order_items (
   product_id        UUID REFERENCES products(id),
   quantity          INTEGER NOT NULL DEFAULT 1,
   price_at_purchase NUMERIC(10, 2) NOT NULL,
+  cost_at_purchase  NUMERIC(10, 2) DEFAULT 0,
   seller_id         UUID REFERENCES users(id) -- to easily query seller payouts
 );
 `;

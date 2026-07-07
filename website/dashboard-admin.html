@@ -7,6 +7,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400;1,500&family=DM+Sans:wght@300;400;500&family=Jost:wght@300;400;500&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="dashboard.css">
   <link rel="icon" type="image/png" href="/assets/favicon.png?v=1">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <style>
     /* ── ADMIN USERS TAB ── */
     :root { --gold-primary: #C8A96A; }
@@ -264,6 +265,7 @@
     <div class="dash-nav">
       <a href="#" class="active" id="nav-overview" onclick="switchTab('overview', this)">📊 Overview</a>
       <a href="#" id="nav-users"    onclick="switchTab('users', this)">👥 Manage Users</a>
+      <a href="#" id="nav-products" onclick="switchTab('products', this)">🏷️ Manage Products</a>
       <a href="#" id="nav-sellers"  onclick="switchTab('sellers', this)">🏪 Manage Sellers</a>
       <a href="#" id="nav-orders"   onclick="switchTab('orders', this)">📦 Global Orders</a>
       <a href="#" id="nav-health"   onclick="switchTab('health', this)">💻 System Health</a>
@@ -287,12 +289,23 @@
       </div>
     </header>
 
-    <!-- ═══ OVERVIEW TAB ═══ -->
+    <!-- ═══ OVERVIEW TAB (ADVANCED ANALYTICS) ═══ -->
     <div id="view-overview" class="dash-view active">
-      <div class="dash-stats" id="adminStatsGrid">
-        <div class="stat-card admin-stat-card">
-          <div class="stat-title">Platform Revenue</div>
-          <div class="stat-value" id="statRevenue">₹0</div>
+      <div class="dash-section-title" style="color: #f3f4f6; margin-bottom: 1.5rem;">Platform Analytics</div>
+      
+      <!-- Top Stats Grid: 6 cards -->
+      <div class="dash-stats" id="adminStatsGrid" style="grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));">
+        <div class="stat-card admin-stat-card" style="border-bottom-color: var(--gold-primary);">
+          <div class="stat-title">Platform Revenue (Sales)</div>
+          <div class="stat-value" id="statRevenue" style="color: var(--gold-primary);">₹0</div>
+        </div>
+        <div class="stat-card admin-stat-card" style="border-bottom-color: #10b981;">
+          <div class="stat-title">Overall Profit</div>
+          <div class="stat-value" id="statProfit" style="color: #10b981;">₹0</div>
+        </div>
+        <div class="stat-card admin-stat-card" style="border-bottom-color: #6366f1;">
+          <div class="stat-title">Profit Margin</div>
+          <div class="stat-value" id="statMargin" style="color: #818cf8;">0%</div>
         </div>
         <div class="stat-card admin-stat-card">
           <div class="stat-title">Total Users</div>
@@ -303,28 +316,80 @@
           <div class="stat-value" id="statSellers">0</div>
         </div>
         <div class="stat-card admin-stat-card">
-          <div class="stat-title">Total Orders</div>
-          <div class="stat-value" id="statOrders">0</div>
+          <div class="stat-title">Total Products Listed</div>
+          <div class="stat-value" id="statProducts">0</div>
         </div>
       </div>
 
-      <div class="dash-section-title" style="color: #f3f4f6;">Recent Platform Orders</div>
-      <div class="dash-table-wrap admin-table-wrap">
-        <table class="dash-table admin-table">
+      <!-- Chart and Recent Orders Side-by-Side -->
+      <div style="display: grid; grid-template-columns: 1fr; gap: 1.5rem; margin-top: 2rem;">
+        
+        <!-- Profit Chart -->
+        <div class="dash-table-wrap admin-table-wrap" style="padding: 1.5rem;">
+          <h3 style="color: #f3f4f6; font-size: 1.1rem; margin-bottom: 1rem; font-family: 'DM Sans', sans-serif;">Revenue vs Profit Breakdown</h3>
+          <div style="width: 100%; height: 300px; position: relative;">
+            <canvas id="profitChart"></canvas>
+          </div>
+        </div>
+
+        <!-- Recent Orders -->
+        <div class="dash-table-wrap admin-table-wrap">
+          <h3 style="color: #f3f4f6; font-size: 1.1rem; margin: 1.5rem; font-family: 'DM Sans', sans-serif;">Recent Platform Orders</h3>
+          <table class="dash-table admin-table">
+            <thead>
+              <tr>
+                <th>Order ID</th>
+                <th>Customer</th>
+                <th>Amount</th>
+                <th>Status</th>
+                <th>Date</th>
+              </tr>
+            </thead>
+            <tbody id="recentOrdersBody">
+              <tr><td colspan="5" style="text-align:center; color:#6b7280; padding: 2rem;">Loading...</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- ═══ PRODUCTS TAB ═══ -->
+    <div id="view-products" class="dash-view" style="display: none;">
+      <div class="dash-section-title" style="color: #f3f4f6; margin-bottom: 1.5rem; display: flex; justify-content: space-between; align-items: center;">
+        <div>
+          🏷️ Manage Products
+          <span id="productsTotalBadge" style="background:rgba(200,169,106,0.15); color:var(--gold-primary); font-size:0.75rem; padding:0.2rem 0.6rem; border-radius:12px; margin-left:0.75rem; vertical-align:middle;"></span>
+        </div>
+        <button class="action-btn-primary" onclick="openProductModal()" style="font-size: 0.85rem; padding: 0.6rem 1.2rem;">+ Add New Product</button>
+      </div>
+
+      <div class="admin-users-bar">
+        <div class="search-box">
+          <span>🔍</span>
+          <input type="text" id="productSearchInput" placeholder="Search products by name..." onkeyup="handleProductSearch(event)">
+        </div>
+      </div>
+
+      <div class="users-table-wrap">
+        <table class="users-table">
           <thead>
             <tr>
-              <th>Order ID</th>
-              <th>Customer</th>
-              <th>Amount</th>
-              <th>Status</th>
-              <th>Date</th>
+              <th>Image</th>
+              <th>Product Name</th>
+              <th>Selling Price</th>
+              <th>Cost Price</th>
+              <th>Stock</th>
+              <th>Actions</th>
             </tr>
           </thead>
-          <tbody id="recentOrdersBody">
-            <tr><td colspan="5" style="text-align:center; color:#6b7280; padding: 2rem;">Loading...</td></tr>
+          <tbody id="productsTableBody">
+            <tr><td colspan="6" class="loader-spinner">⏳ Loading products...</td></tr>
           </tbody>
         </table>
       </div>
+
+      <div class="pagination" id="productsPagination" style="margin-top: 1.5rem;"></div>
     </div>
 
     <!-- ═══ USERS TAB ═══ -->
@@ -407,6 +472,59 @@
       </div>
       <div class="modal-body" id="userDetailBody">
         <div class="loader-spinner">⏳ Loading user details...</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ PRODUCT MODAL ═══ -->
+  <div class="modal-overlay" id="productModalOverlay" onclick="closeProductModal(event)">
+    <div class="user-detail-modal" id="productModal" style="max-width: 500px;">
+      <div class="modal-header">
+        <h2 id="productModalTitle">Add New Product</h2>
+        <button class="modal-close" onclick="closeProductModal()">×</button>
+      </div>
+      <div class="modal-body">
+        <form id="productForm" onsubmit="saveProduct(event)">
+          <input type="hidden" id="prodId">
+          
+          <div style="margin-bottom: 1rem;">
+            <label style="display:block; color:#9ca3af; font-size:0.8rem; margin-bottom:0.3rem;">Product Name</label>
+            <input type="text" id="prodName" required style="width:100%; background:#1f2937; border:1px solid #374151; color:#fff; padding:0.6rem; border-radius:6px; box-sizing: border-box;">
+          </div>
+          
+          <div style="margin-bottom: 1rem; display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+            <div>
+              <label style="display:block; color:#9ca3af; font-size:0.8rem; margin-bottom:0.3rem;">Selling Price (₹)</label>
+              <input type="number" id="prodPrice" required step="0.01" style="width:100%; background:#1f2937; border:1px solid #374151; color:#fff; padding:0.6rem; border-radius:6px; box-sizing: border-box;">
+            </div>
+            <div>
+              <label style="display:block; color:#9ca3af; font-size:0.8rem; margin-bottom:0.3rem;">Cost Price (₹)</label>
+              <input type="number" id="prodCost" step="0.01" style="width:100%; background:#1f2937; border:1px solid #374151; color:#fff; padding:0.6rem; border-radius:6px; box-sizing: border-box;">
+            </div>
+          </div>
+          
+          <div style="margin-bottom: 1rem; display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+            <div>
+              <label style="display:block; color:#9ca3af; font-size:0.8rem; margin-bottom:0.3rem;">Stock</label>
+              <input type="number" id="prodStock" required style="width:100%; background:#1f2937; border:1px solid #374151; color:#fff; padding:0.6rem; border-radius:6px; box-sizing: border-box;">
+            </div>
+            <div>
+              <label style="display:block; color:#9ca3af; font-size:0.8rem; margin-bottom:0.3rem;">Seller ID (UUID)</label>
+              <input type="text" id="prodSeller" style="width:100%; background:#1f2937; border:1px solid #374151; color:#fff; padding:0.6rem; border-radius:6px; box-sizing: border-box;" placeholder="Optional">
+            </div>
+          </div>
+
+          <div style="margin-bottom: 1.5rem;">
+            <label style="display:block; color:#9ca3af; font-size:0.8rem; margin-bottom:0.3rem;">Image URL (Cloudinary or local)</label>
+            <input type="text" id="prodImage" style="width:100%; background:#1f2937; border:1px solid #374151; color:#fff; padding:0.6rem; border-radius:6px; box-sizing: border-box;">
+            <div style="font-size: 0.75rem; color: #6b7280; margin-top: 0.3rem;">Use Image Manager to upload new images.</div>
+          </div>
+
+          <div style="display: flex; gap: 1rem; justify-content: flex-end;">
+            <button type="button" class="action-btn-secondary" onclick="closeProductModal()">Cancel</button>
+            <button type="submit" class="action-btn-primary" id="prodSaveBtn">Save Product</button>
+          </div>
+        </form>
       </div>
     </div>
   </div>
@@ -715,13 +833,22 @@
     /* Override stats to use our new IDs */
     window.__adminStatsLoaded = function(stats) {
       const r = document.getElementById('statRevenue');
+      const p = document.getElementById('statProfit');
+      const m = document.getElementById('statMargin');
       const u = document.getElementById('statUsers');
       const s = document.getElementById('statSellers');
-      const o = document.getElementById('statOrders');
-      if (r) r.textContent = '₹' + (Number(stats.revenue)||0).toLocaleString('en-IN');
+      const o = document.getElementById('statProducts');
+      
+      const rev = Number(stats.revenue)||0;
+      const prof = Number(stats.profit)||0;
+      const margin = rev > 0 ? ((prof / rev) * 100).toFixed(1) : 0;
+
+      if (r) r.textContent = '₹' + rev.toLocaleString('en-IN');
+      if (p) p.textContent = '₹' + prof.toLocaleString('en-IN');
+      if (m) m.textContent = margin + '%';
       if (u) u.textContent = stats.totalUsers || 0;
       if (s) s.textContent = stats.activeSellers || 0;
-      if (o) o.textContent = stats.totalOrders || 0;
+      if (o) o.textContent = stats.totalProducts || 0;
 
       const tbody = document.getElementById('recentOrdersBody');
       if (tbody && stats.recentOrders) {
@@ -736,7 +863,203 @@
         `).join('')
         : `<tr><td colspan="5" style="text-align:center;color:#6b7280;padding:2rem;">No orders yet</td></tr>`;
       }
+
+      // Initialize Chart.js
+      const ctx = document.getElementById('profitChart');
+      if (ctx && !window.profitChartInst) {
+        window.profitChartInst = new Chart(ctx, {
+          type: 'doughnut',
+          data: {
+            labels: ['Cost (₹)', 'Profit (₹)'],
+            datasets: [{
+              data: [rev - prof, prof],
+              backgroundColor: ['#374151', '#10b981'],
+              borderWidth: 0,
+              hoverOffset: 4
+            }]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+              legend: { position: 'bottom', labels: { color: '#9ca3af' } }
+            },
+            cutout: '75%'
+          }
+        });
+      }
     };
+
+    /* ── Admin Products Tab Logic ── */
+    let currentProductsPage = 1;
+    let productsSearchQuery = '';
+
+    async function loadProducts(page = 1) {
+      if (!token) return;
+      try {
+        const res = await fetch(`http://localhost:3000/api/admin/products?page=${page}&limit=10&search=${encodeURIComponent(productsSearchQuery)}`, {
+          headers: { 'Authorization': 'Bearer ' + token }
+        });
+        if (res.status === 401) {
+          localStorage.removeItem('accessToken');
+          localStorage.removeItem('currentUser');
+          window.location.href = 'index.html';
+          return;
+        }
+        if (!res.ok) throw new Error('Failed to fetch products');
+        
+        const data = await res.json();
+        const tbody = document.getElementById('productsTableBody');
+        const badge = document.getElementById('productsTotalBadge');
+        const pag = document.getElementById('productsPagination');
+        
+        if (badge) badge.innerText = `${data.total} Products`;
+        currentProductsPage = data.page;
+
+        if (data.products.length === 0) {
+          tbody.innerHTML = `<tr><td colspan="6" style="text-align:center; padding:2rem; color:#6b7280;">No products found</td></tr>`;
+          pag.innerHTML = '';
+          return;
+        }
+
+        tbody.innerHTML = data.products.map(p => `
+          <tr>
+            <td>
+              <img src="${p.image_url || 'https://via.placeholder.com/40'}" style="width:40px;height:40px;border-radius:4px;object-fit:cover;border:1px solid #374151;">
+            </td>
+            <td>${escHtml(p.name)}</td>
+            <td>₹${Number(p.price).toLocaleString('en-IN')}</td>
+            <td>₹${Number(p.cost_price||0).toLocaleString('en-IN')}</td>
+            <td>${p.stock}</td>
+            <td>
+              <button class="tbl-action-btn" onclick='editProduct(${JSON.stringify(p).replace(/'/g, "&#39;")})'>Edit</button>
+              <button class="tbl-action-btn danger" onclick="deleteProduct('${p.id}')">Delete</button>
+            </td>
+          </tr>
+        `).join('');
+
+        // Pagination UI
+        let pagHtml = `<button class="page-btn" ${data.page === 1 ? 'disabled' : ''} onclick="loadProducts(${data.page - 1})">Prev</button>`;
+        pagHtml += `<span class="page-info">Page ${data.page} of ${data.totalPages || 1}</span>`;
+        pagHtml += `<button class="page-btn" ${data.page === data.totalPages || data.totalPages === 0 ? 'disabled' : ''} onclick="loadProducts(${data.page + 1})">Next</button>`;
+        pag.innerHTML = pagHtml;
+
+      } catch (error) {
+        console.error('Error loading products:', error);
+        document.getElementById('productsTableBody').innerHTML = `<tr><td colspan="6" style="text-align:center;color:#ef4444;padding:2rem;">Error loading products</td></tr>`;
+      }
+    }
+
+    let searchProdTimeout;
+    function handleProductSearch(e) {
+      clearTimeout(searchProdTimeout);
+      productsSearchQuery = e.target.value;
+      searchProdTimeout = setTimeout(() => {
+        loadProducts(1);
+      }, 300);
+    }
+
+    function openProductModal() {
+      document.getElementById('productForm').reset();
+      document.getElementById('prodId').value = '';
+      document.getElementById('productModalTitle').innerText = 'Add New Product';
+      document.getElementById('productModalOverlay').classList.add('open');
+    }
+
+    function closeProductModal(e) {
+      if (e && e.target !== document.getElementById('productModalOverlay')) return;
+      document.getElementById('productModalOverlay').classList.remove('open');
+    }
+
+    function editProduct(prod) {
+      document.getElementById('prodId').value = prod.id;
+      document.getElementById('prodName').value = prod.name;
+      document.getElementById('prodPrice').value = prod.price;
+      document.getElementById('prodCost').value = prod.cost_price;
+      document.getElementById('prodStock').value = prod.stock;
+      document.getElementById('prodSeller').value = prod.seller_id || '';
+      document.getElementById('prodImage').value = prod.image_url || '';
+      
+      document.getElementById('productModalTitle').innerText = 'Edit Product';
+      document.getElementById('productModalOverlay').classList.add('open');
+    }
+
+    async function saveProduct(e) {
+      e.preventDefault();
+      const id = document.getElementById('prodId').value;
+      const payload = {
+        name: document.getElementById('prodName').value,
+        price: parseFloat(document.getElementById('prodPrice').value),
+        cost_price: parseFloat(document.getElementById('prodCost').value) || 0,
+        stock: parseInt(document.getElementById('prodStock').value) || 0,
+        seller_id: document.getElementById('prodSeller').value || null,
+        image_url: document.getElementById('prodImage').value
+      };
+
+      const method = id ? 'PUT' : 'POST';
+      const url = id ? `http://localhost:3000/api/admin/products/${id}` : `http://localhost:3000/api/admin/products`;
+
+      try {
+        const btn = document.getElementById('prodSaveBtn');
+        btn.innerText = 'Saving...';
+        btn.disabled = true;
+
+        const res = await fetch(url, {
+          method,
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer ' + token
+          },
+          body: JSON.stringify(payload)
+        });
+
+        if (!res.ok) throw new Error('Failed to save product');
+        
+        closeProductModal();
+        loadProducts(currentProductsPage);
+        
+        // Refresh dashboard stats if viewing overview
+        if (typeof window.location !== 'undefined') {
+          showToast('Product saved successfully');
+        }
+      } catch (err) {
+        alert(err.message);
+      } finally {
+        const btn = document.getElementById('prodSaveBtn');
+        btn.innerText = 'Save Product';
+        btn.disabled = false;
+      }
+    }
+
+    async function deleteProduct(id) {
+      if (!confirm('Are you sure you want to delete this product?')) return;
+      try {
+        const res = await fetch(`http://localhost:3000/api/admin/products/${id}`, {
+          method: 'DELETE',
+          headers: { 'Authorization': 'Bearer ' + token }
+        });
+        if (!res.ok) throw new Error('Failed to delete product');
+        showToast('Product deleted');
+        loadProducts(currentProductsPage);
+      } catch (err) {
+        alert(err.message);
+      }
+    }
+
+    // Call loadProducts when tab opens (we hook into switchTab via MutationObserver or click event ideally, 
+    // but for simplicity we'll just add it to the window load for now or let the user click)
+    document.getElementById('nav-products').addEventListener('click', () => {
+      loadProducts(1);
+    });
+
+    // Simple toast function if not available
+    function showToast(msg) {
+      const toast = document.createElement('div');
+      toast.style.cssText = 'position:fixed;bottom:20px;right:20px;background:#10b981;color:#fff;padding:1rem 1.5rem;border-radius:8px;box-shadow:0 10px 15px rgba(0,0,0,0.2);z-index:9999;font-size:0.9rem;transition:opacity 0.3s;';
+      toast.innerText = msg;
+      document.body.appendChild(toast);
+      setTimeout(() => { toast.style.opacity = '0'; setTimeout(()=>toast.remove(), 300); }, 3000);
+    }
   </script>
 </body>
 </html>

@@ -47,10 +47,18 @@ async function getDashboardStats(req, res) {
     const role = req.user.role;
 
     if (role === 'admin') {
-      const revRes = await db.query("SELECT COALESCE(SUM(total_amount), 0) as total FROM orders WHERE status != 'cancelled'");
+      const financeRes = await db.query(`
+        SELECT 
+          COALESCE(SUM(o.total_amount), 0) as revenue,
+          COALESCE(SUM((oi.price_at_purchase - oi.cost_at_purchase) * oi.quantity), 0) as profit
+        FROM orders o
+        LEFT JOIN order_items oi ON o.id = oi.order_id
+        WHERE o.status != 'cancelled'
+      `);
       const usersRes = await db.query("SELECT COUNT(*) as count FROM users WHERE role = 'seller'");
       const ordersRes = await db.query("SELECT COUNT(*) as count FROM orders");
       const totalUsersRes = await db.query("SELECT COUNT(*) as count FROM users");
+      const productsRes = await db.query("SELECT COUNT(*) as count FROM products");
       
       const recentOrders = await db.query(`
         SELECT o.id as order_id, o.total_amount, o.status, o.created_at, u.name as customer_name
@@ -60,10 +68,12 @@ async function getDashboardStats(req, res) {
       `);
 
       return res.json({
-        revenue: revRes.rows[0].total,
+        revenue: financeRes.rows[0].revenue,
+        profit: financeRes.rows[0].profit,
         activeSellers: usersRes.rows[0].count,
         totalOrders: ordersRes.rows[0].count,
         totalUsers: totalUsersRes.rows[0].count,
+        totalProducts: productsRes.rows[0].count,
         recentOrders: recentOrders.rows
       });
     } 
@@ -294,6 +304,106 @@ async function updateUser(req, res) {
   }
 }
 
+// ── Admin Product Management ─────────────────────────────────────
+async function getAllProductsAdmin(req, res) {
+  try {
+    if (req.user.role !== 'admin') return res.status(403).json({ error: 'Admin only' });
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 20;
+    const offset = (page - 1) * limit;
+    const search = req.query.search || '';
+
+    let countQuery = 'SELECT COUNT(*) FROM products';
+    let dataQuery = `
+      SELECT p.*, u.name as seller_name 
+      FROM products p 
+      LEFT JOIN users u ON p.seller_id = u.id
+    `;
+    let params = [];
+
+    if (search) {
+      countQuery += ' WHERE name ILIKE $1';
+      dataQuery += ' WHERE p.name ILIKE $1';
+      params.push(`%${search}%`);
+    }
+
+    dataQuery += ` ORDER BY p.created_at DESC LIMIT $${params.length + 1} OFFSET $${params.length + 2}`;
+    
+    const countRes = await db.query(countQuery, params);
+    const dataRes = await db.query(dataQuery, [...params, limit, offset]);
+
+    res.json({
+      total: parseInt(countRes.rows[0].count),
+      page,
+      totalPages: Math.ceil(parseInt(countRes.rows[0].count) / limit),
+      products: dataRes.rows
+    });
+  } catch (error) {
+    console.error('Fetch admin products error:', error);
+    res.status(500).json({ error: 'Failed to fetch products' });
+  }
+}
+
+async function createProductAdmin(req, res) {
+  try {
+    if (req.user.role !== 'admin') return res.status(403).json({ error: 'Admin only' });
+    const { name, description, price, cost_price, stock, image_url, seller_id } = req.body;
+    if (!name || !price) return res.status(400).json({ error: 'Name and price are required' });
+
+    const result = await db.query(`
+      INSERT INTO products (name, description, price, cost_price, stock, image_url, seller_id)
+      VALUES ($1, $2, $3, $4, $5, $6, $7)
+      RETURNING *
+    `, [name, description, price, cost_price || 0, stock || 0, image_url, seller_id || null]);
+    
+    res.status(201).json(result.rows[0]);
+  } catch (error) {
+    console.error('Create product error:', error);
+    res.status(500).json({ error: 'Failed to create product' });
+  }
+}
+
+async function updateProductAdmin(req, res) {
+  try {
+    if (req.user.role !== 'admin') return res.status(403).json({ error: 'Admin only' });
+    const { id } = req.params;
+    const { name, description, price, cost_price, stock, image_url, seller_id } = req.body;
+
+    const result = await db.query(`
+      UPDATE products 
+      SET name = COALESCE($1, name),
+          description = COALESCE($2, description),
+          price = COALESCE($3, price),
+          cost_price = COALESCE($4, cost_price),
+          stock = COALESCE($5, stock),
+          image_url = COALESCE($6, image_url),
+          seller_id = COALESCE($7, seller_id),
+          updated_at = NOW()
+      WHERE id = $8
+      RETURNING *
+    `, [name, description, price, cost_price, stock, image_url, seller_id, id]);
+
+    if (result.rows.length === 0) return res.status(404).json({ error: 'Product not found' });
+    res.json(result.rows[0]);
+  } catch (error) {
+    console.error('Update product error:', error);
+    res.status(500).json({ error: 'Failed to update product' });
+  }
+}
+
+async function deleteProductAdmin(req, res) {
+  try {
+    if (req.user.role !== 'admin') return res.status(403).json({ error: 'Admin only' });
+    const { id } = req.params;
+    const result = await db.query('DELETE FROM products WHERE id = $1 RETURNING id', [id]);
+    if (result.rows.length === 0) return res.status(404).json({ error: 'Product not found' });
+    res.json({ message: 'Product deleted successfully' });
+  } catch (error) {
+    console.error('Delete product error:', error);
+    res.status(500).json({ error: 'Failed to delete product' });
+  }
+}
+
 module.exports = {
   placeOrder,
   getDashboardStats,
@@ -301,5 +411,8 @@ module.exports = {
   getAllUsers,
   getUserDetail,
   updateUser,
+  getAllProductsAdmin,
+  createProductAdmin,
+  updateProductAdmin,
+  deleteProductAdmin
 };
-

@@ -12,5 +12,11 @@ router.get('/admin/users',      authenticate(true), ecommerceController.getAllUs
 router.get('/admin/users/:id',  authenticate(true), ecommerceController.getUserDetail);
 router.patch('/admin/users/:id', authenticate(true), ecommerceController.updateUser);
 
+// ── Admin: Product Management ────────────────────────────────────
+router.get('/admin/products',     authenticate(true), ecommerceController.getAllProductsAdmin);
+router.post('/admin/products',    authenticate(true), ecommerceController.createProductAdmin);
+router.put('/admin/products/:id', authenticate(true), ecommerceController.updateProductAdmin);
+router.delete('/admin/products/:id', authenticate(true), ecommerceController.deleteProductAdmin);
+
 module.exports = router;
 
