@@ -665,3 +665,69 @@ window.handleSearch = function(query) {
 document.addEventListener("DOMContentLoaded", () => {
   document.getElementById('navCartBtn').innerText = `Cart (${cart.reduce((sum, item) => sum + item.quantity, 0)})`;
 });
+
+// Load home page products dynamically
+async function loadHomeProducts() {
+  const wGrid = document.getElementById('women-grid');
+  const mGrid = document.querySelector('.product-grid.men-grid');
+  
+  if (!wGrid && !mGrid) return; // not on home page
+
+  try {
+    const res = await fetch('http://localhost:3000/api/products');
+    if (!res.ok) throw new Error('Failed to fetch products');
+    const products = await res.json();
+    
+    if (wGrid) wGrid.innerHTML = '';
+    if (mGrid) mGrid.innerHTML = '';
+
+    products.forEach((prod, index) => {
+      // Determine if it belongs to Men's based on name/category/tag
+      const isMen = /(men|kurta|sherwani|nehru|shirt)/i.test(prod.name) && !/(women|saree|lehenga|anarkali|sharara|dress)/i.test(prod.name);
+      
+      const grid = isMen ? mGrid : wGrid;
+      if (!grid) return;
+
+      const oldPrice = Math.round(prod.price * 1.3); // Fake old price for UI
+      const imageStyle = prod.image_url ? `background-image: url('${prod.image_url}');` : `background: #374151;`;
+      
+      // Every 5th item can be tall
+      const isTall = index % 5 === 0 ? 'tall' : '';
+      
+      const cardHtml = `
+        <div class="pcard ${isTall} tilt-card">
+          <div class="pcard-bg" style="${imageStyle} background-size: cover; background-position: center; min-height: ${isTall ? '520px' : '380px'}; cursor: pointer;" onclick="openQuickView('${prod.name.replace(/'/g, "\\'")}', ${prod.price}, '', '${oldPrice}', 'Collection', '${prod.image_url || ''}')"></div>
+          <div class="pcard-overlay"></div>
+          <div class="pcard-gloss"></div>
+          <div class="badge-new">New In</div>
+          
+          <button class="pcard-btn" onclick="event.stopPropagation(); addToCart('${prod.name.replace(/'/g, "\\'")}', ${prod.price})">+</button>
+          <div class="pcard-actions">
+            <button class="pcard-btn-add" onclick="addToCart('${prod.name.replace(/'/g, "\\'")}', ${prod.price})">Add to Cart</button>
+            <button class="pcard-btn-buy" onclick="buyNow('${prod.name.replace(/'/g, "\\'")}', ${prod.price})">Buy Now</button>
+          </div>
+          <div class="pcard-info" style="cursor: pointer;" onclick="openQuickView('${prod.name.replace(/'/g, "\\'")}', ${prod.price}, '', '${oldPrice}', 'Collection', '${prod.image_url || ''}')">
+            <div class="pcard-tag">Collection</div>
+            <div class="pcard-name" style="font-size: 1.1rem; line-height: 1.4;">${prod.name}</div>
+            <div class="pcard-price">₹${prod.price} <span class="pcard-price-old">₹${oldPrice}</span></div>
+          </div>
+        </div>
+      `;
+      grid.innerHTML += cardHtml;
+    });
+    
+    // Re-initialize tilt effect for new cards if Tilt.js function exists
+    if (typeof VanillaTilt !== 'undefined') {
+      VanillaTilt.init(document.querySelectorAll(".tilt-card"), {
+        max: 8,
+        speed: 400,
+        glare: true,
+        "max-glare": 0.2,
+      });
+    }
+  } catch (err) {
+    console.error('Error loading home products:', err);
+  }
+}
+
+document.addEventListener("DOMContentLoaded", loadHomeProducts);
