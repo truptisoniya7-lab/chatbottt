@@ -969,6 +969,7 @@ footer { background: var(--plum-deep); padding: 5rem 6rem 2rem; border-top: 1px 
   
   /* Grids to 1 column */
   .product-grid { grid-template-columns: 1fr; }
+  .product-grid.men-grid { grid-template-columns: 1fr; }
   .pcard.tall { grid-row: auto; }
   .pcard.tall .pcard-bg { min-height: 400px !important; }
   .trend-grid { grid-template-columns: 1fr; }
