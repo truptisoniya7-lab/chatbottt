@@ -1,0 +1,965 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Image Manager — Vasudha Couture Admin</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400;1,500&family=DM+Sans:wght@300;400;500&family=Jost:wght@300;400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="dashboard.css">
+  <link rel="icon" type="image/png" href="/assets/favicon.png?v=1">
+  <style>
+    :root { --gold-primary: #C8A96A; }
+
+    /* ── PAGE LAYOUT ── */
+    .img-mgr-header {
+      display: flex; justify-content: space-between; align-items: center;
+      margin-bottom: 1.5rem; flex-wrap: wrap; gap: 1rem;
+    }
+    .img-mgr-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.8rem; color: #f3f4f6; margin: 0;
+    }
+    .img-mgr-subtitle { color: #9ca3af; font-size: 0.88rem; margin-top: 0.25rem; }
+
+    /* ── TABS ── */
+    .imgmgr-tabs {
+      display: flex; gap: 0; border-bottom: 1px solid #374151;
+      margin-bottom: 1.5rem; flex-wrap: wrap;
+    }
+    .imgmgr-tab {
+      background: none; border: none; border-bottom: 3px solid transparent;
+      color: #6b7280; padding: 0.75rem 1.4rem; cursor: pointer;
+      font-size: 0.88rem; font-weight: 500; transition: all 0.2s;
+      margin-bottom: -1px;
+    }
+    .imgmgr-tab.active, .imgmgr-tab:hover {
+      color: var(--gold-primary); border-bottom-color: var(--gold-primary);
+    }
+
+    /* ── UPLOAD ZONE ── */
+    .upload-zone {
+      border: 2px dashed #374151; border-radius: 16px;
+      padding: 3rem 2rem; text-align: center;
+      cursor: pointer; transition: all 0.3s;
+      background: rgba(200,169,106,0.02); margin-bottom: 1.5rem;
+    }
+    .upload-zone:hover, .upload-zone.drag-over {
+      border-color: var(--gold-primary);
+      background: rgba(200,169,106,0.06);
+    }
+    .upload-icon { font-size: 3rem; margin-bottom: 1rem; opacity: 0.6; }
+    .upload-text { color: #9ca3af; font-size: 0.95rem; }
+    .upload-text strong { color: var(--gold-primary); }
+    #fileInput { display: none; }
+
+    /* Upload config */
+    .upload-config {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;
+      margin-bottom: 1.5rem;
+    }
+    @media(max-width:600px) { .upload-config { grid-template-columns: 1fr; } }
+    .cfg-group label {
+      display: block; font-size: 0.78rem; text-transform: uppercase;
+      letter-spacing: 0.07em; color: #6b7280; margin-bottom: 0.4rem;
+    }
+    .cfg-input, .cfg-select {
+      width: 100%; background: #1f2937; border: 1px solid #374151;
+      color: #f3f4f6; border-radius: 8px; padding: 0.7rem 1rem;
+      font-size: 0.9rem; outline: none; transition: border 0.2s;
+      box-sizing: border-box;
+    }
+    .cfg-input:focus, .cfg-select:focus { border-color: var(--gold-primary); }
+
+    /* Upload queue */
+    .upload-queue { display: flex; flex-direction: column; gap: 0.75rem; margin-bottom: 1.5rem; }
+    .queue-item {
+      display: flex; align-items: center; gap: 1rem;
+      background: #1f2937; border: 1px solid #374151; border-radius: 10px;
+      padding: 0.85rem 1.2rem;
+    }
+    .queue-thumb {
+      width: 56px; height: 56px; object-fit: cover;
+      border-radius: 6px; flex-shrink: 0; background: #374151;
+    }
+    .queue-info { flex: 1; min-width: 0; }
+    .queue-name { font-size: 0.88rem; color: #f3f4f6; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .queue-size { font-size: 0.75rem; color: #6b7280; }
+    .queue-progress-wrap { height: 4px; background: #374151; border-radius: 2px; margin-top: 0.5rem; overflow: hidden; }
+    .queue-progress { height: 100%; background: var(--gold-primary); border-radius: 2px; width: 0%; transition: width 0.3s; }
+    .queue-status { font-size: 0.78rem; color: #6b7280; flex-shrink: 0; }
+    .queue-remove { background: none; border: none; color: #6b7280; cursor: pointer; font-size: 1.2rem; flex-shrink: 0; }
+    .queue-remove:hover { color: #f87171; }
+
+    .btn-upload-all {
+      background: linear-gradient(135deg, #8B6914, var(--gold-primary));
+      color: #111; border: none; padding: 0.85rem 2rem;
+      border-radius: 10px; font-weight: 600; cursor: pointer;
+      font-size: 0.9rem; transition: opacity 0.2s; width: 100%;
+      display: flex; align-items: center; justify-content: center; gap: 0.5rem;
+    }
+    .btn-upload-all:hover { opacity: 0.85; }
+    .btn-upload-all:disabled { opacity: 0.4; cursor: not-allowed; }
+
+    /* ── WEBSITE IMAGES GRID ── */
+    .img-filter-bar {
+      display: flex; gap: 0.75rem; margin-bottom: 1.5rem;
+      flex-wrap: wrap; align-items: center;
+    }
+    .img-filter-chip {
+      background: #1f2937; border: 1px solid #374151;
+      color: #9ca3af; padding: 0.45rem 1rem; border-radius: 20px;
+      cursor: pointer; font-size: 0.82rem; transition: all 0.2s;
+    }
+    .img-filter-chip.active, .img-filter-chip:hover {
+      background: rgba(200,169,106,0.12); border-color: var(--gold-primary);
+      color: var(--gold-primary);
+    }
+
+    .img-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 1.2rem; margin-bottom: 2rem;
+    }
+    .img-card {
+      background: #1f2937; border: 1px solid #374151;
+      border-radius: 12px; overflow: hidden;
+      transition: all 0.2s; position: relative;
+    }
+    .img-card:hover { border-color: var(--gold-primary); transform: translateY(-2px); box-shadow: 0 8px 24px rgba(0,0,0,0.4); }
+    .img-card.missing { border-color: rgba(239,68,68,0.4); background: rgba(239,68,68,0.04); }
+    .img-card.cloudinary { border-color: rgba(16,185,129,0.4); background: rgba(16,185,129,0.04); }
+
+    .img-thumb-wrap {
+      position: relative; aspect-ratio: 4/3; overflow: hidden;
+      background: #111827;
+    }
+    .img-thumb {
+      width: 100%; height: 100%; object-fit: cover;
+      transition: transform 0.3s;
+    }
+    .img-card:hover .img-thumb { transform: scale(1.04); }
+    .img-thumb-placeholder {
+      width: 100%; height: 100%;
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      color: #6b7280; gap: 0.5rem; font-size: 0.8rem;
+    }
+    .img-thumb-placeholder .ph-icon { font-size: 2.5rem; opacity: 0.4; }
+
+    .img-source-badge {
+      position: absolute; top: 0.5rem; right: 0.5rem;
+      padding: 0.2rem 0.5rem; border-radius: 6px;
+      font-size: 0.65rem; font-weight: 700; letter-spacing: 0.05em;
+    }
+    .badge-local      { background: rgba(59,130,246,0.85);  color: #fff; }
+    .badge-cloudinary { background: rgba(16,185,129,0.85);  color: #fff; }
+    .badge-missing    { background: rgba(239,68,68,0.85);   color: #fff; }
+
+    .img-card-body { padding: 0.85rem; }
+    .img-card-name { font-size: 0.82rem; font-weight: 600; color: #f3f4f6; margin-bottom: 0.2rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .img-card-cat  { font-size: 0.72rem; color: #9ca3af; margin-bottom: 0.6rem; }
+    .img-card-url  { font-size: 0.7rem; color: #6b7280; font-family: monospace; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; margin-bottom: 0.75rem; }
+
+    .img-card-actions { display: flex; gap: 0.4rem; }
+    .img-act-btn {
+      flex: 1; background: #111827; border: 1px solid #374151;
+      color: #9ca3af; padding: 0.4rem 0; border-radius: 6px;
+      cursor: pointer; font-size: 0.75rem; transition: all 0.2s; text-align: center;
+    }
+    .img-act-btn:hover { border-color: var(--gold-primary); color: var(--gold-primary); }
+    .img-act-btn.replace-btn { background: rgba(200,169,106,0.1); color: var(--gold-primary); border-color: rgba(200,169,106,0.3); }
+
+    /* ── REPLACE MODAL ── */
+    .modal-overlay {
+      position: fixed; inset: 0;
+      background: rgba(0,0,0,0.8); backdrop-filter: blur(4px);
+      display: flex; align-items: center; justify-content: center;
+      z-index: 9999; opacity: 0; pointer-events: none; transition: opacity 0.25s;
+    }
+    .modal-overlay.open { opacity: 1; pointer-events: all; }
+    .replace-modal {
+      background: #111827; border: 1px solid #374151; border-radius: 16px;
+      width: 90%; max-width: 560px; max-height: 90vh; overflow-y: auto;
+      transform: translateY(20px); transition: transform 0.3s cubic-bezier(0.16,1,0.3,1);
+      box-shadow: 0 25px 60px rgba(0,0,0,0.7);
+    }
+    .modal-overlay.open .replace-modal { transform: translateY(0); }
+    .modal-hdr {
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 1.2rem 1.5rem; border-bottom: 1px solid #1f2937;
+    }
+    .modal-hdr h3 { font-family: 'Cormorant Garamond', serif; font-size: 1.4rem; color: var(--gold-primary); margin: 0; }
+    .modal-cls { background: none; border: none; color: #6b7280; font-size: 1.8rem; cursor: pointer; }
+    .modal-cls:hover { color: #f3f4f6; }
+    .modal-bdy { padding: 1.5rem; }
+
+    .replace-preview {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1.5rem;
+    }
+    .rep-pv-card { background: #1f2937; border: 1px solid #374151; border-radius: 10px; overflow: hidden; }
+    .rep-pv-label { padding: 0.5rem 0.75rem; font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.07em; color: #6b7280; }
+    .rep-pv-img { width: 100%; aspect-ratio: 4/3; object-fit: cover; background: #111827; }
+    .rep-pv-placeholder { width: 100%; aspect-ratio: 4/3; display: flex; align-items: center; justify-content: center; color: #4b5563; font-size: 0.8rem; background: #111827; flex-direction: column; gap: 0.3rem; }
+
+    .rep-drop-zone {
+      border: 2px dashed #374151; border-radius: 10px;
+      padding: 2rem; text-align: center; cursor: pointer;
+      transition: all 0.2s; margin-bottom: 1rem;
+    }
+    .rep-drop-zone:hover, .rep-drop-zone.drag-over { border-color: var(--gold-primary); background: rgba(200,169,106,0.06); }
+    .rep-drop-icon { font-size: 2rem; margin-bottom: 0.5rem; }
+    .rep-drop-text { color: #9ca3af; font-size: 0.85rem; }
+    .rep-drop-text strong { color: var(--gold-primary); }
+    #replaceFileInput { display: none; }
+
+    .rep-url-input {
+      width: 100%; background: #1f2937; border: 1px solid #374151;
+      color: #f3f4f6; border-radius: 8px; padding: 0.7rem 1rem;
+      font-size: 0.85rem; outline: none; margin-bottom: 1rem; box-sizing: border-box;
+    }
+    .rep-url-input:focus { border-color: var(--gold-primary); }
+    .rep-divider { text-align: center; color: #4b5563; font-size: 0.8rem; margin: 0.75rem 0; }
+
+    .rep-actions { display: flex; gap: 0.75rem; }
+    .rep-btn-primary {
+      flex: 1; background: linear-gradient(135deg, #8B6914, var(--gold-primary));
+      color: #111; border: none; padding: 0.8rem;
+      border-radius: 8px; font-weight: 600; cursor: pointer; font-size: 0.88rem;
+    }
+    .rep-btn-cancel {
+      background: #1f2937; border: 1px solid #374151; color: #9ca3af;
+      padding: 0.8rem 1.2rem; border-radius: 8px; cursor: pointer; font-size: 0.88rem;
+    }
+
+    /* Progress bar for replace */
+    .rep-progress-wrap { height: 6px; background: #1f2937; border-radius: 3px; margin-bottom: 1rem; overflow: hidden; display: none; }
+    .rep-progress { height: 100%; background: var(--gold-primary); width: 0%; transition: width 0.3s; }
+
+    /* Stats bar */
+    .img-stats {
+      display: flex; gap: 1rem; margin-bottom: 1.5rem; flex-wrap: wrap;
+    }
+    .img-stat {
+      background: #1f2937; border: 1px solid #374151; border-radius: 10px;
+      padding: 0.75rem 1.2rem; display: flex; align-items: center; gap: 0.75rem;
+    }
+    .img-stat-icon { font-size: 1.4rem; }
+    .img-stat-num { font-size: 1.2rem; font-weight: 600; color: #f3f4f6; }
+    .img-stat-lbl { font-size: 0.72rem; color: #6b7280; text-transform: uppercase; letter-spacing: 0.05em; }
+
+    /* Toast */
+    #imgToast {
+      position: fixed; bottom: 30px; left: 50%;
+      transform: translateX(-50%) translateY(20px);
+      background: var(--gold-primary); color: #111;
+      padding: 0.85rem 2rem; border-radius: 30px;
+      font-size: 0.85rem; font-weight: 500;
+      opacity: 0; pointer-events: none; transition: all 0.3s;
+      z-index: 99999; white-space: nowrap;
+    }
+    #imgToast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+    #imgToast.error { background: #7f1d1d; color: #fca5a5; }
+  </style>
+</head>
+<body class="dashboard-body admin-body">
+
+  <button class="dash-toggle-btn" aria-label="Toggle Sidebar" onclick="toggleSidebarLocal()">☰</button>
+  <div class="dash-sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebarLocal()"></div>
+
+  <aside class="dash-sidebar admin-sidebar">
+    <a href="index.html" class="dash-logo">Vasudha <span>Couture</span></a>
+    <div class="dash-nav">
+      <a href="dashboard-admin.html">📊 Overview</a>
+      <a href="dashboard-admin.html#users">👥 Manage Users</a>
+      <a href="image-manager.html" class="active">🖼️ Image Manager</a>
+      <a href="dashboard-admin.html#orders">📦 Global Orders</a>
+    </div>
+    <div class="dash-logout">
+      <button onclick="window.location.href='index.html'" style="margin-bottom:1rem;background:transparent;border:1px solid var(--gold-primary);color:var(--gold-primary);">Back to Home</button>
+      <button onclick="doLogout()">Log Out</button>
+    </div>
+  </aside>
+
+  <main class="dash-main">
+    <div class="img-mgr-header">
+      <div>
+        <h1 class="img-mgr-title">🖼️ Image Manager</h1>
+        <div class="img-mgr-subtitle">Upload, replace and manage all website images via Cloudinary</div>
+      </div>
+      <a href="dashboard-admin.html" style="background:#1f2937;border:1px solid #374151;color:#9ca3af;padding:0.6rem 1.2rem;border-radius:8px;text-decoration:none;font-size:0.85rem;">← Admin Dashboard</a>
+    </div>
+
+    <!-- ── TABS ── -->
+    <div class="imgmgr-tabs">
+      <button class="imgmgr-tab active" onclick="showTab('tab-website', this)">🌐 Website Images</button>
+      <button class="imgmgr-tab"        onclick="showTab('tab-upload', this)">⬆️ Upload New</button>
+      <button class="imgmgr-tab"        onclick="showTab('tab-cloudinary', this)">☁️ Cloudinary Library</button>
+    </div>
+
+    <!-- ══════ TAB: WEBSITE IMAGES ══════ -->
+    <div id="tab-website">
+
+      <!-- Stats -->
+      <div class="img-stats">
+        <div class="img-stat"><div class="img-stat-icon">📁</div><div><div class="img-stat-num" id="statTotal">—</div><div class="img-stat-lbl">Total Images</div></div></div>
+        <div class="img-stat"><div class="img-stat-icon">✅</div><div><div class="img-stat-num" id="statOk" style="color:#34d399">—</div><div class="img-stat-lbl">Available</div></div></div>
+        <div class="img-stat"><div class="img-stat-icon">❌</div><div><div class="img-stat-num" id="statMissing" style="color:#f87171">—</div><div class="img-stat-lbl">Missing</div></div></div>
+        <div class="img-stat"><div class="img-stat-icon">☁️</div><div><div class="img-stat-num" id="statCloud" style="color:#60a5fa">—</div><div class="img-stat-lbl">On Cloudinary</div></div></div>
+      </div>
+
+      <!-- Filter -->
+      <div class="img-filter-bar">
+        <span style="color:#6b7280;font-size:0.82rem;">Filter:</span>
+        <button class="img-filter-chip active" onclick="filterImages('all',this)">All</button>
+        <button class="img-filter-chip" onclick="filterImages('products',this)">Products</button>
+        <button class="img-filter-chip" onclick="filterImages('categories',this)">Categories</button>
+        <button class="img-filter-chip" onclick="filterImages('lookbook',this)">Lookbook</button>
+        <button class="img-filter-chip" onclick="filterImages('trending',this)">Trending</button>
+        <button class="img-filter-chip" onclick="filterImages('missing',this)" style="border-color:rgba(239,68,68,0.3);color:#f87171;">❌ Missing Only</button>
+      </div>
+
+      <!-- Grid -->
+      <div class="img-grid" id="websiteImgGrid">
+        <div style="color:#6b7280;padding:2rem;">Loading images...</div>
+      </div>
+    </div>
+
+    <!-- ══════ TAB: UPLOAD NEW ══════ -->
+    <div id="tab-upload" style="display:none;">
+
+      <div class="upload-config">
+        <div class="cfg-group">
+          <label>Image Category / Folder</label>
+          <select class="cfg-select" id="uploadFolder">
+            <option value="vasudha/products">Products</option>
+            <option value="vasudha/categories">Categories</option>
+            <option value="vasudha/lookbook">Lookbook</option>
+            <option value="vasudha/trending">Trending / Misc</option>
+            <option value="vasudha/hero">Hero Section</option>
+          </select>
+        </div>
+        <div class="cfg-group">
+          <label>CSS Class to update (optional)</label>
+          <select class="cfg-select" id="uploadCssClass">
+            <option value="">— Select class to update —</option>
+            <optgroup label="Products – Women">
+              <option value="img-saree">img-saree (Saree)</option>
+              <option value="img-lehenga">img-lehenga (Lehenga)</option>
+              <option value="img-gown">img-gown (Gown)</option>
+              <option value="img-anarkali">img-anarkali (Anarkali)</option>
+              <option value="img-ethnic">img-ethnic (Ethnic Set)</option>
+              <option value="img-kurti">img-kurti (Kurti)</option>
+              <option value="img-top">img-top (Top)</option>
+              <option value="img-dupatta">img-dupatta (Dupatta)</option>
+              <option value="img-palazzo">img-palazzo (Palazzo)</option>
+            </optgroup>
+            <optgroup label="Products – Men">
+              <option value="img-shirt">img-shirt (Shirt)</option>
+              <option value="img-kurta-men">img-kurta-men (Kurta)</option>
+              <option value="img-sherwani">img-sherwani (Sherwani)</option>
+              <option value="img-jeans">img-jeans (Jeans)</option>
+              <option value="img-blazer">img-blazer (Nehru / Blazer)</option>
+              <option value="img-dhoti">img-dhoti (Dhoti)</option>
+              <option value="img-nehru">img-nehru (Nehru)</option>
+            </optgroup>
+            <optgroup label="Categories">
+              <option value="sph-saree">sph-saree</option>
+              <option value="sph-kurta">sph-kurta</option>
+              <option value="sph-lehenga">sph-lehenga</option>
+              <option value="sph-shirt">sph-shirt</option>
+              <option value="sph-dress">sph-dress</option>
+              <option value="sph-jeans">sph-jeans</option>
+              <option value="sph-ethnic">sph-ethnic</option>
+            </optgroup>
+            <optgroup label="Lookbook">
+              <option value="look-art-saree">look-art-saree</option>
+              <option value="look-art-groom">look-art-groom</option>
+              <option value="look-art-sangeet">look-art-sangeet</option>
+            </optgroup>
+          </select>
+        </div>
+      </div>
+
+      <!-- Drop Zone -->
+      <div class="upload-zone" id="mainDropZone"
+           onclick="document.getElementById('fileInput').click()"
+           ondragover="handleDragOver(event, this)"
+           ondragleave="handleDragLeave(this)"
+           ondrop="handleDrop(event, this)">
+        <div class="upload-icon">📸</div>
+        <div class="upload-text">
+          <strong>Click to browse</strong> or drag &amp; drop images here<br>
+          <span style="font-size:0.8rem;margin-top:0.5rem;display:block;">PNG, JPG, WEBP up to 10MB • Multiple files allowed</span>
+        </div>
+        <input type="file" id="fileInput" multiple accept="image/*" onchange="addToQueue(this.files)">
+      </div>
+
+      <!-- Upload Queue -->
+      <div id="uploadQueue" class="upload-queue"></div>
+
+      <!-- Upload button -->
+      <button class="btn-upload-all" id="uploadAllBtn" onclick="uploadAll()" disabled>
+        ☁️ Upload All to Cloudinary
+      </button>
+    </div>
+
+    <!-- ══════ TAB: CLOUDINARY LIBRARY ══════ -->
+    <div id="tab-cloudinary" style="display:none;">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem;flex-wrap:wrap;gap:0.75rem;">
+        <div style="color:#9ca3af;font-size:0.9rem;">Images previously uploaded to your Cloudinary <strong style="color:var(--gold-primary)">vasudha</strong> account</div>
+        <button class="img-act-btn" style="width:auto;padding:0.5rem 1rem;font-size:0.85rem;" onclick="loadCloudinaryLibrary()">🔄 Refresh</button>
+      </div>
+      <div class="img-grid" id="cloudinaryGrid">
+        <div style="color:#6b7280;padding:2rem;grid-column:1/-1;">Click Refresh to load your Cloudinary images...</div>
+      </div>
+    </div>
+  </main>
+
+  <!-- ══════ REPLACE IMAGE MODAL ══════ -->
+  <div class="modal-overlay" id="replaceOverlay" onclick="closeReplaceModal(event)">
+    <div class="replace-modal">
+      <div class="modal-hdr">
+        <h3 id="replaceModalTitle">Replace Image</h3>
+        <button class="modal-cls" onclick="closeReplaceModal()">×</button>
+      </div>
+      <div class="modal-bdy">
+        <div class="replace-preview">
+          <div class="rep-pv-card">
+            <div class="rep-pv-label">Current Image</div>
+            <div id="repCurrentSlot"></div>
+          </div>
+          <div class="rep-pv-card">
+            <div class="rep-pv-label">New Image Preview</div>
+            <div id="repNewSlot"><div class="rep-pv-placeholder"><span>🖼️</span>No image selected</div></div>
+          </div>
+        </div>
+
+        <div class="rep-drop-zone" id="repDropZone"
+             onclick="document.getElementById('replaceFileInput').click()"
+             ondragover="handleDragOver(event, this)"
+             ondragleave="handleDragLeave(this)"
+             ondrop="handleRepDrop(event, this)">
+          <div class="rep-drop-icon">📤</div>
+          <div class="rep-drop-text"><strong>Click to choose file</strong> or drag &amp; drop</div>
+        </div>
+        <input type="file" id="replaceFileInput" accept="image/*" onchange="previewReplacement(this.files[0])">
+
+        <div class="rep-divider">— or paste a Cloudinary URL —</div>
+
+        <input type="text" class="rep-url-input" id="repUrlInput" placeholder="https://res.cloudinary.com/vasudha/..." oninput="previewUrlInput(this.value)">
+
+        <div class="rep-progress-wrap" id="repProgressWrap">
+          <div class="rep-progress" id="repProgress"></div>
+        </div>
+
+        <div class="rep-actions">
+          <button class="rep-btn-primary" id="repSaveBtn" onclick="saveReplacement()">✅ Upload &amp; Save</button>
+          <button class="rep-btn-cancel"  onclick="closeReplaceModal()">Cancel</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PREVIEW MODAL -->
+  <div class="modal-overlay" id="previewOverlay" onclick="closeReplaceModal(); document.getElementById('previewOverlay').classList.remove('open');" style="z-index:10000;">
+    <div style="max-width:700px;max-height:90vh;border-radius:12px;overflow:hidden;background:#111827;border:1px solid #374151;">
+      <img id="previewBigImg" src="" alt="" style="width:100%;max-height:85vh;object-fit:contain;display:block;">
+    </div>
+  </div>
+
+  <div id="imgToast"></div>
+
+  <script>
+  /* ═══════════════════════════════════════════════════════
+     WEBSITE IMAGE REGISTRY
+     All images used on the site with their CSS class, file path, category
+  ═══════════════════════════════════════════════════════ */
+  const WEBSITE_IMAGES = [
+    // Products – Women
+    { id:'img-saree',    name:'Saree Model',        path:'assets/saree_model_1782371974758.png',   cat:'products', cssClass:'img-saree',    section:'Women Products' },
+    { id:'img-lehenga',  name:'Lehenga Model',       path:'assets/lehenga_model_1782371986363.png', cat:'products', cssClass:'img-lehenga',  section:'Women Products' },
+    { id:'img-gown',     name:'Gown / Dress',        path:'assets/categories/dress.png',            cat:'products', cssClass:'img-gown',     section:'Women Products' },
+    { id:'img-anarkali', name:'Anarkali / Palazzo',  path:'assets/palazzo.png',                     cat:'products', cssClass:'img-anarkali', section:'Women Products' },
+    { id:'img-ethnic',   name:'Ethnic / Chikankari', path:'assets/womens_dress_model_1782379530104.png', cat:'products', cssClass:'img-ethnic', section:'Women Products' },
+    { id:'img-kurti',    name:'Women Kurti',         path:'assets/womens_kurti_distinct.png',        cat:'products', cssClass:'img-kurti',    section:'Women Products' },
+    { id:'img-top',      name:'Women Top',           path:'assets/womens_top_distinct.png',          cat:'products', cssClass:'img-top',      section:'Women Products' },
+    { id:'img-dupatta',  name:'Dupatta',             path:'assets/dupatta.png',                      cat:'trending', cssClass:'img-dupatta',  section:'Trending' },
+    { id:'img-palazzo',  name:'Palazzo',             path:'assets/palazzo.png',                      cat:'trending', cssClass:'img-palazzo',  section:'Trending' },
+    { id:'img-anarkali-suit', name:'Anarkali Suit',  path:'assets/anarkali_suit.png',                cat:'products', cssClass:'',             section:'Women Products' },
+    { id:'img-banarasi', name:'Banarasi Saree',      path:'assets/banarasi.png',                     cat:'lookbook', cssClass:'',             section:'Ethnic Spotlight' },
+    { id:'img-rajasthani',name:'Rajasthani',         path:'assets/rajasthani.png',                   cat:'lookbook', cssClass:'',             section:'Ethnic Spotlight' },
+    { id:'img-chikankari',name:'Chikankari',         path:'assets/chikankari.png',                   cat:'lookbook', cssClass:'',             section:'Ethnic Spotlight' },
+    { id:'img-kalamkari',name:'Kalamkari',           path:'assets/kalamkari.png',                    cat:'lookbook', cssClass:'',             section:'Ethnic Spotlight' },
+    { id:'img-chanderi', name:'Chanderi Silk',       path:'assets/chanderi_silk_crop.png',           cat:'products', cssClass:'',             section:'Women Products' },
+    { id:'img-floral-kurti',name:'Floral Kurti',     path:'assets/floral_rayon_kurti.png',           cat:'products', cssClass:'',             section:'Women Products' },
+    { id:'img-floral-maxi',name:'Floral Maxi',       path:'assets/floral_maxi_dress.png',            cat:'products', cssClass:'',             section:'Women Products' },
+    { id:'img-saree-chan',name:'Saree Chanderi',      path:'assets/saree_chanderi.png',               cat:'products', cssClass:'',             section:'Women Products' },
+    { id:'img-saree-geo', name:'Saree Georgette',    path:'assets/saree_georgette.png',              cat:'products', cssClass:'',             section:'Women Products' },
+    { id:'img-saree-kal', name:'Saree Kalamkari',    path:'assets/saree_kalamkari.png',              cat:'products', cssClass:'',             section:'Women Products' },
+    { id:'img-zari-kurti',name:'Zari Kurti Set',     path:'assets/zari_kurti_set.png',               cat:'products', cssClass:'',             section:'Women Products' },
+    { id:'img-silk-tunic',name:'Silk Blend Tunic',   path:'assets/silk_blend_tunic.png',             cat:'products', cssClass:'',             section:'Women Products' },
+    { id:'img-peplum',   name:'Peplum Top',          path:'assets/peplum_top.png',                   cat:'products', cssClass:'',             section:'Women Products' },
+    { id:'img-printed-kurta',name:'Printed Short Kurta',path:'assets/printed_short_kurta.png',       cat:'products', cssClass:'',             section:'Women Products' },
+    // Products – Men
+    { id:'img-shirt',    name:'Mens Shirt',          path:'assets/mens_shirt_model_1782378349323.png',cat:'products', cssClass:'img-shirt',   section:'Men Products' },
+    { id:'img-kurta-men',name:'Mens Kurta',          path:'assets/kurta_model_1782372108155.png',    cat:'products', cssClass:'img-kurta-men',section:'Men Products' },
+    { id:'img-sherwani', name:'Sherwani',            path:'assets/sherwani_model_1782372003018.png', cat:'lookbook', cssClass:'img-sherwani', section:'Men Products' },
+    { id:'img-jeans',    name:'Mens Jeans',          path:'assets/mens_jeans_model_1782378330701.png',cat:'products', cssClass:'img-jeans',   section:'Men Products' },
+    { id:'img-blazer',   name:'Nehru / Blazer',      path:'assets/nehru.png',                        cat:'products', cssClass:'img-blazer',   section:'Men Products' },
+    { id:'img-dhoti',    name:'Dhoti',               path:'assets/dhoti.png',                        cat:'trending', cssClass:'img-dhoti',    section:'Trending' },
+    { id:'img-nehru',    name:'Nehru Jacket',        path:'assets/nehru.png',                        cat:'trending', cssClass:'img-nehru',    section:'Trending' },
+    { id:'img-polo',     name:'Polo T-Shirt',        path:'assets/polo_tshirt.png',                  cat:'products', cssClass:'',             section:'Men Products' },
+    // Categories
+    { id:'sph-saree',    name:'Category: Saree',     path:'assets/categories/saree.png',             cat:'categories',cssClass:'sph-saree',   section:'Categories' },
+    { id:'sph-kurta',    name:'Category: Kurta',     path:'assets/categories/kurta.png',             cat:'categories',cssClass:'sph-kurta',   section:'Categories' },
+    { id:'sph-lehenga',  name:'Category: Lehenga',   path:'assets/categories/lehenga.png',           cat:'categories',cssClass:'sph-lehenga', section:'Categories' },
+    { id:'sph-shirt',    name:'Category: Shirt',     path:'assets/categories/shirt.png',             cat:'categories',cssClass:'sph-shirt',   section:'Categories' },
+    { id:'sph-dress',    name:'Category: Dress',     path:'assets/categories/dress.png',             cat:'categories',cssClass:'sph-dress',   section:'Categories' },
+    { id:'sph-jeans',    name:'Category: Jeans',     path:'assets/categories/jeans.png',             cat:'categories',cssClass:'sph-jeans',   section:'Categories' },
+    { id:'sph-ethnic',   name:'Category: Ethnic',    path:'assets/categories/ethnic.png',            cat:'categories',cssClass:'sph-ethnic',  section:'Categories' },
+    // Lookbook
+    { id:'look-saree',   name:'Lookbook: Saree',     path:'assets/saree_model_1782371974758.png',    cat:'lookbook', cssClass:'look-art-saree', section:'Lookbook' },
+    { id:'look-groom',   name:'Lookbook: Groom',     path:'assets/sherwani_model_1782372003018.png', cat:'lookbook', cssClass:'look-art-groom', section:'Lookbook' },
+  ];
+
+  // Track which images have been replaced with Cloudinary URLs
+  let cloudinaryMap = JSON.parse(localStorage.getItem('vc_cloudinary_map') || '{}');
+
+  let currentFilter = 'all';
+  let replaceTarget = null; // current image being replaced
+  let repNewFile = null;    // new file chosen for replacement
+  let repNewUrl  = null;    // new URL (from URL input or after upload)
+
+  /* ── Auth Guard ── */
+  const token = localStorage.getItem('accessToken');
+  const currentUser = JSON.parse(localStorage.getItem('currentUser') || 'null');
+  if (!currentUser || !token || currentUser.role !== 'admin') {
+    alert('Admin access required.');
+    window.location.href = 'index.html';
+  }
+
+  /* ═══ TAB SWITCHING ═══ */
+  function showTab(id, btn) {
+    document.querySelectorAll('.imgmgr-tab').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    ['tab-website','tab-upload','tab-cloudinary'].forEach(t => {
+      document.getElementById(t).style.display = t === id ? 'block' : 'none';
+    });
+    if (id === 'tab-cloudinary') loadCloudinaryLibrary();
+  }
+
+  /* ═══ WEBSITE IMAGES TAB ═══ */
+  function filterImages(cat, btn) {
+    currentFilter = cat;
+    document.querySelectorAll('.img-filter-chip').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    renderWebsiteImages();
+  }
+
+  function renderWebsiteImages() {
+    const grid = document.getElementById('websiteImgGrid');
+    let imgs = WEBSITE_IMAGES;
+    if (currentFilter === 'missing') {
+      imgs = imgs.filter(img => isMissing(img));
+    } else if (currentFilter !== 'all') {
+      imgs = imgs.filter(img => img.cat === currentFilter);
+    }
+
+    // Update stats
+    const total   = WEBSITE_IMAGES.length;
+    const missing = WEBSITE_IMAGES.filter(isMissing).length;
+    const cloud   = WEBSITE_IMAGES.filter(img => cloudinaryMap[img.id]).length;
+    document.getElementById('statTotal').textContent   = total;
+    document.getElementById('statOk').textContent      = total - missing;
+    document.getElementById('statMissing').textContent = missing;
+    document.getElementById('statCloud').textContent   = cloud;
+
+    grid.innerHTML = imgs.map(img => {
+      const cloudUrl = cloudinaryMap[img.id];
+      const displayUrl = cloudUrl || img.path;
+      const isCloud = !!cloudUrl;
+      const missing = !fileExists(img.path) && !cloudUrl;
+
+      const sourceBadge = isCloud
+        ? '<span class="img-source-badge badge-cloudinary">☁ CDN</span>'
+        : missing
+          ? '<span class="img-source-badge badge-missing">⚠ Missing</span>'
+          : '<span class="img-source-badge badge-local">💾 Local</span>';
+
+      const cssInfo = img.cssClass
+        ? `<div class="img-card-url">.${img.cssClass}</div>`
+        : '';
+
+      return `<div class="img-card ${missing ? 'missing' : ''} ${isCloud ? 'cloudinary' : ''}" data-id="${img.id}">
+        <div class="img-thumb-wrap">
+          ${missing
+            ? `<div class="img-thumb-placeholder"><div class="ph-icon">🚫</div>Image not found</div>`
+            : `<img class="img-thumb" src="${escHtml(displayUrl)}" alt="${escHtml(img.name)}"
+                onerror="this.parentElement.innerHTML='<div class=\\'img-thumb-placeholder\\'><div class=\\'ph-icon\\'>🚫</div>Load failed</div>'"
+                onclick="previewImage('${escHtml(displayUrl)}')"
+                style="cursor:zoom-in">`
+          }
+          ${sourceBadge}
+        </div>
+        <div class="img-card-body">
+          <div class="img-card-name">${escHtml(img.name)}</div>
+          <div class="img-card-cat">${img.section}</div>
+          ${cssInfo}
+          <div class="img-card-url">${escHtml(isCloud ? displayUrl.substring(0,45)+'...' : img.path)}</div>
+          <div class="img-card-actions">
+            <button class="img-act-btn replace-btn" onclick="openReplaceModal('${img.id}')">🔄 Replace</button>
+            ${isCloud ? `<button class="img-act-btn" onclick="copyUrl('${escHtml(cloudUrl)}')">📋 Copy URL</button>` : ''}
+          </div>
+        </div>
+      </div>`;
+    }).join('');
+
+    if (imgs.length === 0) {
+      grid.innerHTML = `<div style="color:#6b7280;padding:3rem;grid-column:1/-1;text-align:center;">No images found for this filter.</div>`;
+    }
+  }
+
+  function isMissing(img) {
+    return !cloudinaryMap[img.id];
+    // In a real check we'd use fetch HEAD, but for display purposes
+    // we just treat non-cloudinary local assets as "local" not missing
+  }
+
+  function fileExists(path) { return true; } // Local files always assumed present
+
+  /* ═══ REPLACE MODAL ═══ */
+  function openReplaceModal(imgId) {
+    replaceTarget = WEBSITE_IMAGES.find(i => i.id === imgId);
+    repNewFile = null; repNewUrl = null;
+    document.getElementById('repUrlInput').value = '';
+    document.getElementById('repProgressWrap').style.display = 'none';
+    document.getElementById('repProgress').style.width = '0%';
+
+    const title = document.getElementById('replaceModalTitle');
+    title.textContent = 'Replace: ' + replaceTarget.name;
+
+    // Current image slot
+    const curSlot = document.getElementById('repCurrentSlot');
+    const curUrl = cloudinaryMap[imgId] || replaceTarget.path;
+    curSlot.innerHTML = `<img src="${escHtml(curUrl)}" class="rep-pv-img"
+      onerror="this.style.display='none'" alt="current">`;
+
+    // New slot reset
+    document.getElementById('repNewSlot').innerHTML =
+      `<div class="rep-pv-placeholder"><span>🖼️</span>No image selected</div>`;
+
+    document.getElementById('replaceOverlay').classList.add('open');
+  }
+
+  function closeReplaceModal(event) {
+    if (event && event.target !== document.getElementById('replaceOverlay')) return;
+    document.getElementById('replaceOverlay').classList.remove('open');
+    repNewFile = null; repNewUrl = null;
+  }
+
+  function previewReplacement(file) {
+    if (!file) return;
+    repNewFile = file; repNewUrl = null;
+    const reader = new FileReader();
+    reader.onload = e => {
+      document.getElementById('repNewSlot').innerHTML =
+        `<img src="${e.target.result}" class="rep-pv-img" alt="new">`;
+    };
+    reader.readAsDataURL(file);
+  }
+
+  function previewUrlInput(url) {
+    if (!url.startsWith('http')) return;
+    repNewUrl = url; repNewFile = null;
+    document.getElementById('repNewSlot').innerHTML =
+      `<img src="${escHtml(url)}" class="rep-pv-img" alt="new"
+        onerror="this.innerHTML='<div class=\\'rep-pv-placeholder\\'><span>❌</span>Invalid URL</div>'">`;
+  }
+
+  async function saveReplacement() {
+    if (!replaceTarget) return;
+
+    if (repNewUrl && repNewUrl.startsWith('http')) {
+      // Direct URL assignment
+      cloudinaryMap[replaceTarget.id] = repNewUrl;
+      localStorage.setItem('vc_cloudinary_map', JSON.stringify(cloudinaryMap));
+      showToast(`✅ Image URL saved for ${replaceTarget.name}`);
+      closeReplaceModal();
+      renderWebsiteImages();
+      return;
+    }
+
+    if (!repNewFile) {
+      showToast('Please select a file or paste a URL', true);
+      return;
+    }
+
+    // Upload to Cloudinary via backend
+    const formData = new FormData();
+    formData.append('image', repNewFile);
+    formData.append('product_id', replaceTarget.id);
+
+    const progressWrap = document.getElementById('repProgressWrap');
+    const progressBar  = document.getElementById('repProgress');
+    progressWrap.style.display = 'block';
+
+    try {
+      // Simulate progress
+      let prog = 0;
+      const ticker = setInterval(() => {
+        prog = Math.min(prog + 10, 85);
+        progressBar.style.width = prog + '%';
+      }, 200);
+
+      const folder = replaceTarget.cat === 'categories' ? 'vasudha/categories' : 'vasudha/products';
+      const res = await fetch(`http://localhost:3000/api/upload/product-image`, {
+        method: 'POST',
+        headers: { Authorization: 'Bearer ' + token },
+        body: formData
+      });
+
+      clearInterval(ticker);
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error);
+
+      progressBar.style.width = '100%';
+      setTimeout(() => { progressWrap.style.display = 'none'; }, 800);
+
+      cloudinaryMap[replaceTarget.id] = data.image.url;
+      localStorage.setItem('vc_cloudinary_map', JSON.stringify(cloudinaryMap));
+
+      showToast(`☁️ Uploaded & saved: ${replaceTarget.name}`);
+      closeReplaceModal();
+      renderWebsiteImages();
+
+    } catch (err) {
+      progressWrap.style.display = 'none';
+      showToast('Upload failed: ' + err.message, true);
+    }
+  }
+
+  /* ═══ UPLOAD NEW TAB ═══ */
+  const uploadQueue = []; // { file, url?, status }
+
+  function addToQueue(files) {
+    Array.from(files).forEach(file => {
+      if (!file.type.startsWith('image/')) return;
+      uploadQueue.push({ file, url: null, status: 'pending', id: Date.now() + Math.random() });
+    });
+    renderQueue();
+    document.getElementById('uploadAllBtn').disabled = uploadQueue.length === 0;
+  }
+
+  function renderQueue() {
+    const el = document.getElementById('uploadQueue');
+    if (!uploadQueue.length) { el.innerHTML = ''; return; }
+    el.innerHTML = uploadQueue.map((item, i) => `
+      <div class="queue-item" id="qi-${i}">
+        <img class="queue-thumb" src="${URL.createObjectURL(item.file)}" alt="">
+        <div class="queue-info">
+          <div class="queue-name">${escHtml(item.file.name)}</div>
+          <div class="queue-size">${(item.file.size/1024).toFixed(0)} KB</div>
+          <div class="queue-progress-wrap"><div class="queue-progress" id="qp-${i}"></div></div>
+        </div>
+        <div class="queue-status" id="qs-${i}">${item.status === 'done' ? '✅' : item.status === 'error' ? '❌' : '⏳'}</div>
+        <button class="queue-remove" onclick="removeFromQueue(${i})">×</button>
+      </div>
+    `).join('');
+  }
+
+  function removeFromQueue(idx) {
+    uploadQueue.splice(idx, 1);
+    renderQueue();
+    document.getElementById('uploadAllBtn').disabled = uploadQueue.length === 0;
+  }
+
+  async function uploadAll() {
+    const btn = document.getElementById('uploadAllBtn');
+    btn.disabled = true;
+    btn.textContent = '⏳ Uploading...';
+
+    const folder  = document.getElementById('uploadFolder').value;
+    const cssClass = document.getElementById('uploadCssClass').value;
+
+    let successCount = 0;
+
+    for (let i = 0; i < uploadQueue.length; i++) {
+      const item = uploadQueue[i];
+      if (item.status === 'done') continue;
+
+      const progressBar = document.getElementById('qp-' + i);
+      const statusEl    = document.getElementById('qs-' + i);
+      if (progressBar) progressBar.style.width = '30%';
+
+      try {
+        const formData = new FormData();
+        formData.append('image', item.file);
+
+        // Animate progress
+        let p = 30;
+        const ticker = setInterval(() => {
+          p = Math.min(p + 8, 80);
+          if (progressBar) progressBar.style.width = p + '%';
+        }, 150);
+
+        const res = await fetch('http://localhost:3000/api/upload/product-image', {
+          method: 'POST',
+          headers: { Authorization: 'Bearer ' + token },
+          body: formData
+        });
+        clearInterval(ticker);
+
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error);
+
+        item.status = 'done';
+        item.url = data.image.url;
+        if (progressBar) progressBar.style.width = '100%';
+        if (statusEl)    statusEl.textContent = '✅';
+
+        // If a CSS class was selected, map first uploaded image to it
+        if (cssClass && successCount === 0) {
+          const imgEntry = WEBSITE_IMAGES.find(img => img.cssClass === cssClass);
+          if (imgEntry) {
+            cloudinaryMap[imgEntry.id] = data.image.url;
+            localStorage.setItem('vc_cloudinary_map', JSON.stringify(cloudinaryMap));
+          }
+        }
+        successCount++;
+      } catch (err) {
+        item.status = 'error';
+        if (statusEl) statusEl.textContent = '❌';
+      }
+    }
+
+    btn.textContent = '☁️ Upload All to Cloudinary';
+    btn.disabled = false;
+    showToast(`✅ ${successCount} image(s) uploaded successfully!`);
+    renderQueue();
+  }
+
+  /* ═══ CLOUDINARY LIBRARY TAB ═══ */
+  async function loadCloudinaryLibrary() {
+    const grid = document.getElementById('cloudinaryGrid');
+    grid.innerHTML = `<div style="color:#6b7280;padding:2rem;grid-column:1/-1;">⏳ Loading from Cloudinary...</div>`;
+
+    try {
+      // We get signed URL params from backend, then use Cloudinary Search API
+      const res = await fetch('http://localhost:3000/api/upload/signed-url?folder=vasudha', {
+        headers: { Authorization: 'Bearer ' + token }
+      });
+      const params = await res.json();
+
+      // Use Cloudinary's Admin API via signed request
+      const searchRes = await fetch(
+        `https://api.cloudinary.com/v1_1/${params.cloud_name}/resources/image?max_results=60&prefix=vasudha`,
+        {
+          headers: {
+            Authorization: 'Basic ' + btoa(`${params.api_key}:${window.__cldSecret || ''}`)
+          }
+        }
+      );
+
+      if (!searchRes.ok) {
+        throw new Error('Cannot access Cloudinary Admin API from browser (CORS). Use the uploaded images shown below.');
+      }
+
+      const searchData = await searchRes.json();
+      renderCloudinaryGrid(searchData.resources || []);
+    } catch (err) {
+      // Show images from our local cloudinaryMap instead
+      const mapped = Object.entries(cloudinaryMap);
+      if (mapped.length === 0) {
+        grid.innerHTML = `<div style="grid-column:1/-1;text-align:center;padding:3rem;">
+          <div style="font-size:2.5rem;margin-bottom:1rem;">☁️</div>
+          <div style="color:#9ca3af;font-size:0.95rem;">No Cloudinary images saved yet.<br>Upload images using the <strong style="color:var(--gold-primary)">Upload New</strong> tab.</div>
+        </div>`;
+        return;
+      }
+
+      // Show images we've already mapped
+      renderCloudinaryGrid(mapped.map(([imgId, url]) => {
+        const entry = WEBSITE_IMAGES.find(i => i.id === imgId);
+        return { public_id: imgId, secure_url: url, displayName: entry?.name || imgId };
+      }));
+    }
+  }
+
+  function renderCloudinaryGrid(resources) {
+    const grid = document.getElementById('cloudinaryGrid');
+    if (!resources.length) {
+      grid.innerHTML = `<div style="color:#6b7280;padding:2rem;grid-column:1/-1;">No images found.</div>`;
+      return;
+    }
+    grid.innerHTML = resources.map(r => `
+      <div class="img-card cloudinary">
+        <div class="img-thumb-wrap">
+          <img class="img-thumb" src="${escHtml(r.secure_url || r.url || '')}" alt="${escHtml(r.public_id)}"
+            onclick="previewImage('${escHtml(r.secure_url || r.url || '')}')" style="cursor:zoom-in"
+            onerror="this.parentElement.innerHTML='<div class=\\'img-thumb-placeholder\\'><div class=\\'ph-icon\\'>❌</div>Load failed</div>'">
+          <span class="img-source-badge badge-cloudinary">☁ CDN</span>
+        </div>
+        <div class="img-card-body">
+          <div class="img-card-name">${escHtml(r.displayName || r.public_id?.split('/').pop() || 'Image')}</div>
+          <div class="img-card-url">${escHtml((r.secure_url || '').substring(0,50))}...</div>
+          <div class="img-card-actions">
+            <button class="img-act-btn" onclick="copyUrl('${escHtml(r.secure_url || r.url || '')}')">📋 Copy URL</button>
+            <button class="img-act-btn replace-btn" onclick="useCloudinaryUrl('${escHtml(r.secure_url || r.url || '')}')">⬅ Use</button>
+          </div>
+        </div>
+      </div>
+    `).join('');
+  }
+
+  function useCloudinaryUrl(url) {
+    // Open upload tab with this URL pre-filled
+    document.querySelector('.imgmgr-tab:first-child').click();
+    showToast('Copy this URL and use "Replace" on any image card');
+  }
+
+  /* ═══ DRAG & DROP HELPERS ═══ */
+  function handleDragOver(e, el) { e.preventDefault(); el.classList.add('drag-over'); }
+  function handleDragLeave(el)   { el.classList.remove('drag-over'); }
+  function handleDrop(e, el)     { e.preventDefault(); el.classList.remove('drag-over'); addToQueue(e.dataTransfer.files); }
+  function handleRepDrop(e, el)  { e.preventDefault(); el.classList.remove('drag-over'); previewReplacement(e.dataTransfer.files[0]); }
+
+  /* ═══ PREVIEW MODAL ═══ */
+  function previewImage(url) {
+    document.getElementById('previewBigImg').src = url;
+    document.getElementById('previewOverlay').classList.add('open');
+  }
+
+  /* ═══ UTILITIES ═══ */
+  function copyUrl(url) {
+    navigator.clipboard.writeText(url).then(() => showToast('URL copied to clipboard!'));
+  }
+
+  function showToast(msg, isError = false) {
+    const t = document.getElementById('imgToast');
+    t.textContent = msg;
+    t.className = 'show' + (isError ? ' error' : '');
+    setTimeout(() => { t.className = ''; }, 3500);
+  }
+
+  function escHtml(s) {
+    return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+  }
+
+  function doLogout() {
+    localStorage.removeItem('accessToken');
+    localStorage.removeItem('currentUser');
+    window.location.href = 'index.html';
+  }
+
+  function toggleSidebarLocal() {
+    const s = document.querySelector('.dash-sidebar');
+    const o = document.getElementById('sidebarOverlay');
+    if (s) s.classList.toggle('open');
+    if (o) o.classList.toggle('open');
+  }
+
+  /* ═══ INIT ═══ */
+  renderWebsiteImages();
+  </script>
+</body>
+</html>
