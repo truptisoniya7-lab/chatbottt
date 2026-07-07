@@ -260,7 +260,7 @@
 @keyframes vaaniMsgIn { from { transform: translateY(8px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
 @keyframes vaaniPulse { 0%, 100% { transform: scale(1); opacity: 1; } 50% { transform: scale(1.3); opacity: 0.7; } }
 @keyframes vaaniStatusPulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
-@media (max-width: 480px) { .vaani-widget { bottom: 1rem; right: 1rem; } .vaani-panel { width: calc(100vw - 2rem); height: 70vh; bottom: 100px; right: 1rem; } }
+@media (max-width: 576px) { .vaani-widget { bottom: 1rem; right: 1rem; } .vaani-panel { width: calc(100vw - 2rem); height: 70vh; bottom: 100px; right: 1rem; } }
 @media (prefers-reduced-motion: reduce) { .vaani-pet-btn { animation: none; } .vaani-bubble { animation: none; opacity: 1; } }
     `;
     document.head.appendChild(style);

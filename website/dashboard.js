@@ -140,6 +140,14 @@ window.logout = async function() {
   window.location.href = 'index.html';
 };
 
+// Sidebar Toggle Function for Mobile Layouts
+window.toggleSidebar = function() {
+  const sidebar = document.querySelector('.dash-sidebar');
+  const overlay = document.getElementById('sidebarOverlay');
+  if (sidebar) sidebar.classList.toggle('open');
+  if (overlay) overlay.classList.toggle('open');
+};
+
 // Tab Switching Function for Dashboards
 window.switchTab = function(tabId, element) {
   // Update active state in sidebar
@@ -156,5 +164,15 @@ window.switchTab = function(tabId, element) {
   const selectedView = document.getElementById('view-' + tabId);
   if (selectedView) {
     selectedView.style.display = 'block';
+  }
+
+  // Auto-close sidebar on mobile after clicking a link
+  const sidebar = document.querySelector('.dash-sidebar');
+  const overlay = document.getElementById('sidebarOverlay');
+  if (sidebar && sidebar.classList.contains('open')) {
+    sidebar.classList.remove('open');
+  }
+  if (overlay && overlay.classList.contains('open')) {
+    overlay.classList.remove('open');
   }
 };
