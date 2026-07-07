@@ -935,6 +935,24 @@ footer { background: var(--plum-deep); padding: 5rem 6rem 2rem; border-top: 1px 
   /* Sections */
   .section-title { font-size: 2.2rem; }
   .categories-header, .collection-header { flex-direction: column; align-items: flex-start; gap: 1rem; }
+
+  /* Modals */
+  .qv-modal {
+    flex-direction: column;
+    overflow-y: auto;
+  }
+  .qv-image-side {
+    width: 100%;
+    min-height: 300px;
+  }
+  .qv-content-side {
+    width: 100%;
+    padding: 1.5rem;
+  }
+  .auth-modal {
+    padding: 1.5rem;
+    width: 95%;
+  }
 }
 
 @media (max-width: 480px) {
@@ -957,6 +975,57 @@ footer { background: var(--plum-deep); padding: 5rem 6rem 2rem; border-top: 1px 
   
   /* Footer */
   .footer-inner { grid-template-columns: 1fr; gap: 2rem; }
+}
+
+/* ═══════════════════════════════════
+     QUICK VIEW MODAL
+═══════════════════════════════════ */
+.qv-modal {
+  display: flex;
+  max-width: 900px;
+  width: 90%;
+  max-height: 90vh;
+  padding: 0;
+  overflow: hidden;
+  background: var(--void);
+  border-radius: 12px;
+  border: 1px solid var(--glass-bd);
+  box-shadow: 0 20px 40px rgba(0,0,0,0.5);
+  position: relative;
+}
+
+.qv-image-side {
+  width: 50%;
+  background-size: cover;
+  background-position: center;
+  min-height: 400px;
+}
+
+.qv-content-side {
+  width: 50%;
+  padding: 3rem;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.qv-close-btn {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  background: rgba(0,0,0,0.5);
+  border: none;
+  font-size: 1.5rem;
+  color: #fff;
+  cursor: pointer;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10;
 }
 
 /* ═══════════════════════════════════

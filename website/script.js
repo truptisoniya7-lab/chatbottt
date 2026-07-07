@@ -457,7 +457,7 @@ window.openQuickView = function(name, price, imageClass, oldPrice, tag, imageUrl
   
   // Set image background
   const imgEl = document.getElementById('qvImage');
-  imgEl.className = '';
+  imgEl.className = 'qv-image-side';
   if (imageClass) imgEl.classList.add(imageClass);
   
   if (imageUrl) {
