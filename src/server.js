@@ -51,10 +51,11 @@ const server = http.createServer(app);
 
 server.on('error', (e) => {
   if (e.code === 'EADDRINUSE') {
-    console.error(`Port ${PORT} is already in use. Trying ${PORT + 1}...`);
-    server.listen(PORT + 1);
+    console.error(`Port ${PORT} is already in use. Please kill the process using port ${PORT} and try again.`);
+    process.exit(1);
   } else {
     console.error('Server error:', e);
+    process.exit(1);
   }
 });
 
