@@ -7,6 +7,252 @@
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400;1,500&family=DM+Sans:wght@300;400;500&family=Jost:wght@300;400;500&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="dashboard.css">
   <link rel="icon" type="image/png" href="/assets/favicon.png?v=1">
+  <style>
+    /* ── ADMIN USERS TAB ── */
+    :root { --gold-primary: #C8A96A; }
+
+    .admin-users-bar {
+      display: flex; gap: 1rem; align-items: center;
+      flex-wrap: wrap; margin-bottom: 1.5rem;
+    }
+    .admin-search-input {
+      flex: 1; min-width: 220px;
+      background: #1f2937; border: 1px solid #374151;
+      color: #f3f4f6; border-radius: 8px;
+      padding: 0.75rem 1.1rem; font-size: 0.95rem;
+      outline: none; transition: border 0.2s;
+    }
+    .admin-search-input:focus { border-color: var(--gold-primary); }
+    .admin-search-input::placeholder { color: #6b7280; }
+
+    .role-filter-btn {
+      background: #1f2937; border: 1px solid #374151;
+      color: #9ca3af; padding: 0.7rem 1.2rem;
+      border-radius: 8px; cursor: pointer; font-size: 0.85rem;
+      transition: all 0.2s; white-space: nowrap;
+    }
+    .role-filter-btn.active, .role-filter-btn:hover {
+      background: rgba(200,169,106,0.12);
+      border-color: var(--gold-primary); color: var(--gold-primary);
+    }
+
+    /* Users Table */
+    .users-table-wrap {
+      background: #1f2937; border: 1px solid #374151;
+      border-radius: 12px; overflow: hidden; margin-bottom: 1.5rem;
+    }
+    .users-table {
+      width: 100%; border-collapse: collapse; text-align: left;
+    }
+    .users-table th {
+      background: #111827; padding: 0.9rem 1.2rem;
+      font-size: 0.78rem; text-transform: uppercase;
+      letter-spacing: 0.06em; color: #9ca3af; font-weight: 500;
+      border-bottom: 1px solid #374151;
+    }
+    .users-table td {
+      padding: 0.85rem 1.2rem; border-bottom: 1px solid #374151;
+      font-size: 0.92rem; color: #f3f4f6;
+      vertical-align: middle;
+    }
+    .users-table tr:last-child td { border-bottom: none; }
+    .users-table tbody tr {
+      transition: background 0.15s; cursor: pointer;
+    }
+    .users-table tbody tr:hover { background: rgba(200,169,106,0.06); }
+
+    /* User Avatar Cell */
+    .user-cell { display: flex; align-items: center; gap: 0.75rem; }
+    .user-mini-avatar {
+      width: 36px; height: 36px; border-radius: 50%;
+      background: #374151; color: #f3f4f6;
+      display: flex; align-items: center; justify-content: center;
+      font-weight: 600; font-size: 0.9rem; flex-shrink: 0;
+      overflow: hidden;
+    }
+    .user-mini-avatar img { width: 100%; height: 100%; object-fit: cover; }
+    .user-cell-name { font-weight: 500; color: #f3f4f6; line-height: 1.2; }
+    .user-cell-email { font-size: 0.78rem; color: #9ca3af; margin-top: 1px; }
+
+    /* Role Badge */
+    .role-badge {
+      display: inline-block; padding: 0.28rem 0.75rem;
+      border-radius: 20px; font-size: 0.72rem; font-weight: 600;
+      letter-spacing: 0.05em; text-transform: uppercase;
+    }
+    .role-admin    { background: rgba(239,68,68,0.15);  color: #f87171; }
+    .role-seller   { background: rgba(200,169,106,0.15); color: #C8A96A; }
+    .role-customer { background: rgba(59,130,246,0.15);  color: #60a5fa; }
+
+    /* Status Toggle */
+    .status-toggle {
+      display: inline-flex; align-items: center; gap: 0.4rem;
+      padding: 0.28rem 0.75rem; border-radius: 20px;
+      font-size: 0.72rem; font-weight: 600;
+    }
+    .status-active   { background: rgba(16,185,129,0.15); color: #34d399; }
+    .status-inactive { background: rgba(239,68,68,0.15);  color: #f87171; }
+
+    /* Action buttons */
+    .tbl-action-btn {
+      background: transparent; border: 1px solid #374151;
+      color: #9ca3af; padding: 0.35rem 0.8rem;
+      border-radius: 6px; font-size: 0.78rem; cursor: pointer;
+      transition: all 0.2s;
+    }
+    .tbl-action-btn:hover { border-color: var(--gold-primary); color: var(--gold-primary); }
+    .tbl-action-btn.danger:hover { border-color: #f87171; color: #f87171; }
+
+    /* Pagination */
+    .pagination {
+      display: flex; gap: 0.5rem; align-items: center;
+      justify-content: flex-end; flex-wrap: wrap;
+    }
+    .page-btn {
+      background: #1f2937; border: 1px solid #374151;
+      color: #9ca3af; padding: 0.5rem 1rem; border-radius: 6px;
+      cursor: pointer; font-size: 0.85rem; transition: all 0.2s;
+    }
+    .page-btn:hover, .page-btn.active {
+      background: rgba(200,169,106,0.12);
+      border-color: var(--gold-primary); color: var(--gold-primary);
+    }
+    .page-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+    .page-info { color: #6b7280; font-size: 0.85rem; }
+
+    /* ── USER DETAIL MODAL ── */
+    .modal-overlay {
+      position: fixed; inset: 0;
+      background: rgba(0,0,0,0.75); backdrop-filter: blur(4px);
+      display: flex; align-items: center; justify-content: center;
+      z-index: 9999; opacity: 0; pointer-events: none;
+      transition: opacity 0.25s;
+    }
+    .modal-overlay.open { opacity: 1; pointer-events: all; }
+
+    .user-detail-modal {
+      background: #111827; border: 1px solid #374151;
+      border-radius: 16px; width: 90%; max-width: 700px;
+      max-height: 90vh; overflow-y: auto;
+      transform: translateY(20px);
+      transition: transform 0.3s cubic-bezier(0.16,1,0.3,1);
+      box-shadow: 0 25px 60px rgba(0,0,0,0.7);
+    }
+    .modal-overlay.open .user-detail-modal { transform: translateY(0); }
+
+    .modal-header {
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 1.5rem 2rem; border-bottom: 1px solid #1f2937;
+    }
+    .modal-header h2 {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.6rem; color: var(--gold-primary); margin: 0;
+    }
+    .modal-close {
+      background: none; border: none; color: #6b7280;
+      font-size: 1.8rem; cursor: pointer; line-height: 1;
+      transition: color 0.2s;
+    }
+    .modal-close:hover { color: #f3f4f6; }
+
+    .modal-body { padding: 2rem; }
+
+    .modal-profile {
+      display: flex; gap: 1.5rem; align-items: flex-start;
+      margin-bottom: 2rem; flex-wrap: wrap;
+    }
+    .modal-avatar {
+      width: 80px; height: 80px; border-radius: 50%;
+      background: #374151; color: #f3f4f6;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 2rem; font-weight: 600; flex-shrink: 0;
+      border: 3px solid #1f2937; overflow: hidden;
+    }
+    .modal-avatar img { width: 100%; height: 100%; object-fit: cover; }
+    .modal-profile-info { flex: 1; }
+    .modal-profile-info h3 {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.5rem; color: #f3f4f6; margin: 0 0 0.3rem;
+    }
+    .modal-profile-info p { color: #9ca3af; margin: 0 0 0.75rem; font-size: 0.9rem; }
+    .modal-badges { display: flex; gap: 0.5rem; flex-wrap: wrap; }
+
+    .modal-grid {
+      display: grid; grid-template-columns: 1fr 1fr;
+      gap: 1rem; margin-bottom: 2rem;
+    }
+    @media (max-width: 500px) { .modal-grid { grid-template-columns: 1fr; } }
+
+    .modal-info-card {
+      background: #1f2937; border: 1px solid #374151;
+      border-radius: 10px; padding: 1rem 1.2rem;
+    }
+    .modal-info-label {
+      font-size: 0.72rem; text-transform: uppercase;
+      letter-spacing: 0.07em; color: #6b7280; margin-bottom: 0.3rem;
+    }
+    .modal-info-value { font-size: 0.95rem; color: #f3f4f6; font-weight: 500; }
+
+    .modal-section-title {
+      font-size: 0.85rem; text-transform: uppercase;
+      letter-spacing: 0.08em; color: #6b7280;
+      margin: 0 0 0.75rem; font-weight: 600;
+    }
+
+    .modal-orders-table {
+      width: 100%; border-collapse: collapse;
+      font-size: 0.88rem; margin-bottom: 1.5rem;
+    }
+    .modal-orders-table th {
+      color: #6b7280; font-weight: 500; padding: 0.5rem 0.75rem;
+      text-align: left; border-bottom: 1px solid #1f2937;
+      font-size: 0.78rem; text-transform: uppercase;
+    }
+    .modal-orders-table td {
+      padding: 0.65rem 0.75rem; border-bottom: 1px solid #1f2937; color: #d1d5db;
+    }
+    .modal-orders-table tr:last-child td { border-bottom: none; }
+
+    .modal-actions { display: flex; gap: 0.75rem; flex-wrap: wrap; padding-top: 1.5rem; border-top: 1px solid #1f2937; }
+
+    .action-btn-primary {
+      background: linear-gradient(135deg, #8B6914, var(--gold-primary));
+      color: #111; border: none; padding: 0.7rem 1.4rem;
+      border-radius: 8px; font-weight: 600; cursor: pointer;
+      font-size: 0.85rem; transition: opacity 0.2s;
+    }
+    .action-btn-primary:hover { opacity: 0.85; }
+    .action-btn-secondary {
+      background: #1f2937; border: 1px solid #374151;
+      color: #f3f4f6; padding: 0.7rem 1.4rem;
+      border-radius: 8px; font-weight: 500; cursor: pointer;
+      font-size: 0.85rem; transition: all 0.2s;
+    }
+    .action-btn-secondary:hover { border-color: var(--gold-primary); color: var(--gold-primary); }
+    .action-btn-danger {
+      background: rgba(239,68,68,0.1); border: 1px solid rgba(239,68,68,0.3);
+      color: #f87171; padding: 0.7rem 1.4rem;
+      border-radius: 8px; font-weight: 500; cursor: pointer;
+      font-size: 0.85rem; transition: all 0.2s;
+    }
+    .action-btn-danger:hover { background: rgba(239,68,68,0.2); }
+
+    .empty-state {
+      text-align: center; padding: 3rem 1rem; color: #6b7280;
+    }
+    .empty-state .empty-icon { font-size: 3rem; margin-bottom: 1rem; opacity: 0.5; }
+
+    .loader-spinner {
+      display: flex; justify-content: center; align-items: center;
+      padding: 3rem; color: var(--gold-primary); font-size: 0.9rem;
+      gap: 0.5rem;
+    }
+
+    /* Stats in admin */
+    .admin-stat-card .stat-delta {
+      font-size: 0.78rem; color: #34d399; margin-top: 0.3rem;
+    }
+  </style>
 </head>
 <body class="dashboard-body admin-body">
 
@@ -16,11 +262,11 @@
   <aside class="dash-sidebar admin-sidebar">
     <a href="index.html" class="dash-logo">Vasudha <span>Couture</span></a>
     <div class="dash-nav">
-      <a href="#" class="active" onclick="switchTab('overview')">Overview</a>
-      <a href="#" onclick="switchTab('sellers')">Manage Sellers</a>
-      <a href="#" onclick="switchTab('orders')">Global Orders</a>
-      <a href="#" onclick="switchTab('health')">System Health</a>
-      <a href="#" onclick="switchTab('settings')">Settings</a>
+      <a href="#" class="active" id="nav-overview" onclick="switchTab('overview', this)">📊 Overview</a>
+      <a href="#" id="nav-users"    onclick="switchTab('users', this)">👥 Manage Users</a>
+      <a href="#" id="nav-sellers"  onclick="switchTab('sellers', this)">🏪 Manage Sellers</a>
+      <a href="#" id="nav-orders"   onclick="switchTab('orders', this)">📦 Global Orders</a>
+      <a href="#" id="nav-health"   onclick="switchTab('health', this)">💻 System Health</a>
     </div>
     <div class="dash-logout">
       <button onclick="window.location.href='index.html'" style="margin-bottom: 1rem; background: transparent; border: 1px solid var(--gold-primary); color: var(--gold-primary);">Back to Home</button>
@@ -40,19 +286,24 @@
       </div>
     </header>
 
+    <!-- ═══ OVERVIEW TAB ═══ -->
     <div id="view-overview" class="dash-view active">
-      <div class="dash-stats">
+      <div class="dash-stats" id="adminStatsGrid">
         <div class="stat-card admin-stat-card">
           <div class="stat-title">Platform Revenue</div>
-          <div class="stat-value">₹0</div>
+          <div class="stat-value" id="statRevenue">₹0</div>
+        </div>
+        <div class="stat-card admin-stat-card">
+          <div class="stat-title">Total Users</div>
+          <div class="stat-value" id="statUsers">0</div>
         </div>
         <div class="stat-card admin-stat-card">
           <div class="stat-title">Active Sellers</div>
-          <div class="stat-value">0</div>
+          <div class="stat-value" id="statSellers">0</div>
         </div>
         <div class="stat-card admin-stat-card">
           <div class="stat-title">Total Orders</div>
-          <div class="stat-value">0</div>
+          <div class="stat-value" id="statOrders">0</div>
         </div>
       </div>
 
@@ -63,48 +314,428 @@
             <tr>
               <th>Order ID</th>
               <th>Customer</th>
-              <th>Seller</th>
               <th>Amount</th>
               <th>Status</th>
+              <th>Date</th>
             </tr>
           </thead>
-          <tbody>
-            <!-- Dynamic Orders will populate here -->
+          <tbody id="recentOrdersBody">
+            <tr><td colspan="5" style="text-align:center; color:#6b7280; padding: 2rem;">Loading...</td></tr>
           </tbody>
         </table>
       </div>
     </div>
 
+    <!-- ═══ USERS TAB ═══ -->
+    <div id="view-users" class="dash-view" style="display: none;">
+      <div class="dash-section-title" style="color: #f3f4f6; margin-bottom: 1.5rem;">
+        👥 Manage Users
+        <span id="usersTotalBadge" style="background:rgba(200,169,106,0.15); color:var(--gold-primary); font-size:0.75rem; padding:0.2rem 0.6rem; border-radius:12px; margin-left:0.75rem; vertical-align:middle;"></span>
+      </div>
+
+      <!-- Search & Filter Bar -->
+      <div class="admin-users-bar">
+        <input
+          type="text" id="userSearchInput"
+          class="admin-search-input"
+          placeholder="🔍  Search by name or email..."
+          oninput="debounceSearch()"
+        >
+        <button class="role-filter-btn active" id="filter-all"      onclick="setRoleFilter('', this)">All</button>
+        <button class="role-filter-btn"         id="filter-customer" onclick="setRoleFilter('customer', this)">Customers</button>
+        <button class="role-filter-btn"         id="filter-seller"   onclick="setRoleFilter('seller', this)">Sellers</button>
+        <button class="role-filter-btn"         id="filter-admin"    onclick="setRoleFilter('admin', this)">Admins</button>
+      </div>
+
+      <!-- Users Table -->
+      <div class="users-table-wrap">
+        <table class="users-table">
+          <thead>
+            <tr>
+              <th>User</th>
+              <th>Role</th>
+              <th>Status</th>
+              <th>Orders</th>
+              <th>Total Spent</th>
+              <th>Joined</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="usersTableBody">
+            <tr><td colspan="7" class="loader-spinner">⏳ Loading users...</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Pagination -->
+      <div class="pagination" id="usersPagination"></div>
+    </div>
+
+    <!-- ═══ SELLERS TAB ═══ -->
     <div id="view-sellers" class="dash-view" style="display: none;">
       <div class="dash-section-title" style="color: #f3f4f6;">Manage Sellers</div>
       <div style="color: #9ca3af; padding: 2rem; background: #1f2937; border-radius: 8px; border: 1px solid #374151;">
-        Seller management interface goes here...
+        Seller management interface — switch to the Users tab and filter by "Sellers" role.
       </div>
     </div>
 
+    <!-- ═══ ORDERS TAB ═══ -->
     <div id="view-orders" class="dash-view" style="display: none;">
       <div class="dash-section-title" style="color: #f3f4f6;">Global Orders</div>
       <div style="color: #9ca3af; padding: 2rem; background: #1f2937; border-radius: 8px; border: 1px solid #374151;">
-        All orders across the platform goes here...
+        All orders across the platform.
       </div>
     </div>
 
+    <!-- ═══ SYSTEM HEALTH TAB ═══ -->
     <div id="view-health" class="dash-view" style="display: none;">
       <div class="dash-section-title" style="color: #f3f4f6;">System Health</div>
       <div style="color: #9ca3af; padding: 2rem; background: #1f2937; border-radius: 8px; border: 1px solid #374151;">
-        Server logs, CPU usage, and database status goes here...
-      </div>
-    </div>
-
-    <div id="view-settings" class="dash-view" style="display: none;">
-      <div class="dash-section-title" style="color: #f3f4f6;">Settings</div>
-      <div style="color: #9ca3af; padding: 2rem; background: #1f2937; border-radius: 8px; border: 1px solid #374151;">
-        Platform configuration and environment variables goes here...
+        Server logs, CPU usage, and database status.
       </div>
     </div>
 
   </main>
 
+  <!-- ═══ USER DETAIL MODAL ═══ -->
+  <div class="modal-overlay" id="userDetailOverlay" onclick="closeUserModal(event)">
+    <div class="user-detail-modal" id="userDetailModal">
+      <div class="modal-header">
+        <h2>User Details</h2>
+        <button class="modal-close" onclick="closeUserModal()">×</button>
+      </div>
+      <div class="modal-body" id="userDetailBody">
+        <div class="loader-spinner">⏳ Loading user details...</div>
+      </div>
+    </div>
+  </div>
+
   <script src="dashboard.js"></script>
+  <script>
+    /* ── Admin Users Tab Logic ── */
+    const API = 'http://localhost:3000';
+    let usersState = { page: 1, limit: 20, search: '', role: '', total: 0 };
+    let searchTimer = null;
+
+    /* ── Load Users ── */
+    async function loadUsers() {
+      const token = localStorage.getItem('accessToken');
+      const { page, limit, search, role } = usersState;
+
+      const params = new URLSearchParams({ page, limit });
+      if (search) params.set('search', search);
+      if (role)   params.set('role', role);
+
+      const tbody = document.getElementById('usersTableBody');
+      tbody.innerHTML = `<tr><td colspan="7" class="loader-spinner">⏳ Loading...</td></tr>`;
+
+      try {
+        const res = await fetch(`${API}/api/admin/users?${params}`, {
+          headers: { Authorization: 'Bearer ' + token }
+        });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error);
+
+        usersState.total = data.pagination.total;
+
+        // Badge
+        const badge = document.getElementById('usersTotalBadge');
+        if (badge) badge.textContent = `${data.pagination.total} users`;
+
+        renderUsersTable(data.users);
+        renderPagination(data.pagination);
+      } catch (err) {
+        tbody.innerHTML = `<tr><td colspan="7" style="text-align:center; color:#f87171; padding:2rem;">${err.message}</td></tr>`;
+      }
+    }
+
+    function renderUsersTable(users) {
+      const tbody = document.getElementById('usersTableBody');
+      if (!users.length) {
+        tbody.innerHTML = `<tr><td colspan="7">
+          <div class="empty-state">
+            <div class="empty-icon">👤</div>
+            <div>No users found</div>
+          </div>
+        </td></tr>`;
+        return;
+      }
+
+      tbody.innerHTML = users.map(u => {
+        const initials = (u.name || 'U').split(' ').map(w => w[0]).join('').substring(0,2).toUpperCase();
+        const avatarHtml = u.avatar_url
+          ? `<img src="${escHtml(u.avatar_url)}" alt="${escHtml(u.name)}">`
+          : initials;
+        const roleCls = { admin: 'role-admin', seller: 'role-seller', customer: 'role-customer' }[u.role] || 'role-customer';
+        const statusCls = u.is_active ? 'status-active' : 'status-inactive';
+        const statusTxt = u.is_active ? '● Active' : '● Inactive';
+        const joined = u.created_at ? new Date(u.created_at).toLocaleDateString('en-IN', { day:'2-digit', month:'short', year:'numeric' }) : '—';
+        const spent = Number(u.total_spent || 0);
+
+        return `<tr onclick="openUserModal('${escHtml(u.id)}')">
+          <td>
+            <div class="user-cell">
+              <div class="user-mini-avatar">${avatarHtml}</div>
+              <div>
+                <div class="user-cell-name">${escHtml(u.name || '—')}</div>
+                <div class="user-cell-email">${escHtml(u.email || '—')}</div>
+              </div>
+            </div>
+          </td>
+          <td><span class="role-badge ${roleCls}">${u.role}</span></td>
+          <td><span class="status-toggle ${statusCls}">${statusTxt}</span></td>
+          <td>${u.order_count || 0}</td>
+          <td>₹${spent.toLocaleString('en-IN')}</td>
+          <td>${joined}</td>
+          <td onclick="event.stopPropagation()">
+            <button class="tbl-action-btn" onclick="openUserModal('${escHtml(u.id)}')">View</button>
+            <button class="tbl-action-btn ${u.is_active ? 'danger' : ''}" style="margin-left:0.4rem"
+              onclick="quickToggle('${escHtml(u.id)}', ${!u.is_active})">
+              ${u.is_active ? 'Disable' : 'Enable'}
+            </button>
+          </td>
+        </tr>`;
+      }).join('');
+    }
+
+    function renderPagination({ page, totalPages, total, limit }) {
+      const el = document.getElementById('usersPagination');
+      const from = Math.min((page - 1) * limit + 1, total);
+      const to   = Math.min(page * limit, total);
+      el.innerHTML = `
+        <span class="page-info">Showing ${from}–${to} of ${total}</span>
+        <button class="page-btn" onclick="changePage(${page - 1})" ${page <= 1 ? 'disabled' : ''}>‹ Prev</button>
+        ${Array.from({ length: Math.min(totalPages, 7) }, (_, i) => {
+          const p = i + 1;
+          return `<button class="page-btn ${p === page ? 'active' : ''}" onclick="changePage(${p})">${p}</button>`;
+        }).join('')}
+        <button class="page-btn" onclick="changePage(${page + 1})" ${page >= totalPages ? 'disabled' : ''}>Next ›</button>
+      `;
+    }
+
+    function changePage(p) {
+      usersState.page = p;
+      loadUsers();
+    }
+
+    function debounceSearch() {
+      clearTimeout(searchTimer);
+      searchTimer = setTimeout(() => {
+        usersState.search = document.getElementById('userSearchInput').value.trim();
+        usersState.page = 1;
+        loadUsers();
+      }, 400);
+    }
+
+    function setRoleFilter(role, btn) {
+      usersState.role = role;
+      usersState.page = 1;
+      document.querySelectorAll('.role-filter-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      loadUsers();
+    }
+
+    /* ── User Detail Modal ── */
+    async function openUserModal(userId) {
+      document.getElementById('userDetailOverlay').classList.add('open');
+      document.getElementById('userDetailBody').innerHTML = `<div class="loader-spinner">⏳ Loading...</div>`;
+
+      const token = localStorage.getItem('accessToken');
+      try {
+        const res = await fetch(`${API}/api/admin/users/${userId}`, {
+          headers: { Authorization: 'Bearer ' + token }
+        });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error);
+        renderUserDetail(data);
+      } catch (err) {
+        document.getElementById('userDetailBody').innerHTML =
+          `<div style="color:#f87171; padding:1rem;">${err.message}</div>`;
+      }
+    }
+
+    function renderUserDetail({ user, recentOrders, uploadedImages }) {
+      const initials = (user.name || 'U').split(' ').map(w => w[0]).join('').substring(0,2).toUpperCase();
+      const avatarHtml = user.avatar_url
+        ? `<img src="${escHtml(user.avatar_url)}" alt="${escHtml(user.name)}">`
+        : initials;
+      const roleCls = { admin: 'role-admin', seller: 'role-seller', customer: 'role-customer' }[user.role] || 'role-customer';
+      const statusCls = user.is_active ? 'status-active' : 'status-inactive';
+
+      const joined    = user.created_at   ? new Date(user.created_at).toLocaleString('en-IN')   : '—';
+      const lastLogin = user.last_login_at ? new Date(user.last_login_at).toLocaleString('en-IN') : 'Never';
+
+      const ordersHtml = recentOrders.length
+        ? `<table class="modal-orders-table">
+            <thead><tr><th>Order ID</th><th>Amount</th><th>Status</th><th>Date</th></tr></thead>
+            <tbody>${recentOrders.map(o => `
+              <tr>
+                <td style="font-family:monospace; font-size:0.8rem;">#${o.id.substring(0,8).toUpperCase()}</td>
+                <td>₹${Number(o.total_amount).toLocaleString('en-IN')}</td>
+                <td><span class="status-badge ${o.status === 'pending' ? 'status-pending' : 'status-success'}">${o.status}</span></td>
+                <td>${new Date(o.created_at).toLocaleDateString('en-IN')}</td>
+              </tr>
+            `).join('')}</tbody>
+          </table>`
+        : `<div style="color:#6b7280; font-size:0.9rem; padding: 0.5rem 0;">No orders yet.</div>`;
+
+      document.getElementById('userDetailBody').innerHTML = `
+        <div class="modal-profile">
+          <div class="modal-avatar">${avatarHtml}</div>
+          <div class="modal-profile-info">
+            <h3>${escHtml(user.name || '—')}</h3>
+            <p>${escHtml(user.email || '—')}</p>
+            <div class="modal-badges">
+              <span class="role-badge ${roleCls}">${user.role}</span>
+              <span class="status-toggle ${statusCls}">${user.is_active ? '● Active' : '● Inactive'}</span>
+              ${user.email_verified ? '<span style="background:rgba(16,185,129,0.15);color:#34d399;padding:0.28rem 0.75rem;border-radius:20px;font-size:0.72rem;font-weight:600;">✓ Verified</span>' : '<span style="background:rgba(239,68,68,0.1);color:#f87171;padding:0.28rem 0.75rem;border-radius:20px;font-size:0.72rem;font-weight:600;">✗ Unverified</span>'}
+            </div>
+          </div>
+        </div>
+
+        <div class="modal-grid">
+          <div class="modal-info-card">
+            <div class="modal-info-label">User ID</div>
+            <div class="modal-info-value" style="font-family:monospace;font-size:0.78rem;">${escHtml(user.id)}</div>
+          </div>
+          <div class="modal-info-card">
+            <div class="modal-info-label">Language Preference</div>
+            <div class="modal-info-value">${user.language_pref === 'hi' ? '🇮🇳 Hindi' : '🇬🇧 English'}</div>
+          </div>
+          <div class="modal-info-card">
+            <div class="modal-info-label">Joined</div>
+            <div class="modal-info-value">${joined}</div>
+          </div>
+          <div class="modal-info-card">
+            <div class="modal-info-label">Last Login</div>
+            <div class="modal-info-value">${lastLogin}</div>
+          </div>
+          <div class="modal-info-card">
+            <div class="modal-info-label">Total Orders</div>
+            <div class="modal-info-value">${recentOrders.length >= 10 ? '10+' : recentOrders.length}</div>
+          </div>
+          <div class="modal-info-card">
+            <div class="modal-info-label">Uploaded Images</div>
+            <div class="modal-info-value">${uploadedImages}</div>
+          </div>
+        </div>
+
+        <div class="modal-section-title">Recent Orders</div>
+        ${ordersHtml}
+
+        <div class="modal-actions">
+          <select id="modalRoleSelect" style="background:#1f2937;border:1px solid #374151;color:#f3f4f6;padding:0.7rem 1rem;border-radius:8px;font-size:0.85rem;cursor:pointer;">
+            <option value="customer" ${user.role==='customer'?'selected':''}>Customer</option>
+            <option value="seller"   ${user.role==='seller'  ?'selected':''}>Seller</option>
+            <option value="admin"    ${user.role==='admin'   ?'selected':''}>Admin</option>
+          </select>
+          <button class="action-btn-primary" onclick="saveUserRole('${escHtml(user.id)}')">Save Role</button>
+          <button class="action-btn-secondary" onclick="quickToggle('${escHtml(user.id)}', ${!user.is_active}); closeUserModal()">
+            ${user.is_active ? '🚫 Disable Account' : '✅ Enable Account'}
+          </button>
+          <button class="action-btn-danger" onclick="closeUserModal()">Close</button>
+        </div>
+      `;
+    }
+
+    function closeUserModal(event) {
+      if (event && event.target !== document.getElementById('userDetailOverlay')) return;
+      document.getElementById('userDetailOverlay').classList.remove('open');
+    }
+
+    /* ── Quick toggle active/inactive ── */
+    async function quickToggle(userId, newStatus) {
+      const token = localStorage.getItem('accessToken');
+      try {
+        const res = await fetch(`${API}/api/admin/users/${userId}`, {
+          method: 'PATCH',
+          headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + token },
+          body: JSON.stringify({ is_active: newStatus })
+        });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error);
+        showToast(`User ${newStatus ? 'enabled' : 'disabled'} successfully`);
+        loadUsers();
+      } catch (err) { showToast('Error: ' + err.message, true); }
+    }
+
+    /* ── Save role from modal ── */
+    async function saveUserRole(userId) {
+      const role = document.getElementById('modalRoleSelect').value;
+      const token = localStorage.getItem('accessToken');
+      try {
+        const res = await fetch(`${API}/api/admin/users/${userId}`, {
+          method: 'PATCH',
+          headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + token },
+          body: JSON.stringify({ role })
+        });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error);
+        showToast('Role updated to ' + role);
+        closeUserModal();
+        loadUsers();
+      } catch (err) { showToast('Error: ' + err.message, true); }
+    }
+
+    /* ── Toast Notification ── */
+    function showToast(msg, isError = false) {
+      let t = document.getElementById('adminToast');
+      if (!t) {
+        t = document.createElement('div');
+        t.id = 'adminToast';
+        t.style.cssText = 'position:fixed;bottom:30px;left:50%;transform:translateX(-50%) translateY(20px);padding:0.9rem 2rem;border-radius:30px;font-size:0.85rem;font-weight:500;opacity:0;transition:all 0.3s;z-index:99999;letter-spacing:0.05em;';
+        document.body.appendChild(t);
+      }
+      t.textContent = msg;
+      t.style.background = isError ? '#7f1d1d' : '#C8A96A';
+      t.style.color = isError ? '#fca5a5' : '#111';
+      t.style.opacity = '1'; t.style.transform = 'translateX(-50%) translateY(0)';
+      setTimeout(() => { t.style.opacity='0'; t.style.transform='translateX(-50%) translateY(20px)'; }, 3000);
+    }
+
+    /* ── Helper ── */
+    function escHtml(str) {
+      return String(str || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+    }
+
+    /* ── Hook into tab switch to load users ── */
+    const _origSwitch = window.switchTab;
+    window.switchTab = function(tabId, el) {
+      _origSwitch(tabId, el);
+      if (tabId === 'users') loadUsers();
+    };
+
+    /* ── Hook into overview stats (patch dashboard.js output) ── */
+    document.addEventListener('DOMContentLoaded', () => {
+      // Override stat rendering for admin
+      const origInit = document.body.onload;
+    });
+
+    /* Override stats to use our new IDs */
+    window.__adminStatsLoaded = function(stats) {
+      const r = document.getElementById('statRevenue');
+      const u = document.getElementById('statUsers');
+      const s = document.getElementById('statSellers');
+      const o = document.getElementById('statOrders');
+      if (r) r.textContent = '₹' + (Number(stats.revenue)||0).toLocaleString('en-IN');
+      if (u) u.textContent = stats.totalUsers || 0;
+      if (s) s.textContent = stats.activeSellers || 0;
+      if (o) o.textContent = stats.totalOrders || 0;
+
+      const tbody = document.getElementById('recentOrdersBody');
+      if (tbody && stats.recentOrders) {
+        tbody.innerHTML = stats.recentOrders.length ? stats.recentOrders.map(o => `
+          <tr>
+            <td style="font-family:monospace;font-size:0.82rem;">#${o.order_id.substring(0,8).toUpperCase()}</td>
+            <td>${escHtml(o.customer_name)}</td>
+            <td>₹${Number(o.total_amount||0).toLocaleString('en-IN')}</td>
+            <td><span class="status-badge ${o.status==='pending'?'status-pending':'status-success'}">${o.status}</span></td>
+            <td>${new Date(o.created_at).toLocaleDateString('en-IN')}</td>
+          </tr>
+        `).join('')
+        : `<tr><td colspan="5" style="text-align:center;color:#6b7280;padding:2rem;">No orders yet</td></tr>`;
+      }
+    };
+  </script>
 </body>
 </html>

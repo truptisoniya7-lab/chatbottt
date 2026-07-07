@@ -38,14 +38,21 @@ document.addEventListener("DOMContentLoaded", async () => {
     
     // Populate Admin DOM
     if (currentUser.role === 'admin') {
-      const els = document.querySelectorAll('.stat-value');
-      const revenue = Number(stats.revenue) || 0;
-      if(els[0]) els[0].innerText = `₹${revenue.toLocaleString('en-IN')}`;
-      if(els[1]) els[1].innerText = stats.activeSellers || 0;
-      if(els[2]) els[2].innerText = stats.totalOrders || 0;
+      // Call the hook defined in dashboard-admin.html if it exists
+      if (typeof window.__adminStatsLoaded === 'function') {
+        window.__adminStatsLoaded(stats);
+      } else {
+        // Fallback: original behaviour for other pages
+        const els = document.querySelectorAll('.stat-value');
+        const revenue = Number(stats.revenue) || 0;
+        if(els[0]) els[0].innerText = `₹${revenue.toLocaleString('en-IN')}`;
+        if(els[1]) els[1].innerText = stats.totalUsers || stats.activeSellers || 0;
+        if(els[2]) els[2].innerText = stats.activeSellers || 0;
+        if(els[3]) els[3].innerText = stats.totalOrders || 0;
+      }
       
-      const tbody = document.querySelector('.dash-table tbody');
-      if (tbody) {
+      const tbody = document.querySelector('.dash-table tbody') || document.getElementById('recentOrdersBody');
+      if (tbody && stats.recentOrders) {
         tbody.innerHTML = stats.recentOrders.map(o => `
           <tr>
             <td>#${o.order_id.substring(0, 8).toUpperCase()}</td>
