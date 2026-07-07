@@ -34,9 +34,12 @@ app.get('/chat/health', (req, res) => {
 const authRoutes = require('./routes/auth.routes');
 const chatRoutes = require('./routes/chat');
 const ecommerceRoutes = require('./routes/ecommerce.routes');
+const uploadRoutes = require('./routes/upload.routes');
+
 app.use('/auth', authRoutes);
 app.use('/chat', chatRoutes);
 app.use('/api', ecommerceRoutes);
+app.use('/api/upload', uploadRoutes);
 
 app.use((err, req, res, next) => {
   console.error(err.stack);
