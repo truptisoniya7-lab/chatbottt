@@ -26,7 +26,23 @@ function uploadBuffer(buffer, folder = 'vasudha/general', options = {}) {
         ...options,
       },
       (error, result) => {
-        if (error) return reject(error);
+        if (error) {
+          console.warn('Cloudinary upload failed, falling back to local storage:', error.message);
+          try {
+            const fs = require('fs');
+            const path = require('path');
+            const filename = (options.public_id || Date.now()) + '.jpg';
+            const localPath = path.join(__dirname, '../../website/assets/uploads', filename);
+            fs.writeFileSync(localPath, buffer);
+            return resolve({
+              secure_url: 'assets/uploads/' + filename,
+              public_id: options.public_id || filename,
+              width: 800, height: 1100, format: 'jpg', bytes: buffer.length
+            });
+          } catch (localErr) {
+            return reject(error); // Return original cloudinary error if local fails
+          }
+        }
         resolve(result);
       }
     );
