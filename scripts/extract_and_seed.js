@@ -1,3 +1,4 @@
+require('dotenv').config({ path: require('path').join(__dirname, '../.env') });
 const { pool } = require('../src/config/database');
 
 const products = [
@@ -38,5 +39,7 @@ async function seed() {
     process.exit(0);
   }
 }
+
+seed();
 
 seed();

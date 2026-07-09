@@ -536,13 +536,13 @@ nav.scrolled {
   border-radius: 50%; pointer-events: none;
 }
 
-.sph-saree   { background: url('assets/categories/saree.png') center/cover; }
-.sph-kurta   { background: url('assets/categories/kurta.png') center/cover; }
-.sph-lehenga { background: url('assets/categories/lehenga.png') center/cover; }
-.sph-shirt   { background: url('assets/categories/shirt.png') center/cover; }
-.sph-dress   { background: url('assets/categories/dress.png') center/cover; }
-.sph-jeans   { background: url('assets/categories/jeans.png') center/cover; }
-.sph-ethnic  { background: url('assets/categories/ethnic.png') center/cover; }
+.sph-saree   { background: url('https://res.cloudinary.com/jqscyccf/image/upload/v1783573688/chatbottt_frontend/saree.jpg') center/cover; }
+.sph-kurta   { background: url('https://res.cloudinary.com/jqscyccf/image/upload/v1783573684/chatbottt_frontend/kurta.jpg') center/cover; }
+.sph-lehenga { background: url('https://res.cloudinary.com/jqscyccf/image/upload/v1783573686/chatbottt_frontend/lehenga.jpg') center/cover; }
+.sph-shirt   { background: url('https://res.cloudinary.com/jqscyccf/image/upload/v1783573714/chatbottt_frontend/shirt.jpg') center/cover; }
+.sph-dress   { background: url('https://res.cloudinary.com/jqscyccf/image/upload/v1783573699/chatbottt_frontend/dress.jpg') center/cover; }
+.sph-jeans   { background: url('https://res.cloudinary.com/jqscyccf/image/upload/v1783573704/chatbottt_frontend/jeans.jpg') center/cover; }
+.sph-ethnic  { background: url('https://res.cloudinary.com/jqscyccf/image/upload/v1783573701/chatbottt_frontend/ethnic.jpg') center/cover; }
 
 .cat-sphere-name {
   font-family: 'Jost', sans-serif;
@@ -616,40 +616,40 @@ nav.scrolled {
 .pcard:hover .pcard-bg { transform: scale(1.04); }
 
 .img-saree {
-  background: url('assets/saree_model_1782371974758.png') center/cover;
+  background: url('https://res.cloudinary.com/jqscyccf/image/upload/v1783573754/chatbottt_frontend/saree_model_1782371974758.jpg') center/cover;
 }
 .img-lehenga {
-  background: url('assets/lehenga_model_1782371986363.png') center/cover;
+  background: url('https://res.cloudinary.com/jqscyccf/image/upload/v1783573733/chatbottt_frontend/lehenga_model_1782371986363.jpg') center/cover;
 }
 .img-gown {
-  background: url('assets/categories/dress.png') center/cover;
+  background: url('https://res.cloudinary.com/jqscyccf/image/upload/v1783573699/chatbottt_frontend/dress.jpg') center/cover;
 }
 .img-anarkali {
-  background: url('assets/palazzo.png') center/cover;
+  background: url('https://res.cloudinary.com/jqscyccf/image/upload/v1783573744/chatbottt_frontend/palazzo.jpg') center/cover;
 }
 .img-ethnic {
-  background: url('assets/categories/kurta.png') center/cover;
+  background: url('https://res.cloudinary.com/jqscyccf/image/upload/v1783573684/chatbottt_frontend/kurta.jpg') center/cover;
 }
 .img-shirt {
-  background: url('assets/mens_shirt_distinct.png') center/cover;
+  background: url('https://res.cloudinary.com/jqscyccf/image/upload/v1783573740/chatbottt_frontend/mens_shirt_distinct.jpg') center/cover;
 }
 .img-kurta-men {
-  background: url('assets/kurta_model_1782372108155.png') center/cover;
+  background: url('https://res.cloudinary.com/jqscyccf/image/upload/v1783573732/chatbottt_frontend/kurta_model_1782372108155.jpg') center/cover;
 }
 .img-sherwani {
-  background: url('assets/mens_sherwani_distinct.png') center/cover;
+  background: url('https://res.cloudinary.com/jqscyccf/image/upload/v1783573739/chatbottt_frontend/mens_sherwani_distinct.jpg') center/cover;
 }
 .img-jeans {
-  background: url('assets/mens_jeans_distinct.png') center/cover;
+  background: url('https://res.cloudinary.com/jqscyccf/image/upload/v1783573737/chatbottt_frontend/mens_jeans_distinct.jpg') center/cover;
 }
 .img-blazer {
-  background: url('assets/nehru.png') center/cover;
+  background: url('https://res.cloudinary.com/jqscyccf/image/upload/v1783573742/chatbottt_frontend/nehru.jpg') center/cover;
 }
 .img-kurti {
-  background: url('assets/womens_kurti_distinct.png') center/cover;
+  background: url('https://res.cloudinary.com/jqscyccf/image/upload/v1783573769/chatbottt_frontend/womens_kurti_distinct.jpg') center/cover;
 }
 .img-top {
-  background: url('assets/womens_top_distinct.png') center/cover;
+  background: url('https://res.cloudinary.com/jqscyccf/image/upload/v1783573770/chatbottt_frontend/womens_top_distinct.jpg') center/cover;
 }
 
 .pcard-overlay {
@@ -811,10 +811,10 @@ nav.scrolled {
 }
 .tcard-wish:hover { background: var(--rose); color: white; border-color: var(--rose); }
 
-.img-dupatta { background: url('assets/dupatta.png') center/cover; }
-.img-nehru { background: url('assets/nehru.png') center/cover; }
-.img-palazzo { background: url('assets/palazzo.png') center/cover; }
-.img-dhoti { background: url('assets/dhoti.png') center/cover; }
+.img-dupatta { background: url('https://res.cloudinary.com/jqscyccf/image/upload/v1783573723/chatbottt_frontend/dupatta.jpg') center/cover; }
+.img-nehru { background: url('https://res.cloudinary.com/jqscyccf/image/upload/v1783573742/chatbottt_frontend/nehru.jpg') center/cover; }
+.img-palazzo { background: url('https://res.cloudinary.com/jqscyccf/image/upload/v1783573744/chatbottt_frontend/palazzo.jpg') center/cover; }
+.img-dhoti { background: url('https://res.cloudinary.com/jqscyccf/image/upload/v1783573721/chatbottt_frontend/dhoti.jpg') center/cover; }
 
 .tcard-colors { display: flex; gap: 0.3rem; margin-bottom: 0.5rem; }
 .tcard-dot { width: 10px; height: 10px; border-radius: 50%; border: 1px solid rgba(255,255,255,0.2); }
@@ -832,8 +832,8 @@ nav.scrolled {
 .lookbook-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem; }
 .look-card { position: relative; height: 450px; overflow: hidden; cursor: pointer; border-radius: 4px; }
 .look-art { position: absolute; inset: 0; background-size: cover; background-position: center; transition: transform 0.8s; }
-.look-art-saree { background: url('assets/saree_model_1782371974758.png') center/cover; }
-.look-art-groom { background: url('assets/sherwani_model_1782372003018.png') center/cover; }
+.look-art-saree { background: url('https://res.cloudinary.com/jqscyccf/image/upload/v1783573754/chatbottt_frontend/saree_model_1782371974758.jpg') center/cover; }
+.look-art-groom { background: url('https://res.cloudinary.com/jqscyccf/image/upload/v1783573755/chatbottt_frontend/sherwani_model_1782372003018.jpg') center/cover; }
 .look-art-sangeet { background: linear-gradient(170deg, #2a1045, #d4b0f0); }
 .look-card:hover .look-art { transform: scale(1.08); }
 

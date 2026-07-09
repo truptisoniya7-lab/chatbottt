@@ -732,7 +732,7 @@ async function loadHomeProducts() {
 
     // Update Hero Carousel with dynamic products (prioritize sarees)
     const sareeProducts = products.filter(p => /saree/i.test(p.name));
-    const carouselProducts = [...sareeProducts, ...products].filter((v, i, a) => a.findIndex(t => (t.id === v.id)) === i).slice(0, 5);
+    const carouselProducts = [...sareeProducts, ...products].filter((v, i, a) => a.findIndex(t => (t.id === v.id)) === i).slice(0, 15);
     
     if (carouselProducts.length > 0) {
       window.heroCarouselItems = carouselProducts.map(p => {

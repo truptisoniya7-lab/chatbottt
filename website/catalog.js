@@ -120,7 +120,7 @@ window.PRODUCT_CATALOG = {
         "Gold"
       ],
       "gender": "women",
-      "image_url": "assets/saree_model_1782371974758.png"
+      "image_url": "https://res.cloudinary.com/jqscyccf/image/upload/v1783573754/chatbottt_frontend/saree_model_1782371974758.jpg"
     },
     {
       "product_id": "VC-W-002",
@@ -147,7 +147,7 @@ window.PRODUCT_CATALOG = {
         "Ivory"
       ],
       "gender": "women",
-      "image_url": "assets/lehenga_model_1782371986363.png"
+      "image_url": "https://res.cloudinary.com/jqscyccf/image/upload/v1783573733/chatbottt_frontend/lehenga_model_1782371986363.jpg"
     },
     {
       "product_id": "VC-W-003",
@@ -175,7 +175,7 @@ window.PRODUCT_CATALOG = {
         "Yellow"
       ],
       "gender": "women",
-      "image_url": "assets/floral_maxi_dress.png"
+      "image_url": "https://res.cloudinary.com/jqscyccf/image/upload/v1783573727/chatbottt_frontend/floral_maxi_dress.jpg"
     },
     {
       "product_id": "VC-W-004",
@@ -202,7 +202,7 @@ window.PRODUCT_CATALOG = {
         "Teal"
       ],
       "gender": "women",
-      "image_url": "assets/anarkali_suit.png"
+      "image_url": "https://res.cloudinary.com/jqscyccf/image/upload/v1783573693/chatbottt_frontend/anarkali_suit.jpg"
     },
     {
       "product_id": "VC-W-005",
@@ -252,7 +252,7 @@ window.PRODUCT_CATALOG = {
         "Peacock Blue"
       ],
       "gender": "women",
-      "image_url": "assets/dupatta.png"
+      "image_url": "https://res.cloudinary.com/jqscyccf/image/upload/v1783573723/chatbottt_frontend/dupatta.jpg"
     },
     {
       "product_id": "VC-W-007",
@@ -279,7 +279,7 @@ window.PRODUCT_CATALOG = {
         "Rust"
       ],
       "gender": "women",
-      "image_url": "assets/palazzo.png"
+      "image_url": "https://res.cloudinary.com/jqscyccf/image/upload/v1783573744/chatbottt_frontend/palazzo.jpg"
     },
     {
       "product_id": "VC-W-008",
@@ -302,7 +302,7 @@ window.PRODUCT_CATALOG = {
         "Sage Green"
       ],
       "gender": "women",
-      "image_url": "assets/saree_chanderi.png"
+      "image_url": "https://res.cloudinary.com/jqscyccf/image/upload/v1783573750/chatbottt_frontend/saree_chanderi.jpg"
     },
     {
       "product_id": "VC-W-009",
@@ -325,7 +325,7 @@ window.PRODUCT_CATALOG = {
         "Black"
       ],
       "gender": "women",
-      "image_url": "assets/saree_georgette.png"
+      "image_url": "https://res.cloudinary.com/jqscyccf/image/upload/v1783573751/chatbottt_frontend/saree_georgette.jpg"
     },
     {
       "product_id": "VC-W-010",
@@ -347,7 +347,7 @@ window.PRODUCT_CATALOG = {
         "Blue"
       ],
       "gender": "women",
-      "image_url": "assets/saree_kalamkari.png"
+      "image_url": "https://res.cloudinary.com/jqscyccf/image/upload/v1783573753/chatbottt_frontend/saree_kalamkari.jpg"
     },
     {
       "product_id": "VC-W-011",
@@ -373,7 +373,7 @@ window.PRODUCT_CATALOG = {
         "Mustard"
       ],
       "gender": "women",
-      "image_url": "assets/womens_kurti_distinct.png"
+      "image_url": "https://res.cloudinary.com/jqscyccf/image/upload/v1783573769/chatbottt_frontend/womens_kurti_distinct.jpg"
     },
     {
       "product_id": "VC-W-012",
@@ -400,7 +400,7 @@ window.PRODUCT_CATALOG = {
         "Purple"
       ],
       "gender": "women",
-      "image_url": "assets/womens_top_distinct.png"
+      "image_url": "https://res.cloudinary.com/jqscyccf/image/upload/v1783573770/chatbottt_frontend/womens_top_distinct.jpg"
     },
     {
       "product_id": "VC-W-011",
@@ -413,7 +413,7 @@ window.PRODUCT_CATALOG = {
       "occasion": "Casual",
       "region_origin": "Jaipur",
       "gender": "women",
-      "image_url": "assets/womens_kurti_distinct.png"
+      "image_url": "https://res.cloudinary.com/jqscyccf/image/upload/v1783573769/chatbottt_frontend/womens_kurti_distinct.jpg"
     },
     {
       "product_id": "VC-W-012",
@@ -426,7 +426,7 @@ window.PRODUCT_CATALOG = {
       "occasion": "Party",
       "region_origin": "Mumbai",
       "gender": "women",
-      "image_url": "assets/womens_top_distinct.png"
+      "image_url": "https://res.cloudinary.com/jqscyccf/image/upload/v1783573770/chatbottt_frontend/womens_top_distinct.jpg"
     },
     {
       "product_id": "VC-W-013",
@@ -439,7 +439,7 @@ window.PRODUCT_CATALOG = {
       "occasion": "Casual",
       "region_origin": "Delhi",
       "gender": "women",
-      "image_url": "assets/silk_blend_tunic.png"
+      "image_url": "https://res.cloudinary.com/jqscyccf/image/upload/v1783573756/chatbottt_frontend/silk_blend_tunic.jpg"
     },
     {
       "product_id": "VC-W-014",
@@ -452,7 +452,7 @@ window.PRODUCT_CATALOG = {
       "occasion": "Casual",
       "region_origin": "Surat",
       "gender": "women",
-      "image_url": "assets/floral_rayon_kurti.png"
+      "image_url": "https://res.cloudinary.com/jqscyccf/image/upload/v1783573728/chatbottt_frontend/floral_rayon_kurti.jpg"
     },
     {
       "product_id": "VC-W-015",
@@ -465,7 +465,7 @@ window.PRODUCT_CATALOG = {
       "occasion": "Festive",
       "region_origin": "Chanderi",
       "gender": "women",
-      "image_url": "assets/chanderi_silk_crop.png"
+      "image_url": "https://res.cloudinary.com/jqscyccf/image/upload/v1783573716/chatbottt_frontend/chanderi_silk_crop.jpg"
     },
     {
       "product_id": "VC-W-016",
@@ -478,7 +478,7 @@ window.PRODUCT_CATALOG = {
       "occasion": "Casual",
       "region_origin": "Pune",
       "gender": "women",
-      "image_url": "assets/peplum_top.png"
+      "image_url": "https://res.cloudinary.com/jqscyccf/image/upload/v1783573745/chatbottt_frontend/peplum_top.jpg"
     },
     {
       "product_id": "VC-W-017",
@@ -491,7 +491,7 @@ window.PRODUCT_CATALOG = {
       "occasion": "Wedding",
       "region_origin": "Banaras",
       "gender": "women",
-      "image_url": "assets/zari_kurti_set.png"
+      "image_url": "https://res.cloudinary.com/jqscyccf/image/upload/v1783573771/chatbottt_frontend/zari_kurti_set.jpg"
     }
   ],
   "products_men": [
@@ -520,7 +520,7 @@ window.PRODUCT_CATALOG = {
         "Maroon"
       ],
       "gender": "men",
-      "image_url": "assets/sherwani_model_1782372003018.png"
+      "image_url": "https://res.cloudinary.com/jqscyccf/image/upload/v1783573755/chatbottt_frontend/sherwani_model_1782372003018.jpg"
     },
     {
       "product_id": "VC-M-002",
@@ -548,7 +548,7 @@ window.PRODUCT_CATALOG = {
         "Light Pink"
       ],
       "gender": "men",
-      "image_url": "assets/mens_shirt_model_1782378349323.png"
+      "image_url": "https://res.cloudinary.com/jqscyccf/image/upload/v1783573741/chatbottt_frontend/mens_shirt_model_1782378349323.jpg"
     },
     {
       "product_id": "VC-M-003",
@@ -575,7 +575,7 @@ window.PRODUCT_CATALOG = {
         "White"
       ],
       "gender": "men",
-      "image_url": "assets/kurta_model_1782372108155.png"
+      "image_url": "https://res.cloudinary.com/jqscyccf/image/upload/v1783573732/chatbottt_frontend/kurta_model_1782372108155.jpg"
     },
     {
       "product_id": "VC-M-004",
@@ -602,7 +602,7 @@ window.PRODUCT_CATALOG = {
         "Black"
       ],
       "gender": "men",
-      "image_url": "assets/mens_jeans_model_1782378330701.png"
+      "image_url": "https://res.cloudinary.com/jqscyccf/image/upload/v1783573738/chatbottt_frontend/mens_jeans_model_1782378330701.jpg"
     },
     {
       "product_id": "VC-M-005",
@@ -628,7 +628,7 @@ window.PRODUCT_CATALOG = {
         "Brown"
       ],
       "gender": "men",
-      "image_url": "assets/nehru.png"
+      "image_url": "https://res.cloudinary.com/jqscyccf/image/upload/v1783573742/chatbottt_frontend/nehru.jpg"
     },
     {
       "product_id": "VC-M-006",
@@ -770,7 +770,7 @@ window.PRODUCT_CATALOG = {
       "occasion": "Casual",
       "region_origin": "Mumbai",
       "gender": "men",
-      "image_url": "assets/mens_shirt_distinct.png"
+      "image_url": "https://res.cloudinary.com/jqscyccf/image/upload/v1783573740/chatbottt_frontend/mens_shirt_distinct.jpg"
     },
     {
       "product_id": "VC-M-012",
@@ -783,7 +783,7 @@ window.PRODUCT_CATALOG = {
       "occasion": "Festive",
       "region_origin": "Lucknow",
       "gender": "men",
-      "image_url": "assets/kurta_model_1782372108155.png"
+      "image_url": "https://res.cloudinary.com/jqscyccf/image/upload/v1783573732/chatbottt_frontend/kurta_model_1782372108155.jpg"
     },
     {
       "product_id": "VC-M-013",
@@ -796,7 +796,7 @@ window.PRODUCT_CATALOG = {
       "occasion": "Casual",
       "region_origin": "Bangalore",
       "gender": "men",
-      "image_url": "assets/mens_jeans_distinct.png"
+      "image_url": "https://res.cloudinary.com/jqscyccf/image/upload/v1783573737/chatbottt_frontend/mens_jeans_distinct.jpg"
     },
     {
       "product_id": "VC-M-014",
@@ -809,7 +809,7 @@ window.PRODUCT_CATALOG = {
       "occasion": "Casual",
       "region_origin": "Jaipur",
       "gender": "men",
-      "image_url": "assets/printed_short_kurta.png"
+      "image_url": "https://res.cloudinary.com/jqscyccf/image/upload/v1783573747/chatbottt_frontend/printed_short_kurta.jpg"
     },
     {
       "product_id": "VC-M-015",
@@ -822,7 +822,7 @@ window.PRODUCT_CATALOG = {
       "occasion": "Casual",
       "region_origin": "Tiruppur",
       "gender": "men",
-      "image_url": "assets/polo_tshirt.png"
+      "image_url": "https://res.cloudinary.com/jqscyccf/image/upload/v1783573746/chatbottt_frontend/polo_tshirt.jpg"
     }
   ],
   "ethnic_heritage": []

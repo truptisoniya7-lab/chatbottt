@@ -50,11 +50,27 @@ async function getDashboardStats(req, res) {
       const financeRes = await db.query(`
         SELECT 
           COALESCE(SUM(o.total_amount), 0) as revenue,
-          COALESCE(SUM((oi.price_at_purchase - oi.cost_at_purchase) * oi.quantity), 0) as profit
+          COALESCE(SUM((oi.price_at_purchase - oi.cost_at_purchase) * oi.quantity), 0) as gross_profit
         FROM orders o
         LEFT JOIN order_items oi ON o.id = oi.order_id
         WHERE o.status != 'cancelled'
       `);
+      
+      const expensesRes = await db.query(`
+        SELECT COALESCE(SUM(amount), 0) as total_expenses,
+               category
+        FROM platform_expenses
+        GROUP BY category
+      `);
+      
+      let totalExpenses = 0;
+      const expenseBreakdown = {};
+      expensesRes.rows.forEach(row => {
+        const amt = parseFloat(row.total_expenses);
+        totalExpenses += amt;
+        expenseBreakdown[row.category] = amt;
+      });
+
       const usersRes = await db.query("SELECT COUNT(*) as count FROM users WHERE role = 'seller'");
       const ordersRes = await db.query("SELECT COUNT(*) as count FROM orders");
       const totalUsersRes = await db.query("SELECT COUNT(*) as count FROM users");
@@ -68,8 +84,11 @@ async function getDashboardStats(req, res) {
       `);
 
       return res.json({
-        revenue: financeRes.rows[0].revenue,
-        profit: financeRes.rows[0].profit,
+        revenue: parseFloat(financeRes.rows[0].revenue),
+        profit: parseFloat(financeRes.rows[0].gross_profit) - totalExpenses,
+        grossProfit: parseFloat(financeRes.rows[0].gross_profit),
+        totalExpenses,
+        expenseBreakdown,
         activeSellers: usersRes.rows[0].count,
         totalOrders: ordersRes.rows[0].count,
         totalUsers: totalUsersRes.rows[0].count,
@@ -354,7 +373,15 @@ async function createProductAdmin(req, res) {
       INSERT INTO products (name, description, price, cost_price, stock, image_url, seller_id)
       VALUES ($1, $2, $3, $4, $5, $6, $7)
       RETURNING *
-    `, [name, description, price, cost_price || 0, stock || 0, image_url, seller_id || null]);
+    `, [
+      name !== undefined ? name : null,
+      description !== undefined ? description : null,
+      price !== undefined ? price : null,
+      cost_price !== undefined ? cost_price : 0,
+      stock !== undefined ? stock : 0,
+      image_url !== undefined ? image_url : null,
+      (seller_id && seller_id.trim() !== '') ? seller_id : null
+    ]);
     
     res.status(201).json(result.rows[0]);
   } catch (error) {
@@ -381,13 +408,22 @@ async function updateProductAdmin(req, res) {
           updated_at = NOW()
       WHERE id = $8
       RETURNING *
-    `, [name, description, price, cost_price, stock, image_url, seller_id, id]);
+    `, [
+      name !== undefined ? name : null,
+      description !== undefined ? description : null,
+      price !== undefined ? price : null,
+      cost_price !== undefined ? cost_price : null,
+      stock !== undefined ? stock : null,
+      image_url !== undefined ? image_url : null,
+      (seller_id && seller_id.trim() !== '') ? seller_id : null,
+      id
+    ]);
 
     if (result.rows.length === 0) return res.status(404).json({ error: 'Product not found' });
     res.json(result.rows[0]);
   } catch (error) {
     console.error('Update product error:', error);
-    res.status(500).json({ error: 'Failed to update product' });
+    res.status(500).json({ error: error.message });
   }
 }
 
@@ -404,6 +440,164 @@ async function deleteProductAdmin(req, res) {
   }
 }
 
+async function createUserAdmin(req, res) {
+  try {
+    if (req.user.role !== 'admin') return res.status(403).json({ error: 'Admin only' });
+    const { name, email, role, password } = req.body;
+    if (!name || !email || !password) return res.status(400).json({ error: 'Name, email, password required' });
+    
+    const authService = require('../services/authService');
+    const hash = await authService.hashPassword(password);
+    
+    const result = await db.query(
+      'INSERT INTO users (name, email, password_hash, role, email_verified) VALUES ($1, $2, $3, $4, TRUE) RETURNING id, name, email, role',
+      [name, email, hash, role || 'customer']
+    );
+    res.status(201).json(result.rows[0]);
+  } catch (error) {
+    if (error.code === '23505') return res.status(400).json({ error: 'Email already exists' });
+    console.error('Create user error:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+}
+
+async function deleteUserAdmin(req, res) {
+  try {
+    if (req.user.role !== 'admin') return res.status(403).json({ error: 'Admin only' });
+    const { id } = req.params;
+    const result = await db.query('DELETE FROM users WHERE id = $1 RETURNING id', [id]);
+    if (result.rows.length === 0) return res.status(404).json({ error: 'User not found' });
+    res.json({ message: 'User deleted successfully' });
+  } catch (error) {
+    console.error('Delete user error:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+}
+
+// ── Admin Global Orders ──────────────────────────────────────────
+async function getAllOrdersAdmin(req, res) {
+  try {
+    if (req.user.role !== 'admin') return res.status(403).json({ error: 'Admin only' });
+    const result = await db.query(`
+      SELECT o.id, o.total_amount, o.status, o.created_at, u.name as customer_name, u.email as customer_email
+      FROM orders o
+      LEFT JOIN users u ON o.customer_id = u.id
+      ORDER BY o.created_at DESC
+    `);
+    res.json(result.rows);
+  } catch (error) {
+    console.error('Get orders error:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+}
+
+async function getOrderDetailAdmin(req, res) {
+  try {
+    if (req.user.role !== 'admin') return res.status(403).json({ error: 'Admin only' });
+    const { id } = req.params;
+    const orderRes = await db.query(`
+      SELECT o.*, u.name as customer_name, u.email as customer_email 
+      FROM orders o LEFT JOIN users u ON o.customer_id = u.id WHERE o.id = $1
+    `, [id]);
+    
+    if (orderRes.rows.length === 0) return res.status(404).json({ error: 'Order not found' });
+    
+    const itemsRes = await db.query(`
+      SELECT oi.*, p.name as product_name, p.image_url 
+      FROM order_items oi LEFT JOIN products p ON oi.product_id = p.id WHERE oi.order_id = $1
+    `, [id]);
+    
+    res.json({ order: orderRes.rows[0], items: itemsRes.rows });
+  } catch (error) {
+    console.error('Get order detail error:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+}
+
+async function updateOrderStatusAdmin(req, res) {
+  try {
+    if (req.user.role !== 'admin') return res.status(403).json({ error: 'Admin only' });
+    const { id } = req.params;
+    const { status } = req.body;
+    const result = await db.query('UPDATE orders SET status = $1, updated_at = NOW() WHERE id = $2 RETURNING *', [status, id]);
+    if (result.rows.length === 0) return res.status(404).json({ error: 'Order not found' });
+    res.json(result.rows[0]);
+  } catch (error) {
+    console.error('Update order error:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+}
+
+async function deleteOrderAdmin(req, res) {
+  try {
+    if (req.user.role !== 'admin') return res.status(403).json({ error: 'Admin only' });
+    const { id } = req.params;
+    const result = await db.query('DELETE FROM orders WHERE id = $1 RETURNING id', [id]);
+    if (result.rows.length === 0) return res.status(404).json({ error: 'Order not found' });
+    res.json({ message: 'Order deleted successfully' });
+  } catch (error) {
+    console.error('Delete order error:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+}
+
+// ── Admin Expenses ───────────────────────────────────────────────
+async function getExpensesAdmin(req, res) {
+  try {
+    if (req.user.role !== 'admin') return res.status(403).json({ error: 'Admin only' });
+    const result = await db.query('SELECT * FROM platform_expenses ORDER BY created_at DESC');
+    res.json(result.rows);
+  } catch (error) {
+    console.error('Get expenses error:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+}
+
+async function createExpenseAdmin(req, res) {
+  try {
+    if (req.user.role !== 'admin') return res.status(403).json({ error: 'Admin only' });
+    const { category, amount, description } = req.body;
+    const result = await db.query(
+      'INSERT INTO platform_expenses (category, amount, description) VALUES ($1, $2, $3) RETURNING *',
+      [category, amount, description]
+    );
+    res.status(201).json(result.rows[0]);
+  } catch (error) {
+    console.error('Create expense error:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+}
+
+async function updateExpenseAdmin(req, res) {
+  try {
+    if (req.user.role !== 'admin') return res.status(403).json({ error: 'Admin only' });
+    const { id } = req.params;
+    const { category, amount, description } = req.body;
+    const result = await db.query(
+      'UPDATE platform_expenses SET category = COALESCE($1, category), amount = COALESCE($2, amount), description = COALESCE($3, description) WHERE id = $4 RETURNING *',
+      [category, amount, description, id]
+    );
+    if (result.rows.length === 0) return res.status(404).json({ error: 'Expense not found' });
+    res.json(result.rows[0]);
+  } catch (error) {
+    console.error('Update expense error:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+}
+
+async function deleteExpenseAdmin(req, res) {
+  try {
+    if (req.user.role !== 'admin') return res.status(403).json({ error: 'Admin only' });
+    const { id } = req.params;
+    const result = await db.query('DELETE FROM platform_expenses WHERE id = $1 RETURNING id', [id]);
+    if (result.rows.length === 0) return res.status(404).json({ error: 'Expense not found' });
+    res.json({ message: 'Expense deleted successfully' });
+  } catch (error) {
+    console.error('Delete expense error:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+}
+
 module.exports = {
   placeOrder,
   getDashboardStats,
@@ -411,8 +605,18 @@ module.exports = {
   getAllUsers,
   getUserDetail,
   updateUser,
+  createUserAdmin,
+  deleteUserAdmin,
   getAllProductsAdmin,
   createProductAdmin,
   updateProductAdmin,
-  deleteProductAdmin
+  deleteProductAdmin,
+  getAllOrdersAdmin,
+  getOrderDetailAdmin,
+  updateOrderStatusAdmin,
+  deleteOrderAdmin,
+  getExpensesAdmin,
+  createExpenseAdmin,
+  updateExpenseAdmin,
+  deleteExpenseAdmin
 };

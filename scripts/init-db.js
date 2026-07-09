@@ -185,6 +185,31 @@ CREATE TABLE IF NOT EXISTS order_items (
   cost_at_purchase  NUMERIC(10, 2) DEFAULT 0,
   seller_id         UUID REFERENCES users(id) -- to easily query seller payouts
 );
+
+-- ─────────────────────────────────────────
+-- ─────────────────────────────────────────
+-- PLATFORM EXPENSES TABLE
+-- ─────────────────────────────────────────
+CREATE TABLE IF NOT EXISTS platform_expenses (
+  id            UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  category      VARCHAR(50) NOT NULL,
+  amount        NUMERIC(12,2) NOT NULL,
+  description   TEXT,
+  created_at    TIMESTAMPTZ DEFAULT NOW()
+);
+
+-- ─────────────────────────────────────────
+-- REPORTS TABLE
+-- ─────────────────────────────────────────
+CREATE TABLE IF NOT EXISTS reports (
+  id            UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  name          VARCHAR(256) NOT NULL,
+  start_date    DATE NOT NULL,
+  end_date      DATE NOT NULL,
+  report_data   JSONB NOT NULL,
+  created_at    TIMESTAMPTZ DEFAULT NOW(),
+  updated_at    TIMESTAMPTZ DEFAULT NOW()
+);
 `;
 
 async function initDb() {

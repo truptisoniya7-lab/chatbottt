@@ -21,10 +21,14 @@ async function register(req, res) {
 
     const hash = await authService.hashPassword(password);
     
-    await db.query(
-      'INSERT INTO users (name, email, password_hash) VALUES ($1, $2, $3)',
+    const userResult = await db.query(
+      'INSERT INTO users (name, email, password_hash) VALUES ($1, $2, $3) RETURNING id',
       [name, email, hash]
     );
+
+    const userId = userResult.rows[0].id;
+    const verificationToken = authService.generateEmailVerificationToken(userId);
+    console.log(`[SIMULATED EMAIL] To: ${email} | Verify Link: /auth/verify-email?token=${verificationToken}`);
 
     res.status(201).json({ message: 'User registered successfully. Please verify your email.' });
   } catch (error) {
@@ -220,11 +224,23 @@ async function verifyEmail(req, res) {
     const { token } = req.query;
     if (!token) return res.status(400).json({ error: 'Token is required' });
 
-    // Assuming we stored verification tokens in a redis or db.
-    // For now, let's just pretend any valid token verifies the first unverified user.
-    await db.query('UPDATE users SET email_verified = TRUE WHERE email_verified = FALSE');
+    const userId = authService.verifyEmailToken(token);
+    if (!userId) {
+      return res.status(400).json({ error: 'Invalid or expired verification token' });
+    }
+
+    const result = await db.query(
+      'UPDATE users SET email_verified = TRUE WHERE id = $1 RETURNING id',
+      [userId]
+    );
+
+    if (result.rows.length === 0) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+
     res.json({ message: 'Email verified successfully.' });
   } catch (error) {
+    console.error('Email verification error:', error);
     res.status(500).json({ error: 'Internal server error' });
   }
 }

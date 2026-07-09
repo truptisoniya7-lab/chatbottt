@@ -8,7 +8,7 @@ const uploadController = require('../controllers/upload.controller');
 // POST /api/upload/user-image  (multipart: field name "image")
 router.post(
   '/user-image',
-  authenticate(true),
+  
   upload.single('image'),
   uploadController.uploadUserImage
 );

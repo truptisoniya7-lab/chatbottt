@@ -68,10 +68,32 @@ async function rotateRefreshToken(oldRawToken, userId, deviceInfo) {
   return generateRefreshToken(userId, deviceInfo);
 }
 
+function generateEmailVerificationToken(userId) {
+  return jwt.sign(
+    { userId, type: 'email_verification' },
+    process.env.JWT_SECRET,
+    { expiresIn: '24h' }
+  );
+}
+
+function verifyEmailToken(token) {
+  try {
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    if (decoded.type !== 'email_verification') {
+      throw new Error('Invalid token type');
+    }
+    return decoded.userId;
+  } catch (error) {
+    return null;
+  }
+}
+
 module.exports = {
   hashPassword,
   verifyPassword,
   generateAccessToken,
   generateRefreshToken,
-  rotateRefreshToken
+  rotateRefreshToken,
+  generateEmailVerificationToken,
+  verifyEmailToken
 };

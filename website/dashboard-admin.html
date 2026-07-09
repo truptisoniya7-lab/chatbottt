@@ -264,10 +264,12 @@
     <a href="index.html" class="dash-logo">Vasudha <span>Couture</span></a>
     <div class="dash-nav">
       <a href="#" class="active" id="nav-overview" onclick="switchTab('overview', this)">📊 Overview</a>
-      <a href="#" id="nav-users"    onclick="switchTab('users', this)">👥 Manage Users</a>
+      <a href="#" id="nav-users"    onclick="switchTab('users', this); setRoleFilter('', document.getElementById('filter-all'));">👥 Manage Users</a>
       <a href="#" id="nav-products" onclick="switchTab('products', this)">🏷️ Manage Products</a>
-      <a href="#" id="nav-sellers"  onclick="switchTab('sellers', this)">🏪 Manage Sellers</a>
+      <a href="#" id="nav-sellers"  onclick="switchTab('users', this); setRoleFilter('seller', document.getElementById('filter-seller'));">🏪 Manage Sellers</a>
       <a href="#" id="nav-orders"   onclick="switchTab('orders', this)">📦 Global Orders</a>
+      <a href="#" id="nav-expenses" onclick="switchTab('expenses', this)">💸 Platform Expenses</a>
+      <a href="#" id="nav-reports"  onclick="switchTab('reports', this)">📄 Reports</a>
       <a href="#" id="nav-health"   onclick="switchTab('health', this)">💻 System Health</a>
     </div>
     <div class="dash-logout">
@@ -393,9 +395,12 @@
 
     <!-- ═══ USERS TAB ═══ -->
     <div id="view-users" class="dash-view" style="display: none;">
-      <div class="dash-section-title" style="color: #f3f4f6; margin-bottom: 1.5rem;">
-        👥 Manage Users
-        <span id="usersTotalBadge" style="background:rgba(200,169,106,0.15); color:var(--gold-primary); font-size:0.75rem; padding:0.2rem 0.6rem; border-radius:12px; margin-left:0.75rem; vertical-align:middle;"></span>
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+        <div class="dash-section-title" style="color: #f3f4f6; margin-bottom: 0;">
+          👥 Manage Users
+          <span id="usersTotalBadge" style="background:rgba(200,169,106,0.15); color:var(--gold-primary); font-size:0.75rem; padding:0.2rem 0.6rem; border-radius:12px; margin-left:0.75rem; vertical-align:middle;"></span>
+        </div>
+        <button class="tbl-action-btn" style="background: rgba(200,169,106,0.15); border-color: var(--gold-primary); color: var(--gold-primary);" onclick="openAddUserModal()">+ Add User</button>
       </div>
 
       <!-- Search & Filter Bar -->
@@ -447,8 +452,69 @@
     <!-- ═══ ORDERS TAB ═══ -->
     <div id="view-orders" class="dash-view" style="display: none;">
       <div class="dash-section-title" style="color: #f3f4f6;">Global Orders</div>
-      <div style="color: #9ca3af; padding: 2rem; background: #1f2937; border-radius: 8px; border: 1px solid #374151;">
-        All orders across the platform.
+      <div class="users-table-wrap">
+        <table class="users-table">
+          <thead>
+            <tr>
+              <th>Order ID</th>
+              <th>Customer</th>
+              <th>Amount</th>
+              <th>Status</th>
+              <th>Date</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="ordersTableBody">
+            <tr><td colspan="6" class="loader-spinner">⏳ Loading orders...</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- ═══ EXPENSES TAB ═══ -->
+    <div id="view-expenses" class="dash-view" style="display: none;">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+        <div class="dash-section-title" style="color: #f3f4f6; margin-bottom: 0;">Platform Expenses</div>
+        <button class="tbl-action-btn" style="background: rgba(200,169,106,0.15); border-color: var(--gold-primary); color: var(--gold-primary);" onclick="openExpenseModal()">+ Add Expense</button>
+      </div>
+      <div class="users-table-wrap">
+        <table class="users-table">
+          <thead>
+            <tr>
+              <th>Category</th>
+              <th>Amount</th>
+              <th>Description</th>
+              <th>Date</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="expensesTableBody">
+            <tr><td colspan="5" class="loader-spinner">⏳ Loading expenses...</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- ═══ REPORTS TAB ═══ -->
+    <div id="view-reports" class="dash-view" style="display: none;">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+        <div class="dash-section-title" style="color: #f3f4f6; margin-bottom: 0;">Business Reports</div>
+        <button class="tbl-action-btn" style="background: rgba(200,169,106,0.15); border-color: var(--gold-primary); color: var(--gold-primary);" onclick="openReportModal()">+ Generate Report</button>
+      </div>
+      <div class="users-table-wrap">
+        <table class="users-table">
+          <thead>
+            <tr>
+              <th>Report Name</th>
+              <th>Date Range</th>
+              <th>Generated On</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="reportsTableBody">
+            <tr><td colspan="4" class="loader-spinner">⏳ Loading reports...</td></tr>
+          </tbody>
+        </table>
       </div>
     </div>
 
@@ -461,6 +527,102 @@
     </div>
 
   </main>
+
+  <!-- ═══ ADD USER MODAL ═══ -->
+  <div class="modal-overlay" id="addUserOverlay" onclick="closeAddUserModal(event)">
+    <div class="user-detail-modal" id="addUserModal" style="max-width: 400px;">
+      <div class="modal-header">
+        <h2>Add User</h2>
+        <button class="modal-close" onclick="closeAddUserModal()">×</button>
+      </div>
+      <div class="modal-body">
+        <form id="addUserForm" onsubmit="saveNewUser(event)">
+          <div style="margin-bottom: 1rem;">
+            <label style="display:block; color:#9ca3af; font-size:0.8rem; margin-bottom:0.3rem;">Name</label>
+            <input type="text" id="addUserName" required style="width:100%; background:#1f2937; border:1px solid #374151; color:#fff; padding:0.6rem; border-radius:6px; box-sizing: border-box;">
+          </div>
+          <div style="margin-bottom: 1rem;">
+            <label style="display:block; color:#9ca3af; font-size:0.8rem; margin-bottom:0.3rem;">Email</label>
+            <input type="email" id="addUserEmail" required style="width:100%; background:#1f2937; border:1px solid #374151; color:#fff; padding:0.6rem; border-radius:6px; box-sizing: border-box;">
+          </div>
+          <div style="margin-bottom: 1rem;">
+            <label style="display:block; color:#9ca3af; font-size:0.8rem; margin-bottom:0.3rem;">Password</label>
+            <input type="password" id="addUserPassword" required style="width:100%; background:#1f2937; border:1px solid #374151; color:#fff; padding:0.6rem; border-radius:6px; box-sizing: border-box;">
+          </div>
+          <div style="margin-bottom: 1.5rem;">
+            <label style="display:block; color:#9ca3af; font-size:0.8rem; margin-bottom:0.3rem;">Role</label>
+            <select id="addUserRole" required style="width:100%; background:#1f2937; border:1px solid #374151; color:#fff; padding:0.6rem; border-radius:6px; box-sizing: border-box;">
+              <option value="customer">Customer</option>
+              <option value="seller">Seller</option>
+              <option value="admin">Admin</option>
+            </select>
+          </div>
+          <button type="submit" class="tbl-action-btn" style="width: 100%; background: var(--gold-primary); color: #000; padding: 0.75rem; font-weight: bold;">Create User</button>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ EXPENSE MODAL ═══ -->
+  <div class="modal-overlay" id="expenseModalOverlay" onclick="closeExpenseModal(event)">
+    <div class="user-detail-modal" id="expenseModal" style="max-width: 400px;">
+      <div class="modal-header">
+        <h2 id="expenseModalTitle">Add Expense</h2>
+        <button class="modal-close" onclick="closeExpenseModal()">×</button>
+      </div>
+      <div class="modal-body">
+        <form id="expenseForm" onsubmit="saveExpense(event)">
+          <input type="hidden" id="expenseId">
+          <div style="margin-bottom: 1rem;">
+            <label style="display:block; color:#9ca3af; font-size:0.8rem; margin-bottom:0.3rem;">Category</label>
+            <select id="expenseCategory" required style="width:100%; background:#1f2937; border:1px solid #374151; color:#fff; padding:0.6rem; border-radius:6px; box-sizing: border-box;">
+              <option value="raw_materials">Raw Materials</option>
+              <option value="labour">Labour Costs</option>
+              <option value="marketing">Marketing</option>
+              <option value="shipping">Shipping</option>
+              <option value="other">Other</option>
+            </select>
+          </div>
+          <div style="margin-bottom: 1rem;">
+            <label style="display:block; color:#9ca3af; font-size:0.8rem; margin-bottom:0.3rem;">Amount (₹)</label>
+            <input type="number" id="expenseAmount" required step="0.01" style="width:100%; background:#1f2937; border:1px solid #374151; color:#fff; padding:0.6rem; border-radius:6px; box-sizing: border-box;">
+          </div>
+          <div style="margin-bottom: 1.5rem;">
+            <label style="display:block; color:#9ca3af; font-size:0.8rem; margin-bottom:0.3rem;">Description</label>
+            <textarea id="expenseDescription" rows="3" style="width:100%; background:#1f2937; border:1px solid #374151; color:#fff; padding:0.6rem; border-radius:6px; box-sizing: border-box;"></textarea>
+          </div>
+          <button type="submit" class="tbl-action-btn" style="width: 100%; background: var(--gold-primary); color: #000; padding: 0.75rem; font-weight: bold;">Save Expense</button>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ REPORT MODAL ═══ -->
+  <div class="modal-overlay" id="reportModalOverlay" onclick="closeReportModal(event)">
+    <div class="user-detail-modal" id="reportModal" style="max-width: 400px;">
+      <div class="modal-header">
+        <h2 id="reportModalTitle">Generate Report</h2>
+        <button class="modal-close" onclick="closeReportModal()">×</button>
+      </div>
+      <div class="modal-body">
+        <form id="reportForm" onsubmit="generateReport(event)">
+          <div style="margin-bottom: 1rem;">
+            <label style="display:block; color:#9ca3af; font-size:0.8rem; margin-bottom:0.3rem;">Report Name</label>
+            <input type="text" id="reportName" required style="width:100%; background:#1f2937; border:1px solid #374151; color:#fff; padding:0.6rem; border-radius:6px; box-sizing: border-box;" placeholder="e.g. Q1 Financials">
+          </div>
+          <div style="margin-bottom: 1rem;">
+            <label style="display:block; color:#9ca3af; font-size:0.8rem; margin-bottom:0.3rem;">Start Date</label>
+            <input type="date" id="reportStartDate" required style="width:100%; background:#1f2937; border:1px solid #374151; color:#fff; padding:0.6rem; border-radius:6px; box-sizing: border-box;">
+          </div>
+          <div style="margin-bottom: 1.5rem;">
+            <label style="display:block; color:#9ca3af; font-size:0.8rem; margin-bottom:0.3rem;">End Date</label>
+            <input type="date" id="reportEndDate" required style="width:100%; background:#1f2937; border:1px solid #374151; color:#fff; padding:0.6rem; border-radius:6px; box-sizing: border-box;">
+          </div>
+          <button type="submit" class="tbl-action-btn" style="width: 100%; background: var(--gold-primary); color: #000; padding: 0.75rem; font-weight: bold;">Generate & Save</button>
+        </form>
+      </div>
+    </div>
+  </div>
 
   <!-- ═══ USER DETAIL MODAL ═══ -->
   <div class="modal-overlay" id="userDetailOverlay" onclick="closeUserModal(event)">
@@ -613,6 +775,7 @@
               onclick="quickToggle('${escHtml(u.id)}', ${!u.is_active})">
               ${u.is_active ? 'Disable' : 'Enable'}
             </button>
+            <button class="tbl-action-btn danger" style="margin-left:0.4rem" onclick="deleteUser('${escHtml(u.id)}')">Delete</button>
           </td>
         </tr>`;
       }).join('');
@@ -867,14 +1030,20 @@
 
       // Initialize Chart.js
       const ctx = document.getElementById('profitChart');
-      if (ctx && !window.profitChartInst) {
+      if (ctx) {
+        if (window.profitChartInst) window.profitChartInst.destroy();
+        
+        const costOfGoods = rev - (stats.grossProfit || 0);
+        const expenses = stats.totalExpenses || 0;
+        const netProfit = stats.profit || 0;
+
         window.profitChartInst = new Chart(ctx, {
           type: 'doughnut',
           data: {
-            labels: ['Cost (₹)', 'Profit (₹)'],
+            labels: ['Cost of Goods (₹)', 'Expenses (₹)', 'Net Profit (₹)'],
             datasets: [{
-              data: [rev - prof, prof],
-              backgroundColor: ['#374151', '#10b981'],
+              data: [costOfGoods > 0 ? costOfGoods : 0, expenses, netProfit],
+              backgroundColor: ['#374151', '#f59e0b', '#10b981'],
               borderWidth: 0,
               hoverOffset: 4
             }]
@@ -1087,6 +1256,285 @@
     document.getElementById('nav-products').addEventListener('click', () => {
       loadProducts(1);
     });
+
+    // ── Admin: Users (Add/Delete) ──
+    function openAddUserModal() {
+      document.getElementById('addUserForm').reset();
+      document.getElementById('addUserOverlay').classList.add('open');
+    }
+    function closeAddUserModal(e) {
+      if (e && e.target !== document.getElementById('addUserOverlay')) return;
+      document.getElementById('addUserOverlay').classList.remove('open');
+    }
+    async function saveNewUser(e) {
+      e.preventDefault();
+      const token = localStorage.getItem('accessToken');
+      const payload = {
+        name: document.getElementById('addUserName').value,
+        email: document.getElementById('addUserEmail').value,
+        password: document.getElementById('addUserPassword').value,
+        role: document.getElementById('addUserRole').value
+      };
+      try {
+        const res = await fetch('/api/admin/users', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
+          body: JSON.stringify(payload)
+        });
+        if (!res.ok) {
+          const data = await res.json();
+          throw new Error(data.error || 'Failed to create user');
+        }
+        closeAddUserModal();
+        showToast('User created successfully');
+        loadUsers(currentUsersPage);
+      } catch (err) { alert(err.message); }
+    }
+    async function deleteUser(id) {
+      if (!confirm('Are you sure you want to delete this user? This may break related orders.')) return;
+      const token = localStorage.getItem('accessToken');
+      try {
+        const res = await fetch(`/api/admin/users/${id}`, { method: 'DELETE', headers: { 'Authorization': 'Bearer ' + token } });
+        if (!res.ok) throw new Error('Failed to delete user');
+        showToast('User deleted');
+        loadUsers(currentUsersPage);
+      } catch (err) { alert(err.message); }
+    }
+
+    // Hook delete button into the users table mapping: We need to modify `dashboard-admin.html` loadUsers mapping...
+    // I will overwrite loadUsers via monkey-patching or assume it's in the previous block.
+    // Let's redefine `loadUsers` if possible, or we will just modify it using another replace_file_content if needed.
+
+    // ── Admin: Orders ──
+    async function loadOrders() {
+      const token = localStorage.getItem('accessToken');
+      try {
+        const res = await fetch('/api/admin/orders', { headers: { 'Authorization': 'Bearer ' + token } });
+        if (!res.ok) throw new Error('Failed to fetch orders');
+        const orders = await res.json();
+        const tbody = document.getElementById('ordersTableBody');
+        if (orders.length === 0) {
+          tbody.innerHTML = `<tr><td colspan="6" style="text-align:center; padding:2rem; color:#6b7280;">No orders found</td></tr>`;
+          return;
+        }
+        tbody.innerHTML = orders.map(o => `
+          <tr>
+            <td>#${o.id.substring(0, 8).toUpperCase()}</td>
+            <td>${escHtml(o.customer_name)} <br><span style="font-size:0.75rem;color:#9ca3af">${escHtml(o.customer_email)}</span></td>
+            <td>₹${Number(o.total_amount).toLocaleString('en-IN')}</td>
+            <td>
+              <select onchange="updateOrderStatus('${o.id}', this.value)" style="background:#1f2937; border:1px solid #374151; color:#fff; padding:0.2rem; border-radius:4px;">
+                <option value="pending" ${o.status === 'pending' ? 'selected' : ''}>Pending</option>
+                <option value="processing" ${o.status === 'processing' ? 'selected' : ''}>Processing</option>
+                <option value="shipped" ${o.status === 'shipped' ? 'selected' : ''}>Shipped</option>
+                <option value="delivered" ${o.status === 'delivered' ? 'selected' : ''}>Delivered</option>
+                <option value="cancelled" ${o.status === 'cancelled' ? 'selected' : ''}>Cancelled</option>
+              </select>
+            </td>
+            <td>${new Date(o.created_at).toLocaleDateString()}</td>
+            <td>
+              <button class="tbl-action-btn danger" onclick="deleteOrder('${o.id}')">Delete</button>
+            </td>
+          </tr>
+        `).join('');
+      } catch (err) { console.error(err); }
+    }
+    async function updateOrderStatus(id, status) {
+      const token = localStorage.getItem('accessToken');
+      try {
+        const res = await fetch(`/api/admin/orders/${id}`, {
+          method: 'PATCH',
+          headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
+          body: JSON.stringify({ status })
+        });
+        if (!res.ok) throw new Error('Failed to update status');
+        showToast('Order status updated');
+      } catch (err) { alert(err.message); }
+    }
+    async function deleteOrder(id) {
+      if (!confirm('Are you sure you want to delete this order?')) return;
+      const token = localStorage.getItem('accessToken');
+      try {
+        const res = await fetch(`/api/admin/orders/${id}`, { method: 'DELETE', headers: { 'Authorization': 'Bearer ' + token } });
+        if (!res.ok) throw new Error('Failed to delete order');
+        showToast('Order deleted');
+        loadOrders();
+      } catch (err) { alert(err.message); }
+    }
+    document.getElementById('nav-orders').addEventListener('click', loadOrders);
+
+    // ── Admin: Expenses ──
+    async function loadExpenses() {
+      const token = localStorage.getItem('accessToken');
+      try {
+        const res = await fetch('/api/admin/expenses', { headers: { 'Authorization': 'Bearer ' + token } });
+        if (!res.ok) throw new Error('Failed to fetch expenses');
+        const expenses = await res.json();
+        const tbody = document.getElementById('expensesTableBody');
+        if (expenses.length === 0) {
+          tbody.innerHTML = `<tr><td colspan="5" style="text-align:center; padding:2rem; color:#6b7280;">No expenses found</td></tr>`;
+          return;
+        }
+        tbody.innerHTML = expenses.map(e => `
+          <tr>
+            <td><span class="role-badge" style="background:rgba(200,169,106,0.15);color:#C8A96A;">${e.category.replace('_', ' ').toUpperCase()}</span></td>
+            <td>₹${Number(e.amount).toLocaleString('en-IN')}</td>
+            <td>${escHtml(e.description || '')}</td>
+            <td>${new Date(e.created_at).toLocaleDateString()}</td>
+            <td>
+              <button class="tbl-action-btn" onclick='openExpenseModal(${JSON.stringify(e).replace(/'/g, "&#39;")})'>Edit</button>
+              <button class="tbl-action-btn danger" onclick="deleteExpense('${e.id}')">Delete</button>
+            </td>
+          </tr>
+        `).join('');
+      } catch (err) { console.error(err); }
+    }
+    function openExpenseModal(expense = null) {
+      document.getElementById('expenseForm').reset();
+      if (expense) {
+        document.getElementById('expenseId').value = expense.id;
+        document.getElementById('expenseCategory').value = expense.category;
+        document.getElementById('expenseAmount').value = expense.amount;
+        document.getElementById('expenseDescription').value = expense.description;
+        document.getElementById('expenseModalTitle').innerText = 'Edit Expense';
+      } else {
+        document.getElementById('expenseId').value = '';
+        document.getElementById('expenseModalTitle').innerText = 'Add Expense';
+      }
+      document.getElementById('expenseModalOverlay').classList.add('open');
+    }
+    function closeExpenseModal(e) {
+      if (e && e.target !== document.getElementById('expenseModalOverlay')) return;
+      document.getElementById('expenseModalOverlay').classList.remove('open');
+    }
+    async function saveExpense(e) {
+      e.preventDefault();
+      const token = localStorage.getItem('accessToken');
+      const id = document.getElementById('expenseId').value;
+      const payload = {
+        category: document.getElementById('expenseCategory').value,
+        amount: parseFloat(document.getElementById('expenseAmount').value),
+        description: document.getElementById('expenseDescription').value
+      };
+      try {
+        const res = await fetch(id ? `/api/admin/expenses/${id}` : '/api/admin/expenses', {
+          method: id ? 'PUT' : 'POST',
+          headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
+          body: JSON.stringify(payload)
+        });
+        if (!res.ok) throw new Error('Failed to save expense');
+        closeExpenseModal();
+        showToast('Expense saved');
+        loadExpenses();
+      } catch (err) { alert(err.message); }
+    }
+    async function deleteExpense(id) {
+      if (!confirm('Are you sure you want to delete this expense?')) return;
+      const token = localStorage.getItem('accessToken');
+      try {
+        const res = await fetch(`/api/admin/expenses/${id}`, { method: 'DELETE', headers: { 'Authorization': 'Bearer ' + token } });
+        if (!res.ok) throw new Error('Failed to delete expense');
+        showToast('Expense deleted');
+        loadExpenses();
+      } catch (err) { alert(err.message); }
+    }
+    document.getElementById('nav-expenses').addEventListener('click', loadExpenses);
+
+    // ── Admin: Reports ──
+    async function loadReports() {
+      const token = localStorage.getItem('accessToken');
+      try {
+        const res = await fetch('/api/admin/reports', { headers: { 'Authorization': 'Bearer ' + token } });
+        if (!res.ok) throw new Error('Failed to fetch reports');
+        const reports = await res.json();
+        const tbody = document.getElementById('reportsTableBody');
+        if (reports.length === 0) {
+          tbody.innerHTML = `<tr><td colspan="4" style="text-align:center; padding:2rem; color:#6b7280;">No reports generated yet</td></tr>`;
+          return;
+        }
+        tbody.innerHTML = reports.map(r => `
+          <tr>
+            <td><strong>${escHtml(r.name)}</strong></td>
+            <td>${new Date(r.start_date).toLocaleDateString()} to ${new Date(r.end_date).toLocaleDateString()}</td>
+            <td>${new Date(r.created_at).toLocaleDateString()}</td>
+            <td>
+              <button class="tbl-action-btn" style="background:rgba(16,185,129,0.15);color:#10b981;border-color:#10b981;padding:0.3rem 0.6rem;margin-right:0.4rem;" onclick="downloadPdf('${r.id}')">Download PDF</button>
+              <button class="tbl-action-btn danger" onclick="deleteReport('${r.id}')">Delete</button>
+            </td>
+          </tr>
+        `).join('');
+      } catch (err) { console.error(err); }
+    }
+    
+    async function downloadPdf(id) {
+      const token = localStorage.getItem('accessToken');
+      try {
+        const res = await fetch(`/api/admin/reports/${id}/pdf`, {
+          headers: { 'Authorization': 'Bearer ' + token }
+        });
+        if (!res.ok) throw new Error('Failed to download PDF');
+        
+        let filename = 'report.pdf';
+        const disposition = res.headers.get('Content-Disposition');
+        if (disposition && disposition.indexOf('attachment') !== -1) {
+          const matches = /filename="([^"]*)"/.exec(disposition);
+          if (matches && matches[1]) filename = matches[1];
+        }
+        
+        const blob = await res.blob();
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.style.display = 'none';
+        a.href = url;
+        a.download = filename;
+        document.body.appendChild(a);
+        a.click();
+        window.URL.revokeObjectURL(url);
+      } catch (err) { alert(err.message); }
+    }
+
+    function openReportModal() {
+      document.getElementById('reportForm').reset();
+      document.getElementById('reportModalOverlay').classList.add('open');
+    }
+    function closeReportModal(e) {
+      if (e && e.target !== document.getElementById('reportModalOverlay')) return;
+      document.getElementById('reportModalOverlay').classList.remove('open');
+    }
+    async function generateReport(e) {
+      e.preventDefault();
+      const token = localStorage.getItem('accessToken');
+      const payload = {
+        name: document.getElementById('reportName').value,
+        start_date: document.getElementById('reportStartDate').value,
+        end_date: document.getElementById('reportEndDate').value
+      };
+      try {
+        const res = await fetch('/api/admin/reports', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
+          body: JSON.stringify(payload)
+        });
+        if (!res.ok) {
+           const errData = await res.json();
+           throw new Error(errData.error || 'Failed to generate report');
+        }
+        closeReportModal();
+        showToast('Report generated successfully');
+        loadReports();
+      } catch (err) { alert(err.message); }
+    }
+    async function deleteReport(id) {
+      if (!confirm('Are you sure you want to delete this report?')) return;
+      const token = localStorage.getItem('accessToken');
+      try {
+        const res = await fetch(`/api/admin/reports/${id}`, { method: 'DELETE', headers: { 'Authorization': 'Bearer ' + token } });
+        if (!res.ok) throw new Error('Failed to delete report');
+        showToast('Report deleted');
+        loadReports();
+      } catch (err) { alert(err.message); }
+    }
+    document.getElementById('nav-reports').addEventListener('click', loadReports);
 
     // Simple toast function if not available
     function showToast(msg) {

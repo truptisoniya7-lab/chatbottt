@@ -10,10 +10,21 @@ const PORT = parseInt(process.env.PORT || 3000, 10);
 
 // Middleware
 app.use(helmet({
-  contentSecurityPolicy: false // Disable CSP for simple development; in prod we configure properly
+  contentSecurityPolicy: process.env.NODE_ENV === 'production' ? undefined : false
 }));
+
+const allowedOrigins = process.env.ALLOWED_ORIGINS 
+  ? process.env.ALLOWED_ORIGINS.split(',') 
+  : ['http://localhost:3000'];
+
 app.use(cors({
-  origin: true, // Dynamically reflect origin to allow credentials
+  origin: function (origin, callback) {
+    if (!origin || allowedOrigins.indexOf(origin) !== -1) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization']
@@ -43,7 +54,7 @@ app.use('/api/upload', uploadRoutes);
 
 app.use((err, req, res, next) => {
   console.error(err.stack);
-  res.status(500).json({ error: 'Internal Server Error' });
+  res.status(500).json({ error: err.message || 'Internal Server Error' });
 });
 
 const http = require('http');
