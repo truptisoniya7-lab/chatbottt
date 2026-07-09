@@ -475,6 +475,53 @@ async function deleteUserAdmin(req, res) {
 }
 
 // ── Admin Global Orders ──────────────────────────────────────────
+async function createOrderAdmin(req, res) {
+  try {
+    if (req.user.role !== 'admin') return res.status(403).json({ error: 'Admin only' });
+    
+    const { customer_id, items, status } = req.body;
+    
+    if (!customer_id) return res.status(400).json({ error: 'Customer ID is required' });
+    if (!items || !Array.isArray(items) || items.length === 0) {
+      return res.status(400).json({ error: 'Order must contain at least one item' });
+    }
+
+    let totalAmount = 0;
+    items.forEach(item => {
+      totalAmount += (parseFloat(item.price) || 0) * (parseInt(item.quantity, 10) || 1);
+    });
+
+    await db.query('BEGIN');
+
+    const orderResult = await db.query(
+      'INSERT INTO orders (customer_id, total_amount, status) VALUES ($1, $2, $3) RETURNING *',
+      [customer_id, totalAmount, status || 'pending']
+    );
+    const newOrder = orderResult.rows[0];
+
+    for (const item of items) {
+      await db.query(
+        'INSERT INTO order_items (order_id, product_id, quantity, price_at_purchase, cost_at_purchase, seller_id) VALUES ($1, $2, $3, $4, $5, $6)',
+        [
+          newOrder.id, 
+          item.product_id || null, 
+          parseInt(item.quantity, 10) || 1, 
+          parseFloat(item.price) || 0,
+          parseFloat(item.cost_price) || 0,
+          item.seller_id || null
+        ]
+      );
+    }
+
+    await db.query('COMMIT');
+    res.status(201).json(newOrder);
+  } catch (error) {
+    await db.query('ROLLBACK');
+    console.error('Create order admin error:', error);
+    res.status(500).json({ error: 'Failed to create order' });
+  }
+}
+
 async function getAllOrdersAdmin(req, res) {
   try {
     if (req.user.role !== 'admin') return res.status(403).json({ error: 'Admin only' });
@@ -612,6 +659,7 @@ module.exports = {
   updateProductAdmin,
   deleteProductAdmin,
   getAllOrdersAdmin,
+  createOrderAdmin,
   getOrderDetailAdmin,
   updateOrderStatusAdmin,
   deleteOrderAdmin,

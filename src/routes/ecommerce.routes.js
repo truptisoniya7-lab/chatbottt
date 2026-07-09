@@ -22,6 +22,7 @@ router.delete('/admin/products/:id', authenticate(true), ecommerceController.del
 
 // ── Admin: Global Order Management ──────────────────────────────
 router.get('/admin/orders',       authenticate(true), ecommerceController.getAllOrdersAdmin);
+router.post('/admin/orders',      authenticate(true), ecommerceController.createOrderAdmin);
 router.get('/admin/orders/:id',   authenticate(true), ecommerceController.getOrderDetailAdmin);
 router.patch('/admin/orders/:id', authenticate(true), ecommerceController.updateOrderStatusAdmin);
 router.delete('/admin/orders/:id', authenticate(true), ecommerceController.deleteOrderAdmin);
