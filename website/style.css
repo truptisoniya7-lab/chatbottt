@@ -1261,3 +1261,12 @@ footer { background: var(--plum-deep); padding: 5rem 6rem 2rem; border-top: 1px 
 .pcard-btn-add:hover { background: var(--gold); color: #fff; }
 .pcard-btn-buy { background: var(--gold); color: #fff; border-color: var(--gold); }
 .pcard-btn-buy:hover { background: var(--gold-dk); border-color: var(--gold-dk); }
+
+/* Navigation Dropdowns */
+.nav-links li.dropdown { position: relative; padding: 1.5rem 0; }
+.nav-links li.dropdown:hover .dropdown-menu { display: block; }
+.dropdown-menu { display: none; position: absolute; top: 100%; left: -10px; background-color: var(--bg-primary, #0a0a0a); border: 1px solid rgba(200,169,106, 0.3); min-width: 180px; box-shadow: 0 10px 25px rgba(0,0,0,0.5); z-index: 1000; padding: 0; margin: 0; list-style: none; border-radius: 4px; overflow: hidden; }
+.dropdown-menu li { padding: 0; }
+.dropdown-menu li a { padding: 12px 20px; display: block; font-size: 0.85rem; color: var(--text-secondary, #a1a1aa); text-transform: uppercase; letter-spacing: 0.05em; transition: all 0.2s; border-bottom: 1px solid rgba(255,255,255,0.05); }
+.dropdown-menu li:last-child a { border-bottom: none; }
+.dropdown-menu li a:hover { background-color: rgba(200,169,106, 0.1); color: var(--gold-primary, #c8a96a); padding-left: 25px; }
