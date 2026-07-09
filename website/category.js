@@ -38,8 +38,10 @@ async function fetchProducts(categoryType, genderParam = null) {
         const dbProducts = await res.json();
         
         dbProducts.forEach(p => {
-          // Skip if already in the catalog (prevent duplicates)
-          if (products.some(existing => existing.name === p.name)) return;
+          // If a product with the same name exists in the DB, we want to PREFER the DB version 
+          // because the admin might have updated its price or image.
+          // Remove the existing catalog version before adding the DB version.
+          products = products.filter(existing => existing.name !== p.name);
           
           const nameLower = (p.name || '').toLowerCase();
           
@@ -47,7 +49,7 @@ async function fetchProducts(categoryType, genderParam = null) {
           let inferredCat = p.category || '';
           if (!inferredCat) {
             if (nameLower.includes('lehenga')) inferredCat = 'lehengas';
-            else if (nameLower.includes('saree')) inferredCat = 'sarees';
+            else if (nameLower.includes('saree') || nameLower.includes('sari')) inferredCat = 'sarees';
             else if (nameLower.includes('kurti') || nameLower.includes('kurta')) inferredCat = 'kurtas';
             else if (nameLower.includes('shirt')) inferredCat = 'shirts';
             else if (nameLower.includes('jean') || nameLower.includes('trouser')) inferredCat = 'jeans';
@@ -57,7 +59,7 @@ async function fetchProducts(categoryType, genderParam = null) {
           let inferredGender = 'unisex';
           if (p.category && p.category.toLowerCase().includes('men')) inferredGender = 'men';
           else if (p.category && p.category.toLowerCase().includes('women')) inferredGender = 'women';
-          else if (nameLower.includes('women') || nameLower.includes('lehenga') || nameLower.includes('saree') || nameLower.includes('kurti') || nameLower.includes('anarkali') || nameLower.includes('palazzo') || nameLower.includes('dress')) inferredGender = 'women';
+          else if (nameLower.includes('women') || nameLower.includes('lehenga') || nameLower.includes('saree') || nameLower.includes('sari') || nameLower.includes('kurti') || nameLower.includes('anarkali') || nameLower.includes('palazzo') || nameLower.includes('dress')) inferredGender = 'women';
           else if (nameLower.includes('men') || nameLower.includes('sherwani') || nameLower.includes('blazer') || nameLower.includes('shirt')) inferredGender = 'men';
           
           products.push({
@@ -94,7 +96,7 @@ async function fetchProducts(categoryType, genderParam = null) {
         if (targetCat === 'women' && (cat.includes('women') || pGender === 'women')) return true;
         if (targetCat === 'men' && (cat.includes('men') || pGender === 'men')) return true;
         if (targetCat === 'lehengas' && (cat.includes('lehenga') || name.includes('lehenga'))) return true;
-        if (targetCat === 'sarees' && (cat.includes('saree') || name.includes('saree'))) return true;
+        if (targetCat === 'sarees' && (cat.includes('saree') || cat.includes('sari') || name.includes('saree') || name.includes('sari'))) return true;
         if (targetCat === 'kurtas' && (cat.includes('kurta') || name.includes('kurta') || cat.includes('kurti') || name.includes('kurti'))) return true;
         if ((targetCat === 'tops' || targetCat === 'top') && (cat.includes('top') || name.includes('top'))) return true;
         if (targetCat === 'jeans' && (cat.includes('jean') || name.includes('jean') || cat.includes('trouser'))) return true;
