@@ -30,6 +30,27 @@ async function fetchProducts(categoryType) {
       if (window.PRODUCT_CATALOG.ethnic_heritage) products = products.concat(window.PRODUCT_CATALOG.ethnic_heritage);
     }
     
+    // Fetch products from backend database
+    try {
+      const res = await fetch('/api/products');
+      if (res.ok) {
+        const dbProducts = await res.json();
+        const mappedDbProducts = dbProducts.map(p => ({
+          id: p.id,
+          name: p.name,
+          category: p.category,
+          gender: p.category && p.category.toLowerCase().includes('men') ? 'men' : 'women',
+          price: `₹${parseFloat(p.price).toLocaleString('en-IN')}`,
+          priceNum: parseFloat(p.price),
+          image_url: p.image_url || 'https://via.placeholder.com/300x400?text=No+Image',
+          description: p.description
+        }));
+        products = products.concat(mappedDbProducts);
+      }
+    } catch (e) {
+      console.warn('Could not fetch products from backend:', e);
+    }
+    
     if (categoryType !== 'all') {
       const targetCat = categoryType.toLowerCase();
       products = products.filter(p => {
