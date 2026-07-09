@@ -36,17 +36,40 @@ async function fetchProducts(categoryType, genderParam = null) {
       const res = await fetch('/api/products');
       if (res.ok) {
         const dbProducts = await res.json();
-        const mappedDbProducts = dbProducts.map(p => ({
-          id: p.id,
-          name: p.name,
-          category: p.category,
-          gender: p.category && p.category.toLowerCase().includes('men') ? 'men' : 'women',
-          price: `₹${parseFloat(p.price).toLocaleString('en-IN')}`,
-          priceNum: parseFloat(p.price),
-          image_url: p.image_url || 'https://via.placeholder.com/300x400?text=No+Image',
-          description: p.description
-        }));
-        products = products.concat(mappedDbProducts);
+        
+        dbProducts.forEach(p => {
+          // Skip if already in the catalog (prevent duplicates)
+          if (products.some(existing => existing.name === p.name)) return;
+          
+          const nameLower = (p.name || '').toLowerCase();
+          
+          // Infer category
+          let inferredCat = p.category || '';
+          if (!inferredCat) {
+            if (nameLower.includes('lehenga')) inferredCat = 'lehengas';
+            else if (nameLower.includes('saree')) inferredCat = 'sarees';
+            else if (nameLower.includes('kurti') || nameLower.includes('kurta')) inferredCat = 'kurtas';
+            else if (nameLower.includes('shirt')) inferredCat = 'shirts';
+            else if (nameLower.includes('jean') || nameLower.includes('trouser')) inferredCat = 'jeans';
+          }
+          
+          // Infer gender
+          let inferredGender = 'unisex';
+          if (p.category && p.category.toLowerCase().includes('men')) inferredGender = 'men';
+          else if (p.category && p.category.toLowerCase().includes('women')) inferredGender = 'women';
+          else if (nameLower.includes('women') || nameLower.includes('lehenga') || nameLower.includes('saree') || nameLower.includes('kurti') || nameLower.includes('anarkali') || nameLower.includes('palazzo') || nameLower.includes('dress')) inferredGender = 'women';
+          else if (nameLower.includes('men') || nameLower.includes('sherwani') || nameLower.includes('blazer') || nameLower.includes('shirt')) inferredGender = 'men';
+          
+          products.push({
+            id: p.id,
+            name: p.name,
+            category: inferredCat,
+            gender: inferredGender,
+            price: parseFloat(p.price),
+            image_url: p.image_url || 'https://via.placeholder.com/300x400?text=No+Image',
+            description: p.description
+          });
+        });
       }
     } catch (e) {
       console.warn('Could not fetch products from backend:', e);
