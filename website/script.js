@@ -674,9 +674,30 @@ async function loadHomeProducts() {
   if (!wGrid && !mGrid) return; // not on home page
 
   try {
-    const res = await fetch('/api/products');
-    if (!res.ok) throw new Error('Failed to fetch products');
-    const products = await res.json();
+    let products = [];
+    try {
+      const res = await fetch('/api/products');
+      if (res.ok) {
+        products = await res.json();
+      }
+    } catch (e) {
+      console.log('Using static catalog only.');
+    }
+
+    // Merge static catalog products
+    if (window.PRODUCT_CATALOG) {
+      const staticProds = [
+        ...(window.PRODUCT_CATALOG.products_women || []),
+        ...(window.PRODUCT_CATALOG.products_men || []),
+        ...(window.PRODUCT_CATALOG.ethnic_heritage || [])
+      ];
+      staticProds.forEach(sp => {
+        if (!products.find(p => p.name === sp.name)) {
+          products.push(sp);
+        }
+      });
+    }
+
     
     if (wGrid) wGrid.innerHTML = '';
     if (mGrid) mGrid.innerHTML = '';
