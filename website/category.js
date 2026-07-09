@@ -1,6 +1,7 @@
 document.addEventListener('DOMContentLoaded', () => {
   const urlParams = new URLSearchParams(window.location.search);
   const typeParam = urlParams.get('type') || 'all';
+  const genderParam = urlParams.get('gender');
   
   // Update header title
   const titleMap = {
@@ -16,10 +17,10 @@ document.addEventListener('DOMContentLoaded', () => {
   document.getElementById('categoryTitle').innerText = titleMap[typeParam.toLowerCase()] || `Shop ${typeParam}`;
   
   // Fetch products
-  fetchProducts(typeParam);
+  fetchProducts(typeParam, genderParam);
 });
 
-async function fetchProducts(categoryType) {
+async function fetchProducts(categoryType, genderParam = null) {
   const grid = document.getElementById('categoryGrid');
   
   try {
@@ -56,9 +57,19 @@ async function fetchProducts(categoryType) {
       products = products.filter(p => {
         const cat = (p.category || '').toLowerCase();
         const name = (p.name || '').toLowerCase();
+        const pGender = (p.gender || '').toLowerCase();
         
-        if (targetCat === 'women' && (cat.includes('women') || (p.gender && p.gender.toLowerCase() === 'women'))) return true;
-        if (targetCat === 'men' && (cat.includes('men') || (p.gender && p.gender.toLowerCase() === 'men'))) return true;
+        // Exclude if genderParam is explicitly provided and doesn't match product gender
+        if (genderParam) {
+          const targetGender = genderParam.toLowerCase();
+          // We assume "unisex" fits both, otherwise it must match targetGender exactly
+          if (pGender && pGender !== targetGender && !pGender.includes('unisex') && !pGender.includes('both')) {
+            return false;
+          }
+        }
+        
+        if (targetCat === 'women' && (cat.includes('women') || pGender === 'women')) return true;
+        if (targetCat === 'men' && (cat.includes('men') || pGender === 'men')) return true;
         if (targetCat === 'lehengas' && (cat.includes('lehenga') || name.includes('lehenga'))) return true;
         if (targetCat === 'sarees' && (cat.includes('saree') || name.includes('saree'))) return true;
         if (targetCat === 'kurtas' && (cat.includes('kurta') || name.includes('kurta') || cat.includes('kurti') || name.includes('kurti'))) return true;
