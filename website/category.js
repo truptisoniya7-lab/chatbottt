@@ -37,12 +37,11 @@ async function fetchProducts(categoryType, genderParam = null) {
       if (res.ok) {
         const dbProducts = await res.json();
         
-        // Remove catalog products if their name exists in DB, so DB versions are preferred.
-        // We do this outside the loop to avoid self-deleting DB products with identical names.
-        const dbProductNames = new Set(dbProducts.map(p => p.name));
-        products = products.filter(existing => !dbProductNames.has(existing.name));
-        
         dbProducts.forEach(p => {
+          // If a product with the same name exists in the DB, we want to PREFER the DB version 
+          // because the admin might have updated its price or image.
+          // Remove the existing catalog version before adding the DB version.
+          products = products.filter(existing => existing.name !== p.name);
           
           const nameLower = (p.name || '').toLowerCase();
           
