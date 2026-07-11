@@ -88,15 +88,33 @@ document.addEventListener("DOMContentLoaded", async () => {
       
       const tbody = document.querySelector('.dash-table tbody');
       if (tbody) {
-        tbody.innerHTML = stats.orderHistory.map(o => `
+        tbody.innerHTML = stats.orderHistory.map(o => {
+          const isShipped = o.status !== 'pending';
+          const isDelivered = o.status === 'delivered';
+          return `
           <tr>
             <td>#${o.id.substring(0, 8).toUpperCase()}</td>
             <td>${new Date(o.created_at).toLocaleDateString()}</td>
             <td>Multiple Items</td>
             <td>₹${o.total_amount.toLocaleString('en-IN')}</td>
             <td><span class="status-badge status-${o.status === 'pending' ? 'pending' : 'success'}">${o.status}</span></td>
+            <td>
+              <div class="order-tracker">
+                <div class="tracker-step active">
+                  <div class="tracker-dot"></div><span class="tracker-label">Processed</span>
+                </div>
+                <div class="tracker-line ${isShipped ? 'active' : ''}"></div>
+                <div class="tracker-step ${isShipped ? 'active' : ''}">
+                  <div class="tracker-dot"></div><span class="tracker-label">Shipped</span>
+                </div>
+                <div class="tracker-line ${isDelivered ? 'active' : ''}"></div>
+                <div class="tracker-step ${isDelivered ? 'active' : ''}">
+                  <div class="tracker-dot"></div><span class="tracker-label">Delivered</span>
+                </div>
+              </div>
+            </td>
           </tr>
-        `).join('');
+        `}).join('');
       }
       
       // Render Wishlist
@@ -108,27 +126,25 @@ document.addEventListener("DOMContentLoaded", async () => {
       if (viewWishlist) {
         if (wishlist.length === 0) {
           viewWishlist.innerHTML = `
-            <div class="dash-section-title" style="color: #831843;">Saved Items</div>
-            <div style="background: rgba(255, 255, 255, 0.9); padding: 3rem; text-align: center; border-radius: 8px; border: 1px solid #f9a8d4; box-shadow: 0 4px 6px -1px rgba(244,114,182,0.1); backdrop-filter: blur(4px);">
-              <div style="font-size: 3rem; color: #f472b6; margin-bottom: 1rem;">🎀</div>
-              <div style="font-size: 1.2rem; font-family: 'Cormorant Garamond', serif; margin-bottom: 0.5rem; color: #831843;">Your wishlist is empty...</div>
-              <div style="color: #be185d; margin-bottom: 2rem; font-size: 0.9rem;">
-                Discover the latest trends on the home page!
-              </div>
-              <a href="index.html" style="background: #f472b6; color: white; padding: 0.8rem 1.5rem; border-radius: 4px; text-decoration: none; font-weight: 500; display: inline-block; box-shadow: 0 2px 4px rgba(244,114,182,0.3);">Continue Shopping</a>
+            <div class="dash-section-title">My Saved Items</div>
+            <div class="customer-empty-state">
+              <div class="empty-icon">✨</div>
+              <div class="empty-title">Your wishlist is empty...</div>
+              <p>Discover the latest trends on the home page!</p>
+              <a href="index.html" class="customer-btn-primary">Continue Shopping</a>
             </div>
           `;
         } else {
           viewWishlist.innerHTML = `
-            <div class="dash-section-title" style="color: #831843;">My Saved Items</div>
+            <div class="dash-section-title">My Saved Items</div>
             <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 1.5rem;">
               ${wishlist.map(item => `
-                <div style="background: rgba(255, 255, 255, 0.9); border: 1px solid #f9a8d4; border-radius: 8px; overflow: hidden; box-shadow: 0 4px 6px -1px rgba(244,114,182,0.1); backdrop-filter: blur(4px);">
+                <div style="background: var(--plum); border: 1px solid var(--plum-mid); border-radius: 8px; overflow: hidden; transition: 0.3s;" onmouseover="this.style.borderColor='var(--gold-glow)'; this.style.boxShadow='0 4px 15px rgba(0,0,0,0.1)';" onmouseout="this.style.borderColor='var(--plum-mid)'; this.style.boxShadow='none';">
                   <div class="${item.imageClass}" style="height: 300px; background-size: cover; background-position: center;"></div>
                   <div style="padding: 1rem;">
-                    <div style="font-weight: 500; font-family: 'Cormorant Garamond', serif; font-size: 1.2rem; margin-bottom: 0.5rem; color: #831843;">${item.name}</div>
-                    <div style="color: #db2777; font-weight: 500; margin-bottom: 1rem;">₹${item.price.toLocaleString('en-IN')}</div>
-                    <button style="width: 100%; background: #fdf2f8; color: #db2777; border: 1px dashed #f472b6; padding: 0.8rem; border-radius: 4px; cursor: pointer; transition: 0.3s; font-weight: 500;" onmouseover="this.style.background='#fce7f3'" onmouseout="this.style.background='#fdf2f8'" onclick="alert('Moved to cart!');">Move to Cart</button>
+                    <div style="font-weight: 500; font-family: 'Cormorant Garamond', serif; font-size: 1.2rem; margin-bottom: 0.5rem; color: var(--gold);">${item.name}</div>
+                    <div style="color: var(--text-pearl); font-weight: 500; margin-bottom: 1rem;">₹${item.price.toLocaleString('en-IN')}</div>
+                    <button class="customer-btn-outline" style="margin-top:0; padding: 0.8rem;" onclick="alert('Moved to cart!');">Move to Cart</button>
                   </div>
                 </div>
               `).join('')}

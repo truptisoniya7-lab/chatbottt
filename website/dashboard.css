@@ -296,83 +296,283 @@ body.dashboard-body {
 }
 
 /* ============================================================
-   CUSTOMER DASHBOARD (Pinkish Theme)
+   CUSTOMER DASHBOARD (Premium Theme)
    ============================================================ */
 .dashboard-body.customer-body {
-  display: block;
-  background: #fff0f5 url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Ctext x='10' y='30' font-size='16' opacity='0.2'%3E🌸%3C/text%3E%3Ctext x='40' y='50' font-size='12' opacity='0.15'%3E✨%3C/text%3E%3Ctext x='50' y='20' font-size='14' opacity='0.2'%3E🎀%3C/text%3E%3Ctext x='20' y='55' font-size='10' opacity='0.15'%3E💖%3C/text%3E%3C/svg%3E");
-  color: #831843;
+  background: var(--void);
+  color: var(--text-pearl);
 }
+
+.customer-main {
+  background: var(--plum-deep);
+}
+
 .customer-banner {
-  background: linear-gradient(135deg, #fce7f3, #fbcfe8);
+  background: linear-gradient(135deg, var(--plum), var(--plum-deep));
   border-radius: 12px;
   padding: 3rem;
   display: flex;
   align-items: center;
   gap: 2rem;
   margin-bottom: 2rem;
-  border: 1px solid #f9a8d4;
-  box-shadow: 0 4px 15px rgba(244,114,182,0.2);
+  border: 1px solid var(--gold-glow);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.05);
+  position: relative;
+  overflow: hidden;
 }
+
+.customer-banner::before {
+  content: '';
+  position: absolute;
+  top: -50%; right: -10%;
+  width: 400px; height: 400px;
+  background: radial-gradient(circle, var(--gold-glow) 0%, transparent 70%);
+  opacity: 0.5;
+  pointer-events: none;
+}
+
 .customer-avatar-large {
   width: 100px;
   height: 100px;
   border-radius: 50%;
-  background: #f472b6;
-  color: white;
+  background: linear-gradient(135deg, var(--gold), var(--gold-dk));
+  color: var(--void);
   display: flex;
   align-items: center;
   justify-content: center;
   font-size: 3rem;
   font-family: 'Cormorant Garamond', serif;
-  box-shadow: 0 4px 15px rgba(244,114,182,0.4);
+  box-shadow: 0 4px 15px var(--gold-glow);
+  border: 2px solid var(--gold-lt);
 }
+
 .customer-banner-info h1 {
   font-family: 'Cormorant Garamond', serif;
   font-size: 2.5rem;
-  color: #831843;
+  color: var(--gold);
   margin-bottom: 0.5rem;
 }
+
 .customer-banner-info p {
-  color: #9d174d;
+  color: var(--text-muted);
   font-size: 1.1rem;
 }
-.customer-stat-card {
-  background: rgba(255, 255, 255, 0.9);
-  border: 1px solid #f9a8d4;
-  box-shadow: 0 4px 6px -1px rgba(244,114,182,0.1);
-  backdrop-filter: blur(4px);
-}
-.customer-stat-card .stat-title {
-  color: #be185d;
-}
-.customer-stat-card .stat-value {
-  color: #db2777;
-}
-.customer-table-wrap {
-  background: rgba(255, 255, 255, 0.9);
-  border: 1px solid #f9a8d4;
-  backdrop-filter: blur(4px);
-}
-.customer-table-wrap th {
-  background: #fce7f3;
-  color: #831843;
-  border-bottom: 1px solid #f9a8d4;
-}
-.customer-table-wrap td {
-  border-bottom: 1px solid #fce7f3;
-  color: #831843;
+
+.role-badge {
+  background: var(--gold-glow);
+  color: var(--gold);
+  padding: 0.2rem 0.8rem;
+  border-radius: 20px;
+  font-size: 0.85rem;
+  border: 1px solid var(--gold);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
 }
 
+/* Cards & Tables */
+.customer-stat-card {
+  background: var(--plum);
+  border: 1px solid var(--gold-glow);
+  transition: transform 0.3s var(--ease-out), box-shadow 0.3s var(--ease-out);
+}
+.customer-stat-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 25px rgba(200,169,106,0.15);
+}
+
+.customer-table-wrap {
+  background: var(--plum);
+  border: 1px solid var(--plum-mid);
+}
+.customer-table th {
+  background: var(--plum-deep);
+  color: var(--gold);
+  border-bottom: 1px solid var(--plum-mid);
+}
+.customer-table td {
+  border-bottom: 1px solid var(--plum-mid);
+  color: var(--text-pearl);
+}
+
+/* Status Badges */
 .status-badge {
   padding: 0.3rem 0.8rem;
   border-radius: 12px;
   font-size: 0.8rem;
   font-weight: 500;
 }
-.status-success { background: rgba(0, 200, 83, 0.1); color: #00C853; }
-.status-pending { background: rgba(255, 171, 0, 0.1); color: #FFAB00; }
-.status-alert { background: rgba(213, 0, 0, 0.1); color: #D50000; }
+.status-success { background: rgba(0, 200, 83, 0.1); color: #00C853; border: 1px solid rgba(0, 200, 83, 0.2); }
+.status-pending { background: rgba(255, 171, 0, 0.1); color: #FFAB00; border: 1px solid rgba(255, 171, 0, 0.2); }
+.status-alert { background: rgba(213, 0, 0, 0.1); color: #D50000; border: 1px solid rgba(213, 0, 0, 0.2); }
+
+/* Empty State */
+.customer-empty-state {
+  background: var(--plum);
+  padding: 4rem 2rem;
+  border-radius: 12px;
+  border: 1px dashed var(--gold-glow);
+  text-align: center;
+  color: var(--text-muted);
+}
+.customer-empty-state .empty-icon {
+  font-size: 3rem;
+  margin-bottom: 1rem;
+  opacity: 0.8;
+}
+.customer-empty-state .empty-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.8rem;
+  color: var(--gold);
+  margin-bottom: 0.5rem;
+}
+
+/* Buttons */
+.customer-btn-primary {
+  display: inline-block;
+  background: var(--gold);
+  color: var(--void);
+  padding: 0.8rem 2rem;
+  border-radius: 4px;
+  text-decoration: none;
+  font-weight: 500;
+  border: none;
+  cursor: pointer;
+  transition: 0.3s;
+  margin-top: 1.5rem;
+}
+.customer-btn-primary:hover {
+  background: var(--gold-lt);
+  box-shadow: 0 4px 15px var(--gold-glow);
+  color: var(--void);
+}
+
+.customer-btn-outline {
+  display: inline-block;
+  background: transparent;
+  color: var(--gold);
+  padding: 1rem;
+  width: 100%;
+  border-radius: 8px;
+  text-decoration: none;
+  font-weight: 500;
+  border: 1px dashed var(--gold);
+  cursor: pointer;
+  transition: 0.3s;
+  font-family: 'Jost', sans-serif;
+  margin-top: 1rem;
+}
+.customer-btn-outline:hover {
+  background: var(--gold-glow);
+}
+
+/* Address & Settings Cards */
+.customer-address-card,
+.customer-settings-card {
+  background: var(--plum);
+  padding: 1.5rem 2rem;
+  border-radius: 12px;
+  border: 1px solid var(--plum-mid);
+  margin-bottom: 1.5rem;
+  transition: 0.3s;
+}
+.customer-address-card:hover {
+  border-color: var(--gold-glow);
+  box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+}
+
+.address-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+  border-bottom: 1px solid var(--plum-mid);
+  padding-bottom: 0.5rem;
+}
+.address-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.3rem;
+  color: var(--gold);
+}
+.address-actions a {
+  color: var(--gold);
+  font-size: 0.85rem;
+  text-decoration: none;
+  margin-left: 1rem;
+  font-weight: 500;
+}
+.address-actions a:hover { color: var(--gold-lt); }
+.address-actions a.danger { color: #e11d48; }
+.address-actions a.danger:hover { color: #be185d; }
+
+.address-body {
+  color: var(--text-pearl);
+  font-size: 0.95rem;
+  line-height: 1.6;
+}
+
+.form-group {
+  margin-bottom: 1.5rem;
+}
+.form-group label {
+  display: block;
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  margin-bottom: 0.5rem;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+.form-group input {
+  width: 100%;
+  padding: 0.8rem 1rem;
+  border: 1px solid var(--plum-mid);
+  border-radius: 4px;
+  background: var(--void);
+  color: var(--text-pearl);
+  font-family: 'DM Sans', sans-serif;
+  transition: 0.3s;
+}
+.form-group input:focus {
+  outline: none;
+  border-color: var(--gold);
+  box-shadow: 0 0 0 3px var(--gold-glow);
+}
+
+/* Order Tracker */
+.order-tracker {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.8rem;
+  color: var(--text-muted);
+}
+.tracker-step {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+.tracker-dot {
+  width: 10px; height: 10px;
+  border-radius: 50%;
+  background: var(--plum-mid);
+  flex-shrink: 0;
+}
+.tracker-label {
+  font-weight: 500;
+  white-space: nowrap;
+}
+.tracker-line {
+  width: 25px; height: 2px;
+  background: var(--plum-mid);
+  flex-shrink: 0;
+}
+.tracker-step.active .tracker-dot,
+.tracker-line.active {
+  background: var(--gold);
+}
+.tracker-step.active .tracker-label {
+  color: var(--gold);
+}
 
 /* Sidebar Toggle styles */
 .dash-toggle-btn {
