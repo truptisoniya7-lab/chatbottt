@@ -662,3 +662,104 @@ body.dashboard-body {
     padding: 1.5rem 1rem;
   }
 }
+
+/* Modal & Detailed Vertical Tracker */
+.dash-modal-overlay {
+  display: none;
+  position: fixed; inset: 0;
+  background: rgba(15, 7, 24, 0.8);
+  z-index: 1000;
+  backdrop-filter: blur(5px);
+}
+.dash-modal {
+  display: none;
+  position: fixed; top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  width: 90%; max-width: 500px;
+  background: var(--plum);
+  border-radius: 12px;
+  border: 1px solid var(--gold-glow);
+  z-index: 1001;
+  box-shadow: 0 10px 40px rgba(0,0,0,0.5);
+  overflow: hidden;
+}
+.dash-modal.open, .dash-modal-overlay.open {
+  display: block;
+}
+.dash-modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1.5rem 2rem;
+  background: var(--plum-deep);
+  border-bottom: 1px solid var(--plum-mid);
+}
+.modal-close {
+  background: transparent;
+  border: none;
+  color: var(--gold);
+  font-size: 1.5rem;
+  cursor: pointer;
+  transition: 0.3s;
+}
+.modal-close:hover { color: var(--gold-lt); }
+.dash-modal-body {
+  padding: 2rem;
+  max-height: 70vh;
+  overflow-y: auto;
+}
+
+.vertical-tracker {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+.v-tracker-step {
+  display: flex;
+  gap: 1.5rem;
+  position: relative;
+}
+.v-tracker-icon {
+  width: 20px; height: 20px;
+  border-radius: 50%;
+  background: var(--plum-mid);
+  z-index: 2;
+  flex-shrink: 0;
+}
+.v-tracker-step:not(:last-child)::after {
+  content: '';
+  position: absolute;
+  top: 20px; left: 9px;
+  width: 2px;
+  height: calc(100% + 1.5rem - 20px);
+  background: var(--plum-mid);
+  z-index: 1;
+}
+.v-tracker-step.active .v-tracker-icon {
+  background: var(--gold);
+  box-shadow: 0 0 10px var(--gold-glow);
+}
+.v-tracker-step.active:not(:last-child)::after {
+  background: var(--gold);
+}
+.v-tracker-content {
+  color: var(--text-muted);
+}
+.v-tracker-content h4 {
+  margin: 0 0 0.2rem 0;
+  font-size: 1.1rem;
+  font-weight: 500;
+  color: var(--text-pearl);
+}
+.v-tracker-step.active .v-tracker-content h4 {
+  color: var(--gold);
+}
+.v-tracker-content p {
+  margin: 0;
+  font-size: 0.9rem;
+}
+.v-tracker-date {
+  font-size: 0.8rem;
+  opacity: 0.7;
+  margin-top: 0.2rem;
+}

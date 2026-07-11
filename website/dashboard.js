@@ -99,19 +99,7 @@ document.addEventListener("DOMContentLoaded", async () => {
             <td>₹${o.total_amount.toLocaleString('en-IN')}</td>
             <td><span class="status-badge status-${o.status === 'pending' ? 'pending' : 'success'}">${o.status}</span></td>
             <td>
-              <div class="order-tracker">
-                <div class="tracker-step active">
-                  <div class="tracker-dot"></div><span class="tracker-label">Processed</span>
-                </div>
-                <div class="tracker-line ${isShipped ? 'active' : ''}"></div>
-                <div class="tracker-step ${isShipped ? 'active' : ''}">
-                  <div class="tracker-dot"></div><span class="tracker-label">Shipped</span>
-                </div>
-                <div class="tracker-line ${isDelivered ? 'active' : ''}"></div>
-                <div class="tracker-step ${isDelivered ? 'active' : ''}">
-                  <div class="tracker-dot"></div><span class="tracker-label">Delivered</span>
-                </div>
-              </div>
+              <button class="customer-btn-outline" style="padding: 0.5rem 1rem; margin-top:0; font-size: 0.8rem;" onclick="openTracker('${o.id.substring(0, 8).toUpperCase()}', '${o.status}', '${o.created_at}')">Track Order</button>
             </td>
           </tr>
         `}).join('');
@@ -214,4 +202,59 @@ window.switchTab = function(tabId, element) {
   if (overlay && overlay.classList.contains('open')) {
     overlay.classList.remove('open');
   }
+};
+
+window.openTracker = function(orderId, status, dateString) {
+  const modal = document.getElementById('trackerModal');
+  const overlay = document.getElementById('trackerModalOverlay');
+  const modalBody = document.getElementById('trackerModalBody');
+  
+  if (!modal || !modalBody) return;
+  
+  const isShipped = status !== 'pending';
+  const isDelivered = status === 'delivered';
+  
+  // Create some mock dates based on the created_at date
+  const orderDate = new Date(dateString);
+  const shippedDate = new Date(orderDate); shippedDate.setDate(shippedDate.getDate() + 2);
+  const deliveredDate = new Date(orderDate); deliveredDate.setDate(deliveredDate.getDate() + 5);
+  
+  modalBody.innerHTML = `
+    <div class="vertical-tracker">
+      <div class="v-tracker-step active">
+        <div class="v-tracker-icon">✓</div>
+        <div class="v-tracker-content">
+          <h4>Order Placed</h4>
+          <p>Your order was successfully placed.</p>
+          <div class="v-tracker-date">${orderDate.toLocaleDateString()} - Mumbai, India</div>
+        </div>
+      </div>
+      <div class="v-tracker-step ${isShipped ? 'active' : ''}">
+        <div class="v-tracker-icon">📦</div>
+        <div class="v-tracker-content">
+          <h4>Order Shipped</h4>
+          <p>Your order has been picked up by the courier partner.</p>
+          ${isShipped ? '<div class="v-tracker-date">' + shippedDate.toLocaleDateString() + ' - In Transit</div>' : ''}
+        </div>
+      </div>
+      <div class="v-tracker-step ${isDelivered ? 'active' : ''}">
+        <div class="v-tracker-icon">🏠</div>
+        <div class="v-tracker-content">
+          <h4>Order Delivered</h4>
+          <p>Your order has been delivered to your provided address.</p>
+          ${isDelivered ? '<div class="v-tracker-date">' + deliveredDate.toLocaleDateString() + '</div>' : ''}
+        </div>
+      </div>
+    </div>
+  `;
+  
+  modal.classList.add('open');
+  overlay.classList.add('open');
+};
+
+window.closeTracker = function() {
+  const modal = document.getElementById('trackerModal');
+  const overlay = document.getElementById('trackerModalOverlay');
+  if (modal) modal.classList.remove('open');
+  if (overlay) overlay.classList.remove('open');
 };

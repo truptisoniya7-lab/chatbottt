@@ -118,6 +118,18 @@
 
   </main>
 
+  <!-- Tracker Modal -->
+  <div class="dash-modal-overlay" id="trackerModalOverlay" onclick="closeTracker()"></div>
+  <div class="dash-modal" id="trackerModal">
+    <div class="dash-modal-header">
+      <h3 style="margin: 0; color: var(--gold); font-family: 'Cormorant Garamond', serif; font-size: 1.8rem;">Order Status</h3>
+      <button class="modal-close" onclick="closeTracker()">&times;</button>
+    </div>
+    <div class="dash-modal-body" id="trackerModalBody">
+      <!-- Tracker details injected here -->
+    </div>
+  </div>
+
   <script>
     function switchTab(tabId, el) {
       // Update nav styles
